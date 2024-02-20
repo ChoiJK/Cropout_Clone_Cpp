@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "IslandGen.h"
+#include "Spawn/IslandGen.h"
 
 #include "GeometryScript/MeshPrimitiveFunctions.h"
 #include "GeometryScript/MeshVoxelFunctions.h"
