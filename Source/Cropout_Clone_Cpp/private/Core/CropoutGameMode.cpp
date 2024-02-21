@@ -1,13 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Core/CropoutGameMode.h"
-#include "Core/CropoutGameInstance.h"
-#include "Global/GlobalEventDispatcher.h"
 
-void ACropoutGameMode::BeginPlay()
+#include "Global/GlobalEventDispatcher.h"
+#include "Core/CropoutGameInstance.h"
+
+void ACropoutGameMode::StartPlay()
 {
-	Super::BeginPlay();
 
 	auto gameInstance = Cast<UCropoutGameInstance>( GetGameInstance() );
 	if( gameInstance )
@@ -15,21 +14,33 @@ void ACropoutGameMode::BeginPlay()
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
 	}
 
-	if( eventDispatcher.IsValid() )
+	if( TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin() )
 	{
-		islandGenCompleteHandle = eventDispatcher->AddListenerUObject<ACropoutGameMode>( EGlobalEventType::IslandGenComplete, this, &ACropoutGameMode::OnIslandGenComplete );
+		islandGenCompleteHandle = shared->AddListenerUObject( EGlobalEventType::IslandGenComplete, this, &ACropoutGameMode::OnIslandGenComplete );
 		if( islandGenCompleteHandle.IsValid() == false )
 		{
 			UE_LOG( LogTemp, Error, TEXT( "Failed to add listener for IslandGenComplete" ) );
 		}
 	}
+
+	Super::StartPlay();
+}
+
+void ACropoutGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// @ TODO : ScreenEffect FadeOut
+
+
+
 }
 
 void ACropoutGameMode::EndPlay( const EEndPlayReason::Type EndPlayReason )
 {
-	if( eventDispatcher.IsValid() )
+	if( TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin() )
 	{
-		eventDispatcher->RemoveListener( EGlobalEventType::IslandGenComplete, islandGenCompleteHandle );
+		shared->RemoveListener( EGlobalEventType::IslandGenComplete, islandGenCompleteHandle );
 	}
 
 	Super::EndPlay( EndPlayReason );

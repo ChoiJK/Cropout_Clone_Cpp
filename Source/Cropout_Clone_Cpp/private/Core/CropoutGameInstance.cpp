@@ -2,12 +2,13 @@
 
 
 #include "Core/CropoutGameInstance.h"
+#include "Global/GlobalEventDispatcher.h"
 
 void UCropoutGameInstance::Init()
 {
 	Super::Init();
 
-	globalEventDispatcher = NewObject<UGlobalEventDispatcher>();
+	globalEventDispatcher = MakeShared<GlobalEventDispatcher>();
 
 	UE_LOG( LogTemp, Warning, TEXT( "GameInstance Init" ) );
 }

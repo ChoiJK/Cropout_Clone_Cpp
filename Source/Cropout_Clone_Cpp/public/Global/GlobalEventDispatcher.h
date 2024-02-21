@@ -1,20 +1,16 @@
 #pragma once
 #include "CoreMinimal.h"
 
-#include "GlobalEventDispatcher.generated.h"
-
-
-DECLARE_MULTICAST_DELEGATE( FVoidDelegate );
 
 enum class EGlobalEventType
 {
 	IslandGenComplete
 };
 
-UCLASS()
-class CROPOUT_CLONE_CPP_API UGlobalEventDispatcher : public UObject
+DECLARE_MULTICAST_DELEGATE( FVoidDelegate );
+
+class CROPOUT_CLONE_CPP_API GlobalEventDispatcher
 {
-	GENERATED_BODY()
 
 private:
 	TMap<EGlobalEventType, TSharedPtr<FVoidDelegate>> listeners;
@@ -23,15 +19,33 @@ private:
 	void removeAllEventListeners();
 
 public:
-	~UGlobalEventDispatcher();
+	~GlobalEventDispatcher();
 
 	template <typename UserClass>
-	FDelegateHandle AddListener( const EGlobalEventType eventType, UserClass* classInstance,
-								 typename TMemFunPtrType<false, UserClass, void()>::Type InFunc );
+	inline FDelegateHandle AddListener( const EGlobalEventType eventType, UserClass* classInstance,
+								 typename TMemFunPtrType<false, UserClass, void()>::Type InFunc )
+	{
+		auto eventListener = getEventListener( eventType );
+		if( eventListener )
+		{
+			return eventListener->AddRaw( classInstance, InFunc );
+		}
+
+		return FDelegateHandle();
+	}
 
 	template <typename UserClass>
-	FDelegateHandle AddListenerUObject( const EGlobalEventType eventType, UserClass* classInstance,
-										typename TMemFunPtrType<false, UserClass, void()>::Type InFunc );
+	inline FDelegateHandle AddListenerUObject( const EGlobalEventType eventType, UserClass* classInstance,
+										typename TMemFunPtrType<false, UserClass, void()>::Type InFunc )
+	{
+		auto eventListener = getEventListener( eventType );
+		if( eventListener )
+		{
+			return eventListener->AddUObject( classInstance, InFunc );
+		}
+
+		return FDelegateHandle();
+	}
 
 	void RemoveListener( const EGlobalEventType eventType, FDelegateHandle delegateHandle );
 

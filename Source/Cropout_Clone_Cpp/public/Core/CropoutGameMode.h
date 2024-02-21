@@ -10,14 +10,14 @@
  *
  */
 
-class UGlobalEventDispatcher;
+class GlobalEventDispatcher;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	TWeakObjectPtr<UGlobalEventDispatcher> eventDispatcher;
+	TWeakPtr<GlobalEventDispatcher> eventDispatcher;
 
 private:
 	FDelegateHandle islandGenCompleteHandle;
@@ -25,7 +25,10 @@ private:
 
 protected:
 	void OnIslandGenComplete();
+
+	void StartPlay() override;
 	void BeginPlay() override;
 	void EndPlay( const EEndPlayReason::Type EndPlayReason ) override;
+
 
 };

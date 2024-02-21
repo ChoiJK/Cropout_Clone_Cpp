@@ -156,11 +156,9 @@ void AIslandGen::SecondStep()
 	ReleaseAllComputeMeshes();
 	AddActorWorldOffset( FVector( 0, 0, 0.05 ) );
 
-	// @TODO : GameMode에 IslandGenComplete 이벤트를 보내서 다음 단계로 넘어가도록 함
-
-	if( eventDispatcher.IsValid() )
+	if( TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin() )
 	{
-		eventDispatcher->Dispatch( EGlobalEventType::IslandGenComplete );
+		shared->Dispatch( EGlobalEventType::IslandGenComplete );
 	}
 }
 

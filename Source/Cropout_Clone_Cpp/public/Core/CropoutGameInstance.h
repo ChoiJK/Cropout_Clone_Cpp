@@ -10,19 +10,20 @@
 /**
  *
  */
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
 private:
-	UGlobalEventDispatcher* globalEventDispatcher;
+	TSharedPtr<GlobalEventDispatcher> globalEventDispatcher;
 
 	void Init() override;
 	void Shutdown() override;
 
 public:
-	TWeakObjectPtr<UGlobalEventDispatcher> GetGlobalEventDispatcher() const
+	TWeakPtr<GlobalEventDispatcher> GetGlobalEventDispatcher() const
 	{
 		return globalEventDispatcher;
 	}
