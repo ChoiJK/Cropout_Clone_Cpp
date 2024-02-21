@@ -18,20 +18,22 @@ enum class EPlatformPerformance : uint8
 	HighEnd = 1
 };
 
+class UGlobalEventDispatcher;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API AIslandGen : public ADynamicMeshActor
 {
 	GENERATED_BODY()
 
 private:
-	void GenerateIslands(bool spawnMarkers);
-	void FirstStep(bool spawnMarkers);
+	void GenerateIslands( bool spawnMarkers );
+	void FirstStep( bool spawnMarkers );
 	void SecondStep();
 	void ThirdStep();
-	
-	void SetIslandSeed(int32 seed = 0);
+
+	void SetIslandSeed( int32 seed = 0 );
 	void ClearSpawnPoints();
-	
+
 	UBlueprint* GetSpawnMarker();
 	UDynamicMesh* GetDynamicMesh();
 	UMaterialParameterCollection* GetLandScapeMPC();
@@ -39,35 +41,36 @@ private:
 
 	UBlueprint* SpawnMarker = nullptr;
 	UMaterialParameterCollection* LandScapeMPC = nullptr;
-	
+	TWeakObjectPtr<UGlobalEventDispatcher> eventDispatcher;
+
 protected:
 	virtual void BeginPlay() override;
-	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void OnConstruction( const FTransform& Transform ) override;
 
 public:
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY( EditAnywhere )
 	FRandomStream Seed;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY( EditAnywhere )
 	float MaxSpawnDistance = 0.0f;
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY( EditAnywhere )
 	int Islands = 15;
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY( EditAnywhere )
 	UDynamicMesh* DynMesh = nullptr;
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY( EditAnywhere )
 	bool PreConstruct = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY( EditAnywhere )
 	TArray<FVector3d> SpawnPoints;
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY( EditAnywhere )
 	float Radius = 0.0f;
-	
-	UPROPERTY(EditAnywhere)
-	FVector2D IslandsSize = FVector2D(800.0f, 5000.0f);
-		
+
+	UPROPERTY( EditAnywhere )
+	FVector2D IslandsSize = FVector2D( 800.0f, 5000.0f );
+
 };

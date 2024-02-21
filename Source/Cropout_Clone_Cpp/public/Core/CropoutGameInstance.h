@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Global/GlobalEventDispatcher.h"
 #include "CropoutGameInstance.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
@@ -15,14 +16,15 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 private:
+	UGlobalEventDispatcher* globalEventDispatcher;
 
-
-
-	
-public:
 	void Init() override;
-
-
 	void Shutdown() override;
+
+public:
+	TWeakObjectPtr<UGlobalEventDispatcher> GetGlobalEventDispatcher() const
+	{
+		return globalEventDispatcher;
+	}
 
 };

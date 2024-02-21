@@ -6,11 +6,16 @@
 void UCropoutGameInstance::Init()
 {
 	Super::Init();
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance Init"));
+
+	globalEventDispatcher = NewObject<UGlobalEventDispatcher>();
+
+	UE_LOG( LogTemp, Warning, TEXT( "GameInstance Init" ) );
 }
 
 void UCropoutGameInstance::Shutdown()
 {
+	UE_LOG( LogTemp, Warning, TEXT( "GameInstance Shutdown" ) );
+
+
 	Super::Shutdown();
-	UE_LOG(LogTemp, Warning, TEXT("GameInstance Shutdown"));
 }
