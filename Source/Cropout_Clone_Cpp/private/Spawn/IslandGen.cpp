@@ -19,57 +19,61 @@
 
 void AIslandGen::BeginPlay()
 {
-	auto gameInstance = Cast<UCropoutGameInstance>( GetGameInstance() );
-	if( gameInstance )
+	Super::BeginPlay();
+
+	auto gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	if(gameInstance)
 	{
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
 	}
 
 	SetIslandSeed();
 
-	GenerateIslands( true );
+	GenerateIslands(true);
 }
 
-void AIslandGen::OnConstruction( const FTransform& Transform )
+void AIslandGen::OnConstruction(const FTransform& Transform)
 {
-	if( PreConstruct == true )
+	if(PreConstruct == true)
 	{
-		GenerateIslands( false );
+		GenerateIslands(false);
 	}
 }
 
-void AIslandGen::GenerateIslands( bool spawnMarkers )
+void AIslandGen::GenerateIslands(bool spawnMarkers)
 {
 	const auto dynMesh = GetDynamicMesh();
-	if( dynMesh == nullptr )
+	if(dynMesh == nullptr)
 	{
 		return;
 	}
 	dynMesh->Reset();
+	SetActorLocation(FVector::Zero());
+
 	ClearSpawnPoints();
 
-	FirstStep( spawnMarkers );
+	FirstStep(spawnMarkers);
 	SecondStep();
 	ThirdStep();
 }
 
-void AIslandGen::FirstStep( bool spawnMarkers )
+void AIslandGen::FirstStep(bool spawnMarkers)
 {
 	// islands 개수에 맞춰서 랜덤한 위치에 SpawnPoints에 추가
 	const auto dynMesh = GetDynamicMesh();
-	if( dynMesh == nullptr )
+	if(dynMesh == nullptr)
 	{
 		return;
 	}
 
-	for( int i = 0; i <= Islands; i++ )
+	for(int i = 0; i <= Islands; i++)
 	{
-		Radius = Seed.FRandRange( IslandsSize.X, IslandsSize.Y );
-		FVector spawnPoint = Seed.GetUnitVector() * ( MaxSpawnDistance / 2 );
+		Radius = Seed.FRandRange(IslandsSize.X, IslandsSize.Y);
+		FVector spawnPoint = Seed.GetUnitVector() * (MaxSpawnDistance / 2);
 		spawnPoint.Z = 0;
-		SpawnPoints.Add( spawnPoint );
+		SpawnPoints.Add(spawnPoint);
 
-		FTransform transform = FTransform( FRotator( 0, 0, 0 ), FVector( spawnPoint.X, spawnPoint.Y, -800 ) );
+		FTransform transform = FTransform(FRotator(0, 0, 0), FVector(spawnPoint.X, spawnPoint.Y, -800));
 
 		FGeometryScriptPrimitiveOptions options;
 		UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendCone(
@@ -80,23 +84,23 @@ void AIslandGen::FirstStep( bool spawnMarkers )
 			Radius / 4,
 			1300,
 			32,
-			1 );
+			1);
 
-		if( spawnMarkers )
+		if(spawnMarkers)
 		{
 			UBlueprint* spawnMarker = GetSpawnMarker();
-			if( spawnMarker != nullptr )
+			if(spawnMarker != nullptr)
 			{
-				GetWorld()->SpawnActor<AActor>( spawnMarker->GeneratedClass, spawnPoint, FRotator( 0, 0, 0 ) );
+				GetWorld()->SpawnActor<AActor>(spawnMarker->GeneratedClass, spawnPoint, FRotator(0, 0, 0));
 			}
 		}
 	}
 
 	FGeometryScriptPrimitiveOptions options;
 	// 콘들을 합치기위한 박스 추가
-	FTransform boxTransform = FTransform( FRotator( 0, 0, 0 ), FVector( 0, 0, -800 ) );
+	FTransform boxTransform = FTransform(FRotator(0, 0, 0), FVector(0, 0, -800));
 	float dimension = MaxSpawnDistance + 10000;
-	UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox( dynMesh, options, boxTransform, dimension, dimension, 400 );
+	UGeometryScriptLibrary_MeshPrimitiveFunctions::AppendBox(dynMesh, options, boxTransform, dimension, dimension, 400);
 
 	// Solidify mesh, smooth/tesselate/calc normals
 	EPlatformPerformance platformPerformance = GetPlatformPerformance();
@@ -114,17 +118,21 @@ void AIslandGen::FirstStep( bool spawnMarkers )
 	solidifyOptions.bThickenShells = false;
 	solidifyOptions.ShellThickness = 1.0;
 
-	UGeometryScriptLibrary_MeshVoxelFunctions::ApplyMeshSolidify( dynMesh, solidifyOptions );
-	UGeometryScriptLibrary_MeshNormalsFunctions::SetPerVertexNormals( dynMesh );
+	UGeometryScriptLibrary_MeshVoxelFunctions::ApplyMeshSolidify(dynMesh, solidifyOptions);
+	UGeometryScriptLibrary_MeshNormalsFunctions::SetPerVertexNormals(dynMesh);
 
 	FGeometryScriptMeshSelection MeshSelection;
 	FGeometryScriptIterativeMeshSmoothingOptions smoothOptions;
 	smoothOptions.NumIterations = 6;
 	smoothOptions.Alpha = 0.2;
-	UGeometryScriptLibrary_MeshDeformFunctions::ApplyIterativeSmoothingToMesh( dynMesh, MeshSelection, smoothOptions );
+	UGeometryScriptLibrary_MeshDeformFunctions::ApplyIterativeSmoothingToMesh(dynMesh, MeshSelection, smoothOptions);
 
 	FGeometryScriptPNTessellateOptions tessOptions;
-	UGeometryScriptLibrary_MeshSubdivideFunctions::ApplyPNTessellation( dynMesh, tessOptions, platformPerformance == EPlatformPerformance::LowEnd ? 0 : 2 );
+	UGeometryScriptLibrary_MeshSubdivideFunctions::ApplyPNTessellation(dynMesh, tessOptions,
+	                                                                   platformPerformance ==
+	                                                                   EPlatformPerformance::LowEnd
+		                                                                   ? 0
+		                                                                   : 2);
 
 	// Delete the section of the mesh not needed any more (Underside)
 	FGeometryScriptMeshPlaneCutOptions cutOptions;
@@ -133,66 +141,68 @@ void AIslandGen::FirstStep( bool spawnMarkers )
 	cutOptions.bFillSpans = false;
 	cutOptions.bFlipCutSide = false;
 
-	FTransform cutTransform = FTransform( FRotator( 180, 0, 0 ), FVector( 0, 0, -390 ) );
-	UGeometryScriptLibrary_MeshBooleanFunctions::ApplyMeshPlaneCut( dynMesh, cutTransform, cutOptions );
+	FTransform cutTransform = FTransform(FRotator(180, 0, 0), FVector(0, 0, -390));
+	UGeometryScriptLibrary_MeshBooleanFunctions::ApplyMeshPlaneCut(dynMesh, cutTransform, cutOptions);
 
 	//Flatten the top and Project uvs
 	FGeometryScriptMeshPlaneCutOptions topCutOptions;
 	FTransform topCutTransform = FTransform();
-	UGeometryScriptLibrary_MeshBooleanFunctions::ApplyMeshPlaneCut( dynMesh, topCutTransform, topCutOptions );
+	UGeometryScriptLibrary_MeshBooleanFunctions::ApplyMeshPlaneCut(dynMesh, topCutTransform, topCutOptions);
 
-	FTransform projectUVTransform = FTransform( FRotator( 0, 0, 0 ), FVector( 0, 0, 0 ), FVector( 100, 100, 100 ) );
-	UGeometryScriptLibrary_MeshUVFunctions::SetMeshUVsFromPlanarProjection( dynMesh, 0, projectUVTransform, MeshSelection );
+	FTransform projectUVTransform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0), FVector(100, 100, 100));
+	UGeometryScriptLibrary_MeshUVFunctions::SetMeshUVsFromPlanarProjection(
+		dynMesh, 0, projectUVTransform, MeshSelection);
 }
 
 void AIslandGen::SecondStep()
 {
 	// Release all computer meshes and move the island slightly to retrigger nav mesh gen
 	const auto dynMesh = GetDynamicMesh();
-	if( dynMesh == nullptr )
+	if(dynMesh == nullptr)
 	{
 		return;
 	}
 	ReleaseAllComputeMeshes();
-	AddActorWorldOffset( FVector( 0, 0, 0.05 ) );
+	AddActorWorldOffset(FVector(0, 0, 0.05));
 
-	if( TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin() )
+	if(TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin())
 	{
-		shared->Dispatch( EGlobalEventType::IslandGenComplete );
+		shared->Dispatch(EGlobalEventType::IslandGenComplete);
 	}
 }
 
 void AIslandGen::ThirdStep()
 {
 	const auto landScapeMPC = GetLandScapeMPC();
-	if( landScapeMPC == nullptr )
+	if(landScapeMPC == nullptr)
 	{
 		return;
 	}
 
-	auto inst = GetWorld()->GetParameterCollectionInstance( landScapeMPC );
+	auto inst = GetWorld()->GetParameterCollectionInstance(landScapeMPC);
 
 	FLinearColor grassColor;
-	if( inst->GetVectorParameterValue( "GrassColour", grassColor ) )
+	if(inst->GetVectorParameterValue("GrassColour", grassColor))
 	{
 		FLinearColor hsvColor = grassColor.LinearRGBToHSV();
-		hsvColor.R = 102.999725 + Seed.FRandRange( 0, 90 );
+		hsvColor.R = 102.999725 + Seed.FRandRange(0, 90);
 
-		inst->SetVectorParameterValue( "GrassColour", hsvColor.HSVToLinearRGB() );
+		inst->SetVectorParameterValue("GrassColour", hsvColor.HSVToLinearRGB());
 	}
 }
 
-void AIslandGen::SetIslandSeed( int seed )
+void AIslandGen::SetIslandSeed(int seed)
 {
-	Seed = FRandomStream( seed );
+	Seed = FRandomStream(seed);
 }
 
 UDynamicMesh* AIslandGen::GetDynamicMesh()
 {
-	if( DynMesh == nullptr )
+	if(DynMesh == nullptr)
 	{
 		const auto dynMeshComp = GetComponentByClass<UDynamicMeshComponent>();
 		DynMesh = dynMeshComp->GetDynamicMesh();
+		dynMeshComp->SetMaterial(0, GetLandScapeMaterial());
 	}
 
 	return DynMesh;
@@ -200,10 +210,10 @@ UDynamicMesh* AIslandGen::GetDynamicMesh()
 
 UBlueprint* AIslandGen::GetSpawnMarker()
 {
-	if( SpawnMarker == nullptr )
+	if(SpawnMarker == nullptr)
 	{
-		FName path = TEXT( "/Game/Blueprint/Misc/BP_SpawnMarker.BP_SpawnMarker" );
-		SpawnMarker = Cast<UBlueprint>( StaticLoadObject( UBlueprint::StaticClass(), nullptr, *path.ToString() ) );
+		FName path = TEXT("/Game/Blueprint/Misc/BP_SpawnMarker.BP_SpawnMarker");
+		SpawnMarker = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *path.ToString()));
 	}
 
 	return SpawnMarker;
@@ -212,20 +222,33 @@ UBlueprint* AIslandGen::GetSpawnMarker()
 
 UMaterialParameterCollection* AIslandGen::GetLandScapeMPC()
 {
-	if( LandScapeMPC == nullptr )
+	if(LandScapeMPC == nullptr)
 	{
-		FName path = TEXT( "/Game/IslandGenerator/Materials/MPC_Landscape.MPC_Landscape" );
-		LandScapeMPC = Cast<UMaterialParameterCollection>( StaticLoadObject( UMaterialParameterCollection::StaticClass(), nullptr, *path.ToString() ) );
+		const FName Path = TEXT("/Game/Resources/Materials/MPC_Landscape.MPC_Landscape");
+		LandScapeMPC = Cast<UMaterialParameterCollection>(
+			StaticLoadObject(UMaterialParameterCollection::StaticClass(), nullptr, *Path.ToString()));
 	}
 
 	return LandScapeMPC;
 }
 
+UMaterialInstance* AIslandGen::GetLandScapeMaterial()
+{
+	if(LandScapeMaterial == nullptr)
+	{
+		const FName Path = TEXT("Material'/Game/Resources/Materials/M_Landscape.M_Landscape'");
+		LandScapeMaterial = Cast<UMaterialInstance>(
+			StaticLoadObject(UMaterialInstance::StaticClass(), nullptr, *Path.ToString()));
+	}
+
+	return LandScapeMaterial;
+}
+
 EPlatformPerformance AIslandGen::GetPlatformPerformance()
 {
-	FString PlatformName = FPlatformProperties::IniPlatformName();
+	const FString PlatformName = FPlatformProperties::IniPlatformName();
 	// PlatformName이 Android, Switch, IOS일때 LowEnd, 그 외에는 HighEnd
-	if( PlatformName == TEXT( "Android" ) || PlatformName == TEXT( "Switch" ) || PlatformName == TEXT( "IOS" ) )
+	if(PlatformName == TEXT("Android") || PlatformName == TEXT("Switch") || PlatformName == TEXT("IOS"))
 	{
 		return EPlatformPerformance::LowEnd;
 	}
