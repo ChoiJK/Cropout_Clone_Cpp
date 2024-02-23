@@ -1,20 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Interactable/InteractableBaseActor.h"
-
+#include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetRenderingLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/Canvas.h"
 #include "cmath"
-#include "Kismet/BlueprintTypeConversions.h"
 
 AInteractableBaseActor::AInteractableBaseActor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AInteractableBaseActor Constructor"));
+	const auto uSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	uSceneComponent->SetupAttachment(RootComponent);
+	StaticMeshComponent->SetupAttachment(uSceneComponent);
+	BoxComponent->SetupAttachment(uSceneComponent);
 
 	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> TextureRenderTargetAsset(
 		TEXT("TextureRenderTarget2D'/Game/Blueprint/Extras/RT_GrassMove.RT_GrassMove'"));

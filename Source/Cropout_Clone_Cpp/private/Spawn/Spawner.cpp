@@ -15,10 +15,20 @@ ASpawner::ASpawner()
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	LoadClasses();
+}
+
+void ASpawner::LoadClasses()
+{
 }
 
 // Called every frame
 void ASpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ASpawner::SpawnRandom()
+{
 }

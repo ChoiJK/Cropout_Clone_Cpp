@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Data/SpawnData.h"
 #include "Spawner.generated.h"
 
 UCLASS()
@@ -19,7 +20,22 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
+	void LoadClasses();
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void SpawnRandom();
+
+	UPROPERTY(EditAnywhere)
+	TArray<FSpawnData> SpawnTypes;
+
+	// Class Load
+	int ClassRefIndex;
+
+
+	int Counter;
+	int IndexCounter;
 };

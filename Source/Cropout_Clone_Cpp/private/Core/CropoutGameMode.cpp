@@ -4,22 +4,23 @@
 
 #include "Global/GlobalEventDispatcher.h"
 #include "Core/CropoutGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Spawn/Spawner.h"
 
 void ACropoutGameMode::StartPlay()
 {
-
-	auto gameInstance = Cast<UCropoutGameInstance>( GetGameInstance() );
-	if( gameInstance )
+	if(auto gameInstance = GetGameInstance())
 	{
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
 	}
 
-	if( TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin() )
+	if(TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin())
 	{
-		islandGenCompleteHandle = shared->AddListenerUObject( EGlobalEventType::IslandGenComplete, this, &ACropoutGameMode::OnIslandGenComplete );
-		if( islandGenCompleteHandle.IsValid() == false )
+		islandGenCompleteHandle = shared->AddListenerUObject(EGlobalEventType::IslandGenComplete, this,
+		                                                     &ACropoutGameMode::OnIslandGenComplete);
+		if(islandGenCompleteHandle.IsValid() == false)
 		{
-			UE_LOG( LogTemp, Error, TEXT( "Failed to add listener for IslandGenComplete" ) );
+			UE_LOG(LogTemp, Error, TEXT( "Failed to add listener for IslandGenComplete" ));
 		}
 	}
 
@@ -32,21 +33,51 @@ void ACropoutGameMode::BeginPlay()
 
 	// @ TODO : ScreenEffect FadeOut
 
-
-
-}
-
-void ACropoutGameMode::EndPlay( const EEndPlayReason::Type EndPlayReason )
-{
-	if( TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin() )
+	SpawnerRef = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
+	if(SpawnerRef == nullptr)
 	{
-		shared->RemoveListener( EGlobalEventType::IslandGenComplete, islandGenCompleteHandle );
+		UE_LOG(LogTemp, Error, TEXT("SpawnerRef is nullptr"));
+		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
 
-	Super::EndPlay( EndPlayReason );
+	// @ TODO : Add Game HUD to screen
+}
+
+void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if(TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin())
+	{
+		shared->RemoveListener(EGlobalEventType::IslandGenComplete, islandGenCompleteHandle);
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
+UCropoutGameInstance* ACropoutGameMode::GetGameInstance()
+{
+	if(GameInstance == nullptr)
+	{
+		GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	}
+
+	return GameInstance;
 }
 
 void ACropoutGameMode::OnIslandGenComplete()
 {
-	UE_LOG( LogTemp, Warning, TEXT( "IslandGenComplete" ) );
+	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
+	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+	{
+		// @Todo : Check Save Bool (In Game instance)
+		{
+		}
+
+		// else
+		{
+			// @Todo : Spawn Town Hall
+			// @Todo : Spawn Villager
+
+			SpawnerRef->SpawnRandom();
+		}
+	}));
 }

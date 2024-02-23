@@ -7,7 +7,6 @@
 // Sets default values
 AShrub::AShrub()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AShrub Constructor"));
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -24,6 +23,8 @@ AShrub::AShrub()
 	CollectionValue = 10;
 	UseRandomMesh = true;
 	BoundGap = -0.25;
+
+	UE_LOG(LogTemp, Warning, TEXT("AShrub Constructor Success!"));
 }
 
 // Called when the game starts or when spawned

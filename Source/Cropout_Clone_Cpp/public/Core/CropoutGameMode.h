@@ -10,7 +10,9 @@
  *
  */
 
+class UCropoutGameInstance;
 class GlobalEventDispatcher;
+class ASpawner;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
@@ -22,13 +24,18 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 private:
 	FDelegateHandle islandGenCompleteHandle;
 
+	void BeginAsyncSpawning();
 
 protected:
 	void OnIslandGenComplete();
 
-	void StartPlay() override;
-	void BeginPlay() override;
-	void EndPlay( const EEndPlayReason::Type EndPlayReason ) override;
+	virtual void StartPlay() override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	UCropoutGameInstance* GetGameInstance();
 
+public:
+	UCropoutGameInstance* GameInstance;
+	ASpawner* SpawnerRef;
 };
