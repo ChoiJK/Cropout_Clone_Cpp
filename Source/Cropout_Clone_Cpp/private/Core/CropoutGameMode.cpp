@@ -2,7 +2,7 @@
 
 #include "Core/CropoutGameMode.h"
 
-#include "Global/GlobalEventDispatcher.h"
+#include "../../public/Global/GlobalEventDispatcher.h"
 #include "Core/CropoutGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Spawn/Spawner.h"
@@ -14,7 +14,7 @@ void ACropoutGameMode::StartPlay()
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
 	}
 
-	if(TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin())
+	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
 	{
 		islandGenCompleteHandle = shared->AddListenerUObject(EGlobalEventType::IslandGenComplete, this,
 		                                                     &ACropoutGameMode::OnIslandGenComplete);
@@ -45,7 +45,7 @@ void ACropoutGameMode::BeginPlay()
 
 void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if(TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin())
+	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
 	{
 		shared->RemoveListener(EGlobalEventType::IslandGenComplete, islandGenCompleteHandle);
 	}
@@ -57,7 +57,7 @@ UCropoutGameInstance* ACropoutGameMode::GetGameInstance()
 {
 	if(GameInstance == nullptr)
 	{
-		GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+		GameInstance = Cast<UCropoutGameInstance>(GetWorld()->GetGameInstance());
 	}
 
 	return GameInstance;

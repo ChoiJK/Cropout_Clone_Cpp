@@ -11,7 +11,7 @@
  */
 
 class UCropoutGameInstance;
-class GlobalEventDispatcher;
+class FGlobalEventDispatcher;
 class ASpawner;
 
 UCLASS()
@@ -19,7 +19,7 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	TWeakPtr<GlobalEventDispatcher> eventDispatcher;
+	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
 
 private:
 	FDelegateHandle islandGenCompleteHandle;

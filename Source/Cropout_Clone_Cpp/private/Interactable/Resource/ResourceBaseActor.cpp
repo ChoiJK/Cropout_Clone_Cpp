@@ -40,7 +40,7 @@ void AResourceBaseActor::BeginPlay()
 		EventDispatcher = gameInstance->GetGlobalEventDispatcher();
 	}
 
-	if(const TSharedPtr<GlobalEventDispatcher> dispatcher = EventDispatcher.Pin())
+	if(const TSharedPtr<FGlobalEventDispatcher> dispatcher = EventDispatcher.Pin())
 	{
 		ScaleUpHandle = dispatcher->AddListenerUObject(EGlobalEventType::ScaleUp, this, &AResourceBaseActor::ScaleUp);
 		if(ScaleUpHandle.IsValid() == false)
@@ -60,7 +60,7 @@ void AResourceBaseActor::BeginPlay()
 
 void AResourceBaseActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if(const TSharedPtr<GlobalEventDispatcher> dispatcher = EventDispatcher.Pin())
+	if(const TSharedPtr<FGlobalEventDispatcher> dispatcher = EventDispatcher.Pin())
 	{
 		dispatcher->RemoveListener(EGlobalEventType::ScaleUp, ScaleUpHandle);
 	}

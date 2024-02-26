@@ -1,15 +1,15 @@
 #pragma once
 
-class GlobalEventDispatcher;
+class FGlobalEventDispatcher;
 class UCropoutGameInstance;
 
-class CROPOUT_CLONE_CPP_API GlobalSharedVariable
+class CROPOUT_CLONE_CPP_API FGlobalSharedVariable
 {
-	GlobalSharedVariable(UCropoutGameInstance* gameInstance);
+	FGlobalSharedVariable(UCropoutGameInstance* gameInstance);
 
 private:
 	UCropoutGameInstance* GameInstance;
-	TWeakPtr<GlobalEventDispatcher> EventDispatcher;
+	TWeakPtr<FGlobalEventDispatcher> EventDispatcher;
 
 public:
 	void SetScaleUpDelay(float delay);

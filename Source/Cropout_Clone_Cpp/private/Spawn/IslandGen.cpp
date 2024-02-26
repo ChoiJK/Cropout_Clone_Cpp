@@ -163,9 +163,9 @@ void AIslandGen::SecondStep()
 		return;
 	}
 	ReleaseAllComputeMeshes();
-	AddActorWorldOffset(FVector(0, 0, 0.05));
+	AddActorWorldOffset(FVector(0, 0, 0.05)); // retrigger nav mesh gen
 
-	if(TSharedPtr<GlobalEventDispatcher> shared = eventDispatcher.Pin())
+	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
 	{
 		shared->Dispatch(EGlobalEventType::IslandGenComplete);
 	}

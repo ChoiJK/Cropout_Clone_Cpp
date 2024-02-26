@@ -28,7 +28,7 @@ inline FString EnumToString(EResourceType Value)
 }
 
 class UCurveFLoat;
-class GlobalEventDispatcher;
+class FGlobalEventDispatcher;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AResourceBaseActor : public AInteractableBaseActor
@@ -40,7 +40,7 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 private:
-	TWeakPtr<GlobalEventDispatcher> EventDispatcher;
+	TWeakPtr<FGlobalEventDispatcher> EventDispatcher;
 	FDelegateHandle ScaleUpHandle;
 	void ScaleUp();
 	bool IsInitResourceScaleCurveSuccess();

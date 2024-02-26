@@ -10,7 +10,7 @@ enum class EGlobalEventType
 
 DECLARE_MULTICAST_DELEGATE(FVoidDelegate);
 
-class CROPOUT_CLONE_CPP_API GlobalEventDispatcher
+class CROPOUT_CLONE_CPP_API FGlobalEventDispatcher
 {
 private:
 	TMap<EGlobalEventType, TSharedPtr<FVoidDelegate>> listeners;
@@ -19,7 +19,7 @@ private:
 	void removeAllEventListeners();
 
 public:
-	~GlobalEventDispatcher();
+	~FGlobalEventDispatcher();
 
 	template <typename UserClass>
 	FDelegateHandle AddListener(const EGlobalEventType eventType, UserClass* classInstance,

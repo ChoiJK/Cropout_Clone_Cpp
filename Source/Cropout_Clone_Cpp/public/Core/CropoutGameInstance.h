@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Global/GlobalEventDispatcher.h"
+#include "Global/GlobalSharedVariable.h"
+#include "Engine/StreamableManager.h"
+
 #include "CropoutGameInstance.generated.h"
 
 /**
@@ -12,20 +15,32 @@
  */
 
 UCLASS()
+
 class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
 private:
-	TSharedPtr<GlobalEventDispatcher> globalEventDispatcher;
+	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
+	TSharedPtr<FGlobalSharedVariable> GlobalSharedVariable;
+	FStreamableManager streamableManager;
 
-	void Init() override;
-	void Shutdown() override;
+	virtual void Init() override;
+	virtual void Shutdown() override;
 
 public:
-	TWeakPtr<GlobalEventDispatcher> GetGlobalEventDispatcher() const
+	FStreamableManager& GetStreamableManager()
 	{
-		return globalEventDispatcher;
+		return streamableManager;
 	}
 
+	TWeakPtr<FGlobalEventDispatcher> GetGlobalEventDispatcher() const
+	{
+		return GlobalEventDispatcher;
+	}
+
+	TWeakPtr<FGlobalSharedVariable> GetGlobalSharedVariable() const
+	{
+		return GlobalSharedVariable;
+	}
 };

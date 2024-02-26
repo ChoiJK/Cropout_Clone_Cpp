@@ -18,7 +18,7 @@ enum class EPlatformPerformance : uint8
 	HighEnd = 1
 };
 
-class GlobalEventDispatcher;
+class FGlobalEventDispatcher;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AIslandGen : public ADynamicMeshActor
@@ -43,7 +43,7 @@ private:
 	UBlueprint* SpawnMarker = nullptr;
 	UMaterialParameterCollection* LandScapeMPC = nullptr;
 	UMaterialInstance* LandScapeMaterial = nullptr;
-	TWeakPtr<GlobalEventDispatcher> eventDispatcher;
+	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
 
 protected:
 	virtual void BeginPlay() override;

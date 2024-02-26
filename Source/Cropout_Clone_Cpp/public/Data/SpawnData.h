@@ -1,10 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interactable/Resource/ResourceBaseActor.h"
 
 #include "SpawnData.generated.h"
-
-class AResourceBaseActor;
 
 USTRUCT()
 struct FSpawnData
@@ -12,7 +11,7 @@ struct FSpawnData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	AResourceBaseActor* ClassRef;
+	TSoftClassPtr<AResourceBaseActor> ClassRef;
 
 	UPROPERTY(EditAnywhere)
 	float BiomeScale;
