@@ -40,23 +40,28 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 private:
-	TWeakPtr<FGlobalEventDispatcher> EventDispatcher;
-	FDelegateHandle ScaleUpHandle;
-	void ScaleUp();
 	bool IsInitResourceScaleCurveSuccess();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+public:
+	virtual void Tick(float DeltaSeconds) override;
+
+protected:
 	FTimeline Timeline;
 	void StartTimeline();
 	void StopTimeline();
 
+	UFUNCTION()
 	void TimelineUpdate(float scaleValue) const;
-	static void TimelineFinished();
+	UFUNCTION()
+	void TimelineFinished();
 
 public:
+	void DoScaleUp(float delay);
 	void DoDeath();
 	virtual void Interact() override;
 

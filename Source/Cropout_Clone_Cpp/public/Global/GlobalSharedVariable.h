@@ -12,9 +12,6 @@ private:
 	TWeakPtr<FGlobalEventDispatcher> EventDispatcher;
 
 public:
-	void SetScaleUpDelay(float delay);
-	float GetScaleUpDelay() const { return ScaleUpDelay; }
 
 private:
-	float ScaleUpDelay = 0.0f;
 };

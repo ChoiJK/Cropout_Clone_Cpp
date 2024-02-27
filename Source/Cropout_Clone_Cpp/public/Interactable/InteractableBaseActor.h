@@ -24,8 +24,8 @@ protected:
 	void ReCalcBoxExtent() const;
 
 
-	UMaterialInstance* ShapeDrawMaterial = nullptr;
-	UMaterialInstance* GetShapeDrawMaterial();
+	UMaterial* ShapeDrawMaterial = nullptr;
+	UMaterial* GetShapeDrawMaterial();
 
 	void TransformToTexture(FVector2d InVec, FVector2d& OutVec, FVector2d& OutVec2) const;
 

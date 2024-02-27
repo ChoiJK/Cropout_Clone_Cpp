@@ -189,13 +189,10 @@ void ASpawner::SpawnAssets(const FSpawnData& SpawnData)
 					                                       spawnPos,
 					                                       FVector(scale, scale, scale));
 
-					GetWorld()->SpawnActor(ActorClass, &spawnTransform);
+					AResourceBaseActor* spawnedActor = Cast<AResourceBaseActor>(
+						GetWorld()->SpawnActor(ActorClass, &spawnTransform));
+					spawnedActor->DoScaleUp(Counter / TotalCount);
 					Counter++;
-
-					if(const auto sharedVariable = GameInstance->GetGlobalSharedVariable().Pin())
-					{
-						sharedVariable->SetScaleUpDelay(Counter / TotalCount);
-					}
 				}
 			}
 		}
@@ -242,11 +239,6 @@ void ASpawner::SpawnInstance(UInstancedStaticMeshComponent* iSMC, const float ra
 
 					iSMC->AddInstance(spawnTransform, true);
 					Counter++;
-
-					if(const auto sharedVariable = GameInstance->GetGlobalSharedVariable().Pin())
-					{
-						sharedVariable->SetScaleUpDelay(Counter / TotalCount);
-					}
 				}
 			}
 		}

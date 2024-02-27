@@ -34,21 +34,6 @@ void AResourceBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
-	if(gameInstance)
-	{
-		EventDispatcher = gameInstance->GetGlobalEventDispatcher();
-	}
-
-	if(const TSharedPtr<FGlobalEventDispatcher> dispatcher = EventDispatcher.Pin())
-	{
-		ScaleUpHandle = dispatcher->AddListenerUObject(EGlobalEventType::ScaleUp, this, &AResourceBaseActor::ScaleUp);
-		if(ScaleUpHandle.IsValid() == false)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to add listener for IslandGenComplete"));
-		}
-	}
-
 	FOnTimelineFloat TimelineProgress;
 	TimelineProgress.BindUFunction(this, FName("TimelineUpdate"));
 	FOnTimelineEvent TimelineFinished;
@@ -60,29 +45,16 @@ void AResourceBaseActor::BeginPlay()
 
 void AResourceBaseActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if(const TSharedPtr<FGlobalEventDispatcher> dispatcher = EventDispatcher.Pin())
-	{
-		dispatcher->RemoveListener(EGlobalEventType::ScaleUp, ScaleUpHandle);
-	}
-
 	Super::EndPlay(EndPlayReason);
 }
 
-void AResourceBaseActor::ScaleUp()
+void AResourceBaseActor::Tick(float DeltaSeconds)
 {
-	StaticMeshComponent->SetHiddenInGame(true);
+	Super::Tick(DeltaSeconds);
 
-	if(UWorld* world = GetWorld())
-	{
-		world->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
-		{
-			StaticMeshComponent->SetRelativeScale3D(FVector::Zero());
-			StaticMeshComponent->SetHiddenInGame(false);
-
-			StartTimeline();
-		}));
-	}
+	Timeline.TickTimeline(DeltaSeconds);
 }
+
 
 bool AResourceBaseActor::IsInitResourceScaleCurveSuccess()
 {
@@ -97,7 +69,7 @@ bool AResourceBaseActor::IsInitResourceScaleCurveSuccess()
 
 void AResourceBaseActor::StartTimeline()
 {
-	Timeline.Play();
+	Timeline.PlayFromStart();
 }
 
 void AResourceBaseActor::StopTimeline()
@@ -107,11 +79,30 @@ void AResourceBaseActor::StopTimeline()
 
 void AResourceBaseActor::TimelineUpdate(float scaleValue) const
 {
+	UE_LOG(LogTemp, Warning, TEXT("TimelineUpdate : %f"), scaleValue);
 	StaticMeshComponent->SetRelativeScale3D(FVector(scaleValue, scaleValue, scaleValue));
 }
 
 void AResourceBaseActor::TimelineFinished()
 {
+	StaticMeshComponent->SetRelativeScale3D(FVector(1, 1, 1));
+}
+
+void AResourceBaseActor::DoScaleUp(float delay)
+{
+	StaticMeshComponent->SetHiddenInGame(true);
+
+	if(UWorld* world = GetWorld())
+	{
+		FTimerHandle timerHandle;
+		GetWorldTimerManager().SetTimer(timerHandle, FTimerDelegate::CreateWeakLambda(this, [this]()
+		{
+			StaticMeshComponent->SetRelativeScale3D(FVector::Zero());
+			StaticMeshComponent->SetHiddenInGame(false);
+
+			StartTimeline();
+		}), delay, false);
+	}
 }
 
 void AResourceBaseActor::DoDeath()

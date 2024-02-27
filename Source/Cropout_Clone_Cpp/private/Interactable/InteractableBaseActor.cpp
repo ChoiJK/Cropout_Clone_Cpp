@@ -12,12 +12,12 @@
 AInteractableBaseActor::AInteractableBaseActor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AInteractableBaseActor Constructor"));
-	const auto uSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	//const auto uSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	uSceneComponent->SetupAttachment(RootComponent);
-	StaticMeshComponent->SetupAttachment(uSceneComponent);
-	BoxComponent->SetupAttachment(uSceneComponent);
+	//uSceneComponent->SetupAttachment(RootComponent);
+	StaticMeshComponent->SetupAttachment(RootComponent);
+	BoxComponent->SetupAttachment(RootComponent);
 
 	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> TextureRenderTargetAsset(
 		TEXT("TextureRenderTarget2D'/Game/Blueprint/Extras/RT_GrassMove.RT_GrassMove'"));
@@ -51,7 +51,7 @@ void AInteractableBaseActor::BeginPlay()
 				FVector2D ScreenSize = FVector2D(512, 512);
 				TransformToTexture(Size, ScreenPosition, ScreenSize);
 
-				UMaterialInstance* shapeDrawMaterial = GetShapeDrawMaterial();
+				UMaterial* shapeDrawMaterial = GetShapeDrawMaterial();
 				Canvas->K2_DrawMaterial(shapeDrawMaterial, ScreenPosition, ScreenSize, FVector2D(0, 0));
 
 				UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
@@ -142,12 +142,12 @@ void AInteractableBaseActor::TransformToTexture(FVector2d InVec, FVector2d& OutV
 	OutVec = FVector2d(actorLocation.X, actorLocation.Y);
 }
 
-UMaterialInstance* AInteractableBaseActor::GetShapeDrawMaterial()
+UMaterial* AInteractableBaseActor::GetShapeDrawMaterial()
 {
 	if(ShapeDrawMaterial == nullptr)
 	{
 		FName path = TEXT("Material'/Game/Environment/Materials/M_ShapeDraw.M_ShapeDraw'");
-		ShapeDrawMaterial = LoadObject<UMaterialInstance>(nullptr, *path.ToString());
+		ShapeDrawMaterial = LoadObject<UMaterial>(nullptr, *path.ToString());
 	}
 
 	return ShapeDrawMaterial;
