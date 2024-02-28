@@ -12,6 +12,8 @@
 
 class UCropoutGameInstance;
 class FGlobalEventDispatcher;
+class FGlobalSharedVariable;
+class ABuildingBaseActor;
 class ASpawner;
 
 UCLASS()
@@ -19,12 +21,20 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
+public:
+	ACropoutGameMode();
 
-private:
+	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
+	TWeakPtr<FGlobalSharedVariable> globalSharedVariable;
+
 	FDelegateHandle islandGenCompleteHandle;
 
 	void BeginAsyncSpawning();
+
+	ABuildingBaseActor* TownHall;
+	TSubclassOf<ABuildingBaseActor> TownHall_Ref;
+	TSubclassOf<ABuildingBaseActor> GetTownHallRef();
+	void SpawnTownHall();
 
 protected:
 	void OnIslandGenComplete();

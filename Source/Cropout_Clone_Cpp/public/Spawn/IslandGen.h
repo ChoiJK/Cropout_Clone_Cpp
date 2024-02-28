@@ -19,6 +19,7 @@ enum class EPlatformPerformance : uint8
 };
 
 class FGlobalEventDispatcher;
+class FGlobalSharedVariable;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AIslandGen : public ADynamicMeshActor
@@ -34,16 +35,11 @@ private:
 	void SetIslandSeed(int32 seed = 0);
 	void ClearSpawnPoints();
 
-	UBlueprint* GetSpawnMarker();
 	UDynamicMesh* GetDynamicMesh();
-	UMaterialParameterCollection* GetLandScapeMPC();
-	UMaterialInstance* GetLandScapeMaterial();
 	EPlatformPerformance GetPlatformPerformance();
 
-	UBlueprint* SpawnMarker = nullptr;
-	UMaterialParameterCollection* LandScapeMPC = nullptr;
-	UMaterialInstance* LandScapeMaterial = nullptr;
 	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
+	TWeakPtr<FGlobalSharedVariable> globalSharedVariable;
 
 protected:
 	virtual void BeginPlay() override;

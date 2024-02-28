@@ -2,8 +2,12 @@
 
 #include "Core/CropoutGameMode.h"
 
-#include "../../public/Global/GlobalEventDispatcher.h"
+#include "EngineUtils.h"
+#include "Global/GlobalEventDispatcher.h"
+#include "Global/GlobalSharedVariable.h"
+#include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
+#include "Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Spawn/Spawner.h"
 
@@ -12,6 +16,7 @@ void ACropoutGameMode::StartPlay()
 	if(auto gameInstance = GetGameInstance())
 	{
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
+		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
 	}
 
 	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
@@ -63,6 +68,59 @@ UCropoutGameInstance* ACropoutGameMode::GetGameInstance()
 	return GameInstance;
 }
 
+void ACropoutGameMode::SpawnTownHall()
+{
+	auto townHallRef = GetTownHallRef();
+
+	if(townHallRef == nullptr)
+	{
+		return;
+	}
+
+	UClass* bp_class = nullptr;
+	if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
+	{
+		bp_class = gsv->GetSpawnMarkerClass();
+	}
+
+	if(bp_class == nullptr)
+	{
+		return;
+	}
+
+	TArray<AActor*> FoundActors;
+	for(TActorIterator<AActor> It(GetWorld(), bp_class); It; ++It)
+	{
+		FoundActors.Add(*It);
+	}
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), bp_class, FoundActors);
+
+	FVector spawnLocation = FVector::ZeroVector;
+	if(FoundActors.Num() != 0)
+	{
+		spawnLocation = FGlobalUtilFunctions::SteppedPosition(
+			FoundActors[FMath::RandRange(0, FoundActors.Num() - 1)]->GetActorLocation());
+	}
+
+	TownHall = Cast<ABuildingBaseActor>(GetWorld()->SpawnActor(townHallRef, &spawnLocation));
+}
+
+
+TSubclassOf<ABuildingBaseActor> ACropoutGameMode::GetTownHallRef()
+{
+	if(TownHall_Ref == nullptr)
+	{
+		FName path = TEXT("Blueprint'/Game/Blueprint/Interactable/Building/BP_TownCenter.BP_TownCenter'");
+		auto townHall_BP = Cast<UBlueprint>(
+			StaticLoadObject(UBlueprint::StaticClass(), nullptr, *path.ToString()));
+
+		TownHall_Ref = townHall_BP->GeneratedClass;
+	}
+
+	return TownHall_Ref;
+}
+
+
 void ACropoutGameMode::OnIslandGenComplete()
 {
 	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
@@ -74,7 +132,7 @@ void ACropoutGameMode::OnIslandGenComplete()
 
 		// else
 		{
-			// @Todo : Spawn Town Hall
+			SpawnTownHall();
 			// @Todo : Spawn Villager
 
 			SpawnerRef->SpawnRandom();

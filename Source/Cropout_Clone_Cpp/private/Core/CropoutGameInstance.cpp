@@ -9,6 +9,7 @@ void UCropoutGameInstance::Init()
 	Super::Init();
 
 	GlobalEventDispatcher = MakeShared<FGlobalEventDispatcher>();
+	GlobalSharedVariable = MakeShared<FGlobalSharedVariable>(this);
 
 	UE_LOG(LogTemp, Warning, TEXT( "GameInstance Init" ));
 }

@@ -25,6 +25,7 @@ void AIslandGen::BeginPlay()
 	if(gameInstance)
 	{
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
+		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
 	}
 
 	SetIslandSeed();
@@ -88,10 +89,13 @@ void AIslandGen::FirstStep(bool spawnMarkers)
 
 		if(spawnMarkers)
 		{
-			UBlueprint* spawnMarker = GetSpawnMarker();
-			if(spawnMarker != nullptr)
+			if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
 			{
-				GetWorld()->SpawnActor<AActor>(spawnMarker->GeneratedClass, spawnPoint, FRotator(0, 0, 0));
+				UClass* spawnMarker = gsv->GetSpawnMarkerClass();
+				if(spawnMarker != nullptr)
+				{
+					GetWorld()->SpawnActor(spawnMarker, &spawnPoint);
+				}
 			}
 		}
 	}
@@ -173,7 +177,12 @@ void AIslandGen::SecondStep()
 
 void AIslandGen::ThirdStep()
 {
-	const auto landScapeMPC = GetLandScapeMPC();
+	UMaterialParameterCollection* landScapeMPC = nullptr;
+	if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
+	{
+		landScapeMPC = gsv->GetLandScapeMPC();
+	}
+
 	if(landScapeMPC == nullptr)
 	{
 		return;
@@ -198,50 +207,19 @@ void AIslandGen::SetIslandSeed(int seed)
 
 UDynamicMesh* AIslandGen::GetDynamicMesh()
 {
-	if(DynMesh == nullptr)
+	UMaterial* landScapeMaterial = nullptr;
+	if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
+	{
+		landScapeMaterial = gsv->GetLandScapeMaterial();
+	}
+	if(DynMesh == nullptr && landScapeMaterial != nullptr)
 	{
 		const auto dynMeshComp = GetComponentByClass<UDynamicMeshComponent>();
 		DynMesh = dynMeshComp->GetDynamicMesh();
-		dynMeshComp->SetMaterial(0, GetLandScapeMaterial());
+		dynMeshComp->SetMaterial(0, landScapeMaterial);
 	}
 
 	return DynMesh;
-}
-
-UBlueprint* AIslandGen::GetSpawnMarker()
-{
-	if(SpawnMarker == nullptr)
-	{
-		FName path = TEXT("/Game/Blueprint/Misc/BP_SpawnMarker.BP_SpawnMarker");
-		SpawnMarker = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), nullptr, *path.ToString()));
-	}
-
-	return SpawnMarker;
-}
-
-
-UMaterialParameterCollection* AIslandGen::GetLandScapeMPC()
-{
-	if(LandScapeMPC == nullptr)
-	{
-		const FName Path = TEXT("/Game/Resources/Materials/MPC_Landscape.MPC_Landscape");
-		LandScapeMPC = Cast<UMaterialParameterCollection>(
-			StaticLoadObject(UMaterialParameterCollection::StaticClass(), nullptr, *Path.ToString()));
-	}
-
-	return LandScapeMPC;
-}
-
-UMaterialInstance* AIslandGen::GetLandScapeMaterial()
-{
-	if(LandScapeMaterial == nullptr)
-	{
-		const FName Path = TEXT("Material'/Game/Resources/Materials/M_Landscape.M_Landscape'");
-		LandScapeMaterial = Cast<UMaterialInstance>(
-			StaticLoadObject(UMaterialInstance::StaticClass(), nullptr, *Path.ToString()));
-	}
-
-	return LandScapeMaterial;
 }
 
 EPlatformPerformance AIslandGen::GetPlatformPerformance()

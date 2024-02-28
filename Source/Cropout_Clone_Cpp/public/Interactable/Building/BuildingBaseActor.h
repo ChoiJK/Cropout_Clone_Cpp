@@ -6,12 +6,19 @@
 #include "Interactable/InteractableBaseActor.h"
 #include "BuildingBaseActor.generated.h"
 
+class UBoxComponent;
+class UNavModifierComponent;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API ABuildingBaseActor : public AInteractableBaseActor
 {
 	GENERATED_BODY()
 
+	UBoxComponent* NavBlocker;
+	void ChangeMesh(int index);
+
 public:
+	ABuildingBaseActor();
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
