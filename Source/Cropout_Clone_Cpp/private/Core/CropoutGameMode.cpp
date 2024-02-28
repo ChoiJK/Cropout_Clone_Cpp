@@ -7,9 +7,17 @@
 #include "Global/GlobalSharedVariable.h"
 #include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/CropoutPlayerController.h"
 #include "Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/CropoutPlayer.h"
 #include "Spawn/Spawner.h"
+
+ACropoutGameMode::ACropoutGameMode()
+{
+	DefaultPawnClass = ACropoutPlayer::StaticClass();
+	PlayerControllerClass = ACropoutPlayerController::StaticClass();
+}
 
 void ACropoutGameMode::StartPlay()
 {
