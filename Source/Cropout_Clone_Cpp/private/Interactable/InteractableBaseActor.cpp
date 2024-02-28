@@ -12,10 +12,8 @@
 AInteractableBaseActor::AInteractableBaseActor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AInteractableBaseActor Constructor"));
-	//const auto uSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	//uSceneComponent->SetupAttachment(RootComponent);
 	StaticMeshComponent->SetupAttachment(RootComponent);
 	BoxComponent->SetupAttachment(RootComponent);
 
@@ -38,20 +36,30 @@ void AInteractableBaseActor::BeginPlay()
 	{
 		world->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
 		{
-			if(EnableGroundBlend)
+			if(EnableGroundBlend && OutlineDraw > 0.f)
 			{
 				// Remove grass and paint dirty around asset
 				UCanvas* Canvas = nullptr;
-				FVector2D Size = FVector2D(512, 512);
+				FVector2D Size;
 				FDrawToRenderTargetContext Context;
 				UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(GetWorld(), RT_Draw, Canvas, Size, Context);
 				UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
 
-				FVector2D ScreenPosition = FVector2D(0, 0);
-				FVector2D ScreenSize = FVector2D(512, 512);
+				FVector2D ScreenPosition;
+				FVector2D ScreenSize;
 				TransformToTexture(Size, ScreenPosition, ScreenSize);
 
 				UMaterial* shapeDrawMaterial = GetShapeDrawMaterial();
+				shapeDrawMaterial->EnsureIsComplete();
+
+				FVector2D coordinatePosition = FVector2D(0, 0);
+				FVector2D coordinateSize = FVector2D(1, 1);
+				FCanvasTileItem TileItem(ScreenPosition, shapeDrawMaterial->GetRenderProxy(), ScreenSize,
+				                         coordinatePosition, coordinatePosition + coordinateSize);
+				TileItem.Rotation = FRotator(0, 0, 0);
+				TileItem.PivotPoint = FVector2D(0.5f, 0.5f);
+				TileItem.SetColor(FLinearColor::White);
+				Canvas->DrawItem(TileItem);
 				Canvas->K2_DrawMaterial(shapeDrawMaterial, ScreenPosition, ScreenSize, FVector2D(0, 0));
 
 				UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
@@ -125,20 +133,21 @@ void AInteractableBaseActor::ReCalcBoxExtent() const
 void AInteractableBaseActor::TransformToTexture(FVector2d InVec, FVector2d& OutVec, FVector2d& OutVec2) const
 {
 	FVector actorLocation = GetActorLocation();
-	actorLocation = actorLocation + FVector(10000, 10000, 10000);
-	actorLocation /= 20000;
+	actorLocation = actorLocation + FVector(10000.f, 10000.f, 10000.f);
+	actorLocation /= 20000.f;
 	actorLocation *= InVec.X;
 
 	FVector origin = FVector(0, 0, 0);
 	FVector boxExtent = FVector(0, 0, 0);
 	GetActorBounds(false, origin, boxExtent);
+	//boxExtent *= 0.25f;
 	float minValue = std::min(boxExtent.X, boxExtent.Y);
-	minValue /= 10000;
+	minValue /= 10000.f;
 	minValue = minValue * InVec.X * OutlineDraw;
 	OutVec2 = FVector2d(minValue, minValue);
-	minValue /= 2;
+	minValue /= 2.f;
 
-	actorLocation = actorLocation + FVector(minValue, minValue, minValue);
+	actorLocation = actorLocation - FVector(minValue, minValue, minValue);
 	OutVec = FVector2d(actorLocation.X, actorLocation.Y);
 }
 
