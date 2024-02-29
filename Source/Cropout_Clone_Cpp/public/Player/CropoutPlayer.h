@@ -6,10 +6,22 @@
 #include "GameFramework/Pawn.h"
 #include "CropoutPlayer.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+class UStaticMeshComponent;
+class USphereComponent;
+class UFloatingPawnMovement;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
 {
 	GENERATED_BODY()
+
+	USpringArmComponent* SpringArm;
+	UCameraComponent* Camera;
+	UStaticMeshComponent* CursorMesh;
+	USphereComponent* Collision;
+	UFloatingPawnMovement* Movement;
 
 public:
 	// Sets default values for this pawn's properties

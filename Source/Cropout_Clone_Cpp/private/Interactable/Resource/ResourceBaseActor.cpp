@@ -79,7 +79,6 @@ void AResourceBaseActor::StopTimeline()
 
 void AResourceBaseActor::TimelineUpdate(float scaleValue) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("TimelineUpdate : %f"), scaleValue);
 	StaticMeshComponent->SetRelativeScale3D(FVector(scaleValue, scaleValue, scaleValue));
 }
 
