@@ -2,3 +2,10 @@
 
 
 #include "Core/CropoutPlayerController.h"
+
+void ACropoutPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	bShowMouseCursor = true;
+}

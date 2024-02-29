@@ -13,4 +13,7 @@ UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
 };
