@@ -16,13 +16,18 @@ ACropoutPlayer::ACropoutPlayer()
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	USceneComponent* root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(root);
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->SetRelativeRotation(FRotator(-47.5f, 0.f, 0.f));
+	SpringArm->SetupAttachment(GetRootComponent());
+	SpringArm->SetRelativeLocationAndRotation(FVector::Zero(), FRotator(-47.5f, 0.f, 0.f));
 	SpringArm->TargetArmLength = 20000.f;
 	SpringArm->SocketOffset = FVector(-300.f, 0.f, 80.f);
 	SpringArm->TargetOffset = FVector(0.f, 0.f, 0.f);
-	SpringArm->bEnableCameraLag = false;
+	SpringArm->bUsePawnControlRotation = false;
+	SpringArm->bEnableCameraRotationLag = true;
+	SpringArm->bDoCollisionTest = false;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->AttachToComponent(SpringArm, FAttachmentTransformRules::KeepRelativeTransform);
@@ -30,10 +35,10 @@ ACropoutPlayer::ACropoutPlayer()
 	Camera->SetFieldOfView(20.0f);
 
 	CursorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CursorMesh"));
-	CursorMesh->SetupAttachment(RootComponent);
+	CursorMesh->SetupAttachment(GetRootComponent());
 
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
-	Collision->SetupAttachment(RootComponent);
+	Collision->SetupAttachment(GetRootComponent());
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 }
@@ -42,8 +47,7 @@ ACropoutPlayer::ACropoutPlayer()
 void ACropoutPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//RootComponent->SetWorldLocation(FVector::Zero());
+	RootComponent->SetWorldLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, 0));
 }
 
 // Called every frame

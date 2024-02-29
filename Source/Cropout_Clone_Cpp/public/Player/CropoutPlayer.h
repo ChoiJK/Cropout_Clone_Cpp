@@ -17,10 +17,19 @@ class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm;
+
+	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* CursorMesh;
+
+	UPROPERTY(EditAnywhere)
 	USphereComponent* Collision;
+
+	UPROPERTY(EditAnywhere)
 	UFloatingPawnMovement* Movement;
 
 public:
