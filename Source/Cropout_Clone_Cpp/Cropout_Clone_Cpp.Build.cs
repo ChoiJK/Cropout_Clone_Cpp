@@ -9,7 +9,7 @@ public class Cropout_Clone_Cpp : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new[]
-			{ "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem" });
+			{ "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "EnhancedInput" });
 
 		PrivateDependencyModuleNames.AddRange(new[] { "GeometryScriptingCore" });
 
