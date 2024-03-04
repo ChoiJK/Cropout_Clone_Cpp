@@ -73,6 +73,19 @@ ACropoutPlayer::ACropoutPlayer()
 	{
 		SpinAction = ia_Spin.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> c_zoom
+		(TEXT("CurveFloat'/Game/Blueprint/Player/Curve/C_Zoom.C_Zoom'"));
+	if(c_zoom.Succeeded())
+	{
+		ZoomCurve = c_zoom.Object;
+	}
+
+	check(IMC_BaseContext != nullptr);
+	check(MoveAction != nullptr);
+	check(ZoomAction != nullptr);
+	check(SpinAction != nullptr);
+	check(ZoomCurve != nullptr);
 }
 
 // Called when the game starts or when spawned
@@ -123,14 +136,36 @@ void ACropoutPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void ACropoutPlayer::OnMovePressed(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Move Pressed : %s"), *Value.ToString());
+	AddMovementInput(GetActorForwardVector(), Value[1]);
+	AddMovementInput(GetActorRightVector(), Value[0]);
 }
 
 void ACropoutPlayer::OnSpinPressed(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Spin Pressed : %s"), *Value.ToString());
+	AddActorLocalRotation(FRotator(0, Value[0], 0));
 }
 
 void ACropoutPlayer::OnZoomPressed(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Zoom Pressed : %s"), *Value.ToString());
+	ZoomDirection = Value[0];
+	UpdateZoom();
+	UpdateDof();
+}
+
+void ACropoutPlayer::UpdateZoom()
+{
+	ZoomValue += ZoomDirection * 0.01f;
+	ZoomValue = FMath::Clamp(ZoomValue, 0.0f, 1.f);
+	float lerpKey = ZoomCurve != nullptr ? ZoomCurve->GetFloatValue(ZoomValue) : 0.5f;
+
+	SpringArm->TargetArmLength = FMath::Lerp(800.f, 40000.f, lerpKey);
+	SpringArm->SetRelativeRotation(FRotator(FMath::Lerp(-40.0f, -55.0f, lerpKey), 0.f, 0.f));
+
+	Movement->MaxSpeed = FMath::Lerp(1000.f, 6000.f, lerpKey);
+
+	Camera->FieldOfView = FMath::Lerp(20.f, 15.f, lerpKey);
+}
+
+void ACropoutPlayer::UpdateDof()
+{
 }
