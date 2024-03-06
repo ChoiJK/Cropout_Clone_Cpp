@@ -13,6 +13,7 @@ class UInputMappingContext;
 class UFloatingPawnMovement;
 class UInputAction;
 class UInputComponent;
+class UEnhancedInputLocalPlayerSubsystem;
 
 struct FInputActionValue;
 
@@ -33,6 +34,7 @@ protected:
 
 private:
 	ACropoutPlayer* Owner = nullptr;
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = nullptr;
 
 	UFloatingPawnMovement* Movement = nullptr;
 	UInputMappingContext* IMC_BaseContext = nullptr;
@@ -40,19 +42,33 @@ private:
 	UInputAction* ZoomAction = nullptr;
 	UInputAction* SpinAction = nullptr;
 
+	UInputMappingContext* IMC_DragMoveContext = nullptr;
+	UInputAction* DragMoveAction = nullptr;
+
 	void OnMovePressed(const FInputActionValue& Value);
 	void OnSpinPressed(const FInputActionValue& Value);
 	void OnZoomPressed(const FInputActionValue& Value);
+	void OnDragMovePressed(const FInputActionValue& Value);
 
+	// Zoom
 	float ZoomDirection = 0.f;
 	float ZoomValue = 0.5f;
 	UCurveFloat* ZoomCurve = nullptr;
 	void UpdateZoom();
 	void UpdateDof() const;
 
+	// DragMove
+	FVector StoredMove;
+	FVector TargetHandle;
+	bool SingleTouchCheck() const;
+	void TrackMove();
+	bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos) const;
+
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+	void InitDragMoveIMC() const;
+	void ReleaseDragMoveIMC() const;
 };

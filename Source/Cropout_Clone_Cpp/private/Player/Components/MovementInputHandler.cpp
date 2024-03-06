@@ -12,10 +12,12 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Core/CropoutPlayerController.h"
 
 UMovementInputHandler::UMovementInputHandler()
 {
+	PrimaryComponentTick.bCanEverTick = true;
+
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> imc_BaseInput
 		(TEXT("EnhancedInput.InputMappingContext'/Game/Blueprint/Player/Input/IMC_BaseInput.IMC_BaseInput'"));
 	if(imc_BaseInput.Succeeded())
@@ -51,17 +53,34 @@ UMovementInputHandler::UMovementInputHandler()
 		ZoomCurve = c_zoom.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> imc_dragMove
+		(TEXT("EnhancedInput.InputMappingContext'/Game/Blueprint/Player/Input/IMC_DragMove.IMC_DragMove'"));
+	if(imc_dragMove.Succeeded())
+	{
+		IMC_DragMoveContext = imc_dragMove.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ia_dragMove
+		(TEXT("EnhancedInput.InputAction'/Game/Blueprint/Player/Input/IA_DragMove.IA_DragMove'"));
+	if(ia_dragMove.Succeeded())
+	{
+		DragMoveAction = ia_dragMove.Object;
+	}
+
 	check(IMC_BaseContext != nullptr);
 	check(MoveAction != nullptr);
 	check(ZoomAction != nullptr);
 	check(SpinAction != nullptr);
 	check(ZoomCurve != nullptr);
+	check(IMC_DragMoveContext != nullptr);
+	check(DragMoveAction != nullptr);
 }
 
 void UMovementInputHandler::Initialize(UFloatingPawnMovement* movement)
 {
-	Owner = Cast<ACropoutPlayer>(GetOwner());
 	Movement = movement;
+
+	Owner = Cast<ACropoutPlayer>(GetOwner());
 
 	check(Owner != nullptr);
 }
@@ -79,6 +98,8 @@ void UMovementInputHandler::TickComponent(float DeltaTime, ELevelTick TickType,
                                           FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	auto playerInput = InputSubsystem->GetPlayerInput();
+	int iojsdoijfwe = 0;
 }
 
 void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -88,14 +109,14 @@ void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		return;
 	}
 
-	auto PC = UGameplayStatics::GetPlayerController(this, 0);
-
-	if(const ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+	if(const ULocalPlayer* LocalPlayer = Owner->GetPlayerController()->GetLocalPlayer())
 	{
-		if(UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
-			UEnhancedInputLocalPlayerSubsystem>())
+		InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+		if(InputSubsystem)
 		{
-			InputSystem->AddMappingContext(IMC_BaseContext, 1);
+			InputSubsystem->AddMappingContext(IMC_BaseContext, 0);
+			// @TODO : Villiger가 추가되면 DragMoveIMC의 초기화를 여기서 안해도 됨
+			InitDragMoveIMC();
 			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 			{
 				EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this,
@@ -104,8 +125,31 @@ void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInp
 				                                   &UMovementInputHandler::OnZoomPressed);
 				EnhancedInputComponent->BindAction(SpinAction, ETriggerEvent::Triggered, this,
 				                                   &UMovementInputHandler::OnSpinPressed);
+				EnhancedInputComponent->BindAction(DragMoveAction, ETriggerEvent::Triggered, this,
+				                                   &UMovementInputHandler::OnDragMovePressed);
 			}
 		}
+	}
+}
+
+void UMovementInputHandler::InitDragMoveIMC() const
+{
+	if(InputSubsystem)
+	{
+		InputSubsystem->AddMappingContext(IMC_DragMoveContext, 0);
+	}
+}
+
+void UMovementInputHandler::ReleaseDragMoveIMC() const
+{
+	if(InputSubsystem)
+	{
+		FModifyContextOptions options;
+		options.bIgnoreAllPressedKeysUntilRelease = true;
+		options.bForceImmediately = true;
+		options.bNotifyUserSettings = false;
+
+		InputSubsystem->RemoveMappingContext(IMC_DragMoveContext, options);
 	}
 }
 
@@ -128,6 +172,18 @@ void UMovementInputHandler::OnZoomPressed(const FInputActionValue& Value)
 	UpdateDof();
 }
 
+void UMovementInputHandler::OnDragMovePressed(const FInputActionValue& Value)
+{
+	if(SingleTouchCheck())
+	{
+		TrackMove();
+	}
+	else
+	{
+		ReleaseDragMoveIMC();
+	}
+}
+
 void UMovementInputHandler::UpdateZoom()
 {
 	ZoomValue += ZoomDirection * 0.01f;
@@ -148,4 +204,92 @@ void UMovementInputHandler::UpdateDof() const
 	Owner->Camera->PostProcessSettings.bOverride_DepthOfFieldFstop = 3.f;
 	Owner->Camera->PostProcessSettings.bOverride_DepthOfFieldSensorWidth = 150.f;
 	Owner->Camera->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = Owner->SpringArm->TargetArmLength;
+}
+
+bool UMovementInputHandler::SingleTouchCheck() const
+{
+	float locX, locY;
+	bool isCurrentlyTouching = false;
+	Owner->GetPlayerController()->GetInputTouchState(ETouchIndex::Touch2, locX, locY, isCurrentlyTouching);
+
+	return !isCurrentlyTouching;
+}
+
+void UMovementInputHandler::TrackMove()
+{
+	FVector2D ScreenPos;
+	FVector IntersectionPos;
+	if(ProjectTouchToGroundPlane(ScreenPos, IntersectionPos))
+	{
+		FVector offset;
+		FVector forwardVec = Owner->SpringArm->GetForwardVector();
+		FVector upVec = Owner->SpringArm->GetUpVector();
+		FVector socketOffset = Owner->SpringArm->SocketOffset;
+		FVector springArmWorldLoc = Owner->SpringArm->GetComponentLocation();
+		FVector cameraWorldLoc = Owner->Camera->GetComponentLocation();
+
+		FVector offsetApplyForwardVec = -(forwardVec * (Owner->SpringArm->TargetArmLength - socketOffset.X));
+		offsetApplyForwardVec = offsetApplyForwardVec + (upVec * socketOffset.Z) + springArmWorldLoc;
+		offset = offsetApplyForwardVec - cameraWorldLoc;
+
+		StoredMove = TargetHandle - IntersectionPos - offset;
+
+		Owner->AddActorWorldOffset(FVector(StoredMove.X, StoredMove.Y, 0.f));
+	}
+}
+
+bool UMovementInputHandler::ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos) const
+{
+	auto playerController = Owner->GetPlayerController();
+
+	int32 viewportSizeX, viewportSizeY;
+	playerController->GetViewportSize(viewportSizeX, viewportSizeY);
+
+	FVector2D screenPos;
+	screenPos.X = viewportSizeX / 2;
+	screenPos.Y = viewportSizeY / 2;
+
+	bool hasTouch = false;
+	float worldLocZ = 0.f;
+	switch(playerController->GetCurrentInputType())
+	{
+	case EInputType::KeyMouse:
+		double mouseX, mouseY;
+		if(playerController->GetMousePosition(mouseX, mouseY))
+		{
+			hasTouch = true;
+			screenPos.X = mouseX;
+			screenPos.Y = mouseY;
+		}
+		break;
+	case EInputType::GamePad:
+		hasTouch = true;
+	case EInputType::Touch:
+		double touchX, touchY;
+		bool isCurrentlyTouching;
+		playerController->GetInputTouchState(ETouchIndex::Touch1, touchX, touchY, isCurrentlyTouching);
+		if(isCurrentlyTouching)
+		{
+			hasTouch = true;
+			screenPos.X = touchX;
+			screenPos.Y = touchY;
+		}
+		else
+		{
+			worldLocZ = -500.f;
+		}
+		break;
+	}
+
+	FVector worldLocation, worldDirection;
+	playerController->DeprojectScreenPositionToWorld(screenPos.X, screenPos.Y, worldLocation, worldDirection);
+	FVector end = worldLocation + (worldDirection * 100000.0f);
+
+	const FVector intersectionLoc =
+		FMath::LinePlaneIntersection(worldLocation, end, FVector(0, 0, 0), FVector(0, 0, 1));
+
+	ScreenPos = screenPos;
+	IntersectionPos = FVector(intersectionLoc.X, intersectionLoc.Y, worldLocZ);
+
+	return hasTouch;
 }
