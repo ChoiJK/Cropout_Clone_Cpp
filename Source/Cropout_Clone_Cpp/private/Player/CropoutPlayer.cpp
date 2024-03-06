@@ -7,8 +7,12 @@
 #include "Engine/EngineTypes.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
+#include "Core/CropoutGameInstance.h"
+#include "Core/CropoutPlayerController.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Global/GlobalEventDispatcher.h"
 
 
 // Sets default values
@@ -52,6 +56,17 @@ void ACropoutPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	RootComponent->SetWorldLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, 0));
+
+	auto gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	if(gameInstance)
+	{
+		GlobalEventDispatcher = gameInstance->GetGlobalEventDispatcher();
+		if(TSharedPtr<FGlobalEventDispatcher> EventDispatcher = GlobalEventDispatcher.Pin())
+		{
+			EventDispatcher->AddListenerUObject(EGlobalEventType::ChangedInputType, this,
+			                                    &ACropoutPlayer::OnChangedInputType);
+		}
+	}
 }
 
 // Called every frame
@@ -66,4 +81,38 @@ void ACropoutPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	MovementInputHandler->SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+ACropoutPlayerController* ACropoutPlayer::GetPlayerController()
+{
+	if(PlayerController == nullptr)
+	{
+		PlayerController = Cast<ACropoutPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+		check(PlayerController != nullptr);
+	}
+
+	return PlayerController;
+}
+
+void ACropoutPlayer::OnChangedInputType()
+{
+	auto currentInputType = GetPlayerController()->GetCurrentInputType();
+	if(currentInputType == EInputType::Unknown)
+	{
+		return;
+	}
+
+	if(currentInputType == EInputType::Touch)
+	{
+		CursorMesh->SetHiddenInGame(true, true);
+		Collision->SetRelativeLocation(FVector(0, 0, -500));
+		return;
+	}
+
+	if(currentInputType == EInputType::KeyMouse)
+	{
+		Collision->SetRelativeLocation(FVector(0, 0, 10));
+	}
+
+	CursorMesh->SetHiddenInGame(false, true);
 }

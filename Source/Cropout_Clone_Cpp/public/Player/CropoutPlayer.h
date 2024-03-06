@@ -12,6 +12,8 @@ class UStaticMeshComponent;
 class USphereComponent;
 class UFloatingPawnMovement;
 class UMovementInputHandler;
+class FGlobalEventDispatcher;
+class ACropoutPlayerController;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
@@ -21,6 +23,10 @@ class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
 public:
 	ACropoutPlayer();
 
+private:
+	TWeakPtr<FGlobalEventDispatcher> GlobalEventDispatcher = nullptr;
+	ACropoutPlayerController* PlayerController;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -28,6 +34,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	ACropoutPlayerController* GetPlayerController();
+	void OnChangedInputType();
 
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm = nullptr;

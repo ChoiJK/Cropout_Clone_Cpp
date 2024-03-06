@@ -5,7 +5,7 @@
 enum class EGlobalEventType
 {
 	IslandGenComplete,
-	ScaleUp
+	ChangedInputType
 };
 
 DECLARE_MULTICAST_DELEGATE(FVoidDelegate);
