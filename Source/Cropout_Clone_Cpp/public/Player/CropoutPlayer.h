@@ -14,6 +14,7 @@ class UFloatingPawnMovement;
 class UMovementInputHandler;
 class FGlobalEventDispatcher;
 class ACropoutPlayerController;
+class AInteractableBaseActor;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
@@ -25,18 +26,21 @@ public:
 
 private:
 	TWeakPtr<FGlobalEventDispatcher> GlobalEventDispatcher = nullptr;
-	ACropoutPlayerController* PlayerController;
+	ACropoutPlayerController* PlayerController = nullptr;
+
+	AInteractableBaseActor* HoverActor = nullptr;
 
 protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	ACropoutPlayerController* GetPlayerController();
 	void OnChangedInputType();
+
+	void SetHoverActor(AInteractableBaseActor* actor) { HoverActor = actor; }
+	AInteractableBaseActor* GetHoverActor() { return HoverActor; }
 
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm = nullptr;

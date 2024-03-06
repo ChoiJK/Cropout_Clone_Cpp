@@ -18,9 +18,6 @@
 // Sets default values
 ACropoutPlayer::ACropoutPlayer()
 {
-	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	USceneComponent* root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(root);
 
@@ -41,6 +38,24 @@ ACropoutPlayer::ACropoutPlayer()
 
 	CursorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CursorMesh"));
 	CursorMesh->SetupAttachment(GetRootComponent());
+	CursorMesh->SetRelativeLocation(FVector(0.f, 0.f, 10.f));
+	CursorMesh->SetRelativeScale3D(FVector(2.f, 2.f, 1.f));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SMplane
+		(TEXT("Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	check(SMplane.Succeeded());
+	if(SMplane.Succeeded())
+	{
+		CursorMesh->SetStaticMesh(SMplane.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> MIcursor
+		(TEXT("Engine.MaterialInstanceConstant'/Game/VFX/Materials/MI_Cursor.MI_Cursor'"));
+	check(MIcursor.Succeeded());
+	if(MIcursor.Succeeded())
+	{
+		CursorMesh->SetMaterial(0, MIcursor.Object);
+	}
 
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(GetRootComponent());
@@ -50,6 +65,7 @@ ACropoutPlayer::ACropoutPlayer()
 	MovementInputHandler = CreateDefaultSubobject<UMovementInputHandler>(TEXT("MovementInputHandler"));
 	MovementInputHandler->Initialize(Movement);
 }
+
 
 // Called when the game starts or when spawned
 void ACropoutPlayer::BeginPlay()
@@ -67,12 +83,13 @@ void ACropoutPlayer::BeginPlay()
 			                                    &ACropoutPlayer::OnChangedInputType);
 		}
 	}
-}
 
-// Called every frame
-void ACropoutPlayer::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	MovementInputHandler->UpdateZoom();
+
+	FTimerHandle MoveTrackingHandle;
+	GetWorld()->GetTimerManager().SetTimer(MoveTrackingHandle, MovementInputHandler,
+	                                       &UMovementInputHandler::MoveTracking, 0.016666f,
+	                                       true, 0.0f);
 }
 
 // Called to bind functionality to input

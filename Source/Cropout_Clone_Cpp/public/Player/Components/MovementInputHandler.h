@@ -54,15 +54,20 @@ private:
 	float ZoomDirection = 0.f;
 	float ZoomValue = 0.5f;
 	UCurveFloat* ZoomCurve = nullptr;
-	void UpdateZoom();
-	void UpdateDof() const;
 
 	// DragMove
 	FVector StoredMove;
 	FVector TargetHandle;
 	bool SingleTouchCheck() const;
 	void TrackMove();
-	bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos) const;
+	bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos);
+
+	// Cursor
+	float EdgeMoveDistance = 50.0f;
+	void UpdateCursorPosition();
+	void GetEdgeMove(FVector& Direction, float& Strength);
+	FVector2D GetViewportCenter() const;
+	void CursorDistFromViewportCenter(FVector2D mousePosFromViewportCenter, FVector& Direction, float& Strength) const;
 
 public:
 	// Called every frame
@@ -71,4 +76,8 @@ public:
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	void InitDragMoveIMC() const;
 	void ReleaseDragMoveIMC() const;
+
+	void MoveTracking();
+	void UpdateZoom();
+	void UpdateDof() const;
 };
