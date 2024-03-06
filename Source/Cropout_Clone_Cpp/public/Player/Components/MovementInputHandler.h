@@ -70,9 +70,6 @@ private:
 	void CursorDistFromViewportCenter(FVector2D mousePosFromViewportCenter, FVector& Direction, float& Strength) const;
 
 public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	void InitDragMoveIMC() const;
 	void ReleaseDragMoveIMC() const;

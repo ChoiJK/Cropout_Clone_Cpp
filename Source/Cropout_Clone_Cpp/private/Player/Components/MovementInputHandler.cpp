@@ -21,8 +21,6 @@
 
 UMovementInputHandler::UMovementInputHandler()
 {
-	PrimaryComponentTick.bCanEverTick = true;
-
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> imc_BaseInput
 		(TEXT("EnhancedInput.InputMappingContext'/Game/Blueprint/Player/Input/IMC_BaseInput.IMC_BaseInput'"));
 	if(imc_BaseInput.Succeeded())
@@ -91,29 +89,13 @@ void UMovementInputHandler::Initialize(UFloatingPawnMovement* movement)
 }
 
 
-// Called when the game starts
 void UMovementInputHandler::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-
-// Called every frame
-void UMovementInputHandler::TickComponent(float DeltaTime, ELevelTick TickType,
-                                          FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	auto playerInput = InputSubsystem->GetPlayerInput();
-	int iojsdoijfwe = 0;
-}
-
 void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	if(IMC_BaseContext == nullptr)
-	{
-		return;
-	}
-
 	if(const ULocalPlayer* LocalPlayer = Owner->GetPlayerController()->GetLocalPlayer())
 	{
 		InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
