@@ -13,7 +13,6 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Chaos/SAT.h"
 #include "Components/SphereComponent.h"
 #include "Core/CropoutPlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -102,8 +101,7 @@ void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		if(InputSubsystem)
 		{
 			InputSubsystem->AddMappingContext(IMC_BaseContext, 0);
-			// @TODO : Villiger가 추가되면 DragMoveIMC의 초기화를 여기서 안해도 됨
-			InitDragMoveIMC();
+
 			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 			{
 				EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this,
@@ -221,6 +219,20 @@ void UMovementInputHandler::UpdateDof() const
 	Owner->Camera->PostProcessSettings.bOverride_DepthOfFieldFocalDistance = Owner->SpringArm->TargetArmLength;
 }
 
+void UMovementInputHandler::PositionCheck()
+{
+	FVector2D ScreenPos;
+	FVector IntersectionPos;
+	ProjectTouchToGroundPlane(ScreenPos, IntersectionPos);
+	TargetHandle = IntersectionPos;
+
+	const auto inputType = Owner->GetPlayerController()->GetCurrentInputType();
+	if(inputType == EInputType::KeyMouse || inputType == EInputType::KeyMouse)
+	{
+		Owner->Collision->SetWorldLocation(TargetHandle);
+	}
+}
+
 bool UMovementInputHandler::SingleTouchCheck() const
 {
 	float locX, locY;
@@ -236,8 +248,6 @@ void UMovementInputHandler::TrackMove()
 	FVector IntersectionPos;
 	if(ProjectTouchToGroundPlane(ScreenPos, IntersectionPos))
 	{
-		// @Todo클릭시 TargetHandle을 초기화 (이건 Villiger 이벤트에서 처리됨)
-
 		FVector offset;
 		FVector forwardVec = Owner->SpringArm->GetForwardVector();
 		FVector upVec = Owner->SpringArm->GetUpVector();

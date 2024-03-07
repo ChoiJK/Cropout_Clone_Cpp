@@ -58,7 +58,6 @@ private:
 	// DragMove
 	FVector StoredMove;
 	FVector TargetHandle;
-	bool SingleTouchCheck() const;
 	void TrackMove();
 	bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos);
 
@@ -74,7 +73,9 @@ public:
 	void InitDragMoveIMC() const;
 	void ReleaseDragMoveIMC() const;
 
+	bool SingleTouchCheck() const;
 	void MoveTracking();
 	void UpdateZoom();
 	void UpdateDof() const;
+	void PositionCheck();
 };

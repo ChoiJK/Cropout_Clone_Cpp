@@ -13,6 +13,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Global/GlobalEventDispatcher.h"
+#include "Player/Components/VillagerHandler.h"
 
 
 // Sets default values
@@ -64,6 +65,8 @@ ACropoutPlayer::ACropoutPlayer()
 
 	MovementInputHandler = CreateDefaultSubobject<UMovementInputHandler>(TEXT("MovementInputHandler"));
 	MovementInputHandler->Initialize(Movement);
+	VillagerHandler = CreateDefaultSubobject<UVillagerHandler>(TEXT("VillagerHandler"));
+	VillagerHandler->Initialize();
 }
 
 
@@ -98,6 +101,7 @@ void ACropoutPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	MovementInputHandler->SetupPlayerInputComponent(PlayerInputComponent);
+	VillagerHandler->SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 ACropoutPlayerController* ACropoutPlayer::GetPlayerController()

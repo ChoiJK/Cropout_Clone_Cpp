@@ -11,10 +11,12 @@ class UCameraComponent;
 class UStaticMeshComponent;
 class USphereComponent;
 class UFloatingPawnMovement;
-class UMovementInputHandler;
 class FGlobalEventDispatcher;
 class ACropoutPlayerController;
 class AInteractableBaseActor;
+
+class UMovementInputHandler;
+class UVillagerHandler;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
@@ -28,7 +30,7 @@ private:
 	TWeakPtr<FGlobalEventDispatcher> GlobalEventDispatcher = nullptr;
 	ACropoutPlayerController* PlayerController = nullptr;
 
-	AInteractableBaseActor* HoverActor = nullptr;
+	AActor* HoverActor = nullptr;
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,8 +41,8 @@ public:
 	ACropoutPlayerController* GetPlayerController();
 	void OnChangedInputType();
 
-	void SetHoverActor(AInteractableBaseActor* actor) { HoverActor = actor; }
-	AInteractableBaseActor* GetHoverActor() { return HoverActor; }
+	void SetHoverActor(AActor* actor) { HoverActor = actor; }
+	AActor* GetHoverActor() { return HoverActor; }
 
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm = nullptr;
@@ -58,4 +60,5 @@ public:
 	UFloatingPawnMovement* Movement = nullptr;
 
 	UMovementInputHandler* MovementInputHandler = nullptr;
+	UVillagerHandler* VillagerHandler = nullptr;
 };
