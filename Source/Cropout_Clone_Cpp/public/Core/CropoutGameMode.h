@@ -15,6 +15,7 @@ class FGlobalEventDispatcher;
 class FGlobalSharedVariable;
 class ABuildingBaseActor;
 class ASpawner;
+class AVillager;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
@@ -30,6 +31,11 @@ public:
 	FDelegateHandle islandGenCompleteHandle;
 
 	void BeginAsyncSpawning();
+
+	TSubclassOf<AVillager> Villager_Ref;
+	TArray<AVillager*> Villagers;
+	void SpawnVillagers();
+	AVillager* SpawnVillager();
 
 	ABuildingBaseActor* TownHall;
 	TSubclassOf<ABuildingBaseActor> TownHall_Ref;

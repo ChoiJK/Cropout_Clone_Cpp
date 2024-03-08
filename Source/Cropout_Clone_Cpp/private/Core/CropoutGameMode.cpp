@@ -3,6 +3,7 @@
 #include "Core/CropoutGameMode.h"
 
 #include "EngineUtils.h"
+#include "NavigationSystem.h"
 #include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Global/GlobalUtilFunctions.h"
@@ -12,11 +13,14 @@
 #include "Kismet/GameplayStatics.h"
 #include "Player/CropoutPlayer.h"
 #include "Spawn/Spawner.h"
+#include "Villager/Villager.h"
 
 ACropoutGameMode::ACropoutGameMode()
 {
 	DefaultPawnClass = ACropoutPlayer::StaticClass();
 	PlayerControllerClass = ACropoutPlayerController::StaticClass();
+
+	Villager_Ref = AVillager::StaticClass();
 }
 
 void ACropoutGameMode::StartPlay()
@@ -141,9 +145,57 @@ void ACropoutGameMode::OnIslandGenComplete()
 		// else
 		{
 			SpawnTownHall();
-			// @Todo : Spawn Villager
+			SpawnVillagers();
 
 			SpawnerRef->SpawnRandom();
 		}
 	}));
+}
+
+void ACropoutGameMode::SpawnVillagers()
+{
+	for(int i = 0; i < 3; ++i)
+	{
+		auto villager = SpawnVillager();
+		if(villager != nullptr)
+		{
+			Villagers.Add(villager);
+			// @TODO : gameInstance를 통해 저장
+		}
+	}
+}
+
+AVillager* ACropoutGameMode::SpawnVillager()
+{
+	FActorSpawnParameters ActorSpawnParams;
+	ActorSpawnParams.Owner = Owner;
+	ActorSpawnParams.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+	FVector location = FVector::ZeroVector;
+	FVector boxExtent = FVector::ZeroVector;
+	TownHall->GetActorBounds(false, location, boxExtent);
+	float newPosDistance = FMath::Min(boxExtent.X, boxExtent.Y) * 2.f;
+	FVector newPosDelta = FMath::VRand() * newPosDistance;
+	location += newPosDelta;
+	location.Z = 0.f;
+
+	UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
+	FNavLocation NavLocation;
+	NavSys->GetRandomReachablePointInRadius(location, 500.0f, NavLocation);
+
+	auto NewPawn = GetWorld()->SpawnActor<AVillager>(*Villager_Ref, NavLocation, FRotator::ZeroRotator,
+	                                                 ActorSpawnParams);
+
+	if(NewPawn != nullptr)
+	{
+		if(NewPawn->Controller == NULL)
+		{
+			// NOTE: SpawnDefaultController ALSO calls Possess() to possess the pawn (if a controller is successfully spawned).
+			NewPawn->SpawnDefaultController();
+		}
+		return NewPawn;
+	}
+
+	return nullptr;
 }
