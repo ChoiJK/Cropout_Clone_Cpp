@@ -19,8 +19,12 @@ public:
 	AInteractableBaseActor();
 
 protected:
+	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(VisibleAnywhere)
 	UBoxComponent* BoxComponent;
+
 	void ReCalcBoxExtent() const;
 
 

@@ -18,6 +18,8 @@ class AInteractableBaseActor;
 class UMovementInputHandler;
 class UVillagerHandler;
 
+struct FTimerHandle;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
 {
@@ -32,10 +34,21 @@ private:
 
 	AActor* HoverActor = nullptr;
 
+	UFUNCTION()
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                  int32 OtherBodyIndex);
+
+	FTimerHandle ClosestHoverCheckTimerHandle;
+	void ClosestHoverCheck();
+
 protected:
 	virtual void BeginPlay() override;
 
 public:
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	ACropoutPlayerController* GetPlayerController();

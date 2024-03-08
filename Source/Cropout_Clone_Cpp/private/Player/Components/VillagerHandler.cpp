@@ -11,6 +11,7 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/SphereComponent.h"
 
 
 UVillagerHandler::UVillagerHandler()
@@ -151,7 +152,7 @@ void UVillagerHandler::VillagerRelease()
 AActor* UVillagerHandler::VillagerOverlapCheck()
 {
 	TArray<AActor*> OverlappingActors;
-	Owner->GetOverlappingActors(OverlappingActors, APawn::StaticClass());
+	Owner->Collision->GetOverlappingActors(OverlappingActors, APawn::StaticClass());
 
 	AActor* villagerActor = nullptr;
 	if(OverlappingActors.Num() > 0)

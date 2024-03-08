@@ -15,10 +15,13 @@
 #include "Global/GlobalEventDispatcher.h"
 #include "Player/Components/VillagerHandler.h"
 
+#include "limits"
+#include "DrawDebugHelpers.h"
 
-// Sets default values
 ACropoutPlayer::ACropoutPlayer()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	USceneComponent* root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(root);
 
@@ -60,6 +63,8 @@ ACropoutPlayer::ACropoutPlayer()
 
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(GetRootComponent());
+	Collision->OnComponentBeginOverlap.AddDynamic(this, &ACropoutPlayer::OnBeginOverlap);
+	Collision->OnComponentEndOverlap.AddDynamic(this, &ACropoutPlayer::OnEndOverlap);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 
@@ -69,6 +74,69 @@ ACropoutPlayer::ACropoutPlayer()
 	VillagerHandler->Initialize();
 }
 
+
+void ACropoutPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                    const FHitResult& SweepResult)
+{
+	if(HoverActor->IsValidLowLevel())
+	{
+		return;
+	}
+
+	if(OtherActor == this)
+	{
+		return;
+	}
+
+	SetHoverActor(OtherActor);
+
+	GetWorldTimerManager().SetTimer(ClosestHoverCheckTimerHandle, this, &ACropoutPlayer::ClosestHoverCheck, 0.01f,
+	                                true);
+}
+
+void ACropoutPlayer::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	TArray<AActor*> overlappingActors;
+	Collision->GetOverlappingActors(overlappingActors, AActor::StaticClass());
+	if(overlappingActors.IsEmpty())
+	{
+		GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+		{
+			SetHoverActor(nullptr);
+		}));
+	}
+}
+
+void ACropoutPlayer::ClosestHoverCheck()
+{
+	TArray<AActor*> overlappingActors;
+	Collision->GetOverlappingActors(overlappingActors, AActor::StaticClass());
+	if(overlappingActors.IsEmpty())
+	{
+		GetWorldTimerManager().PauseTimer(ClosestHoverCheckTimerHandle);
+	}
+	else
+	{
+		AActor* NewHover = nullptr;
+		float closestDistance = std::numeric_limits<float>::max();
+		for(auto OverlappingActor : overlappingActors)
+		{
+			float newClosestDistance = FVector::DistSquared(GetActorLocation(), Collision->GetComponentLocation());
+			if(NewHover != this && closestDistance > newClosestDistance)
+			{
+				closestDistance = newClosestDistance;
+				NewHover = OverlappingActor;
+			}
+		}
+
+		if(NewHover != HoverActor)
+		{
+			SetHoverActor(NewHover);
+		}
+	}
+}
 
 // Called when the game starts or when spawned
 void ACropoutPlayer::BeginPlay()
@@ -93,6 +161,14 @@ void ACropoutPlayer::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(MoveTrackingHandle, MovementInputHandler,
 	                                       &UMovementInputHandler::MoveTracking, 0.016666f,
 	                                       true, 0.0f);
+}
+
+void ACropoutPlayer::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	DrawDebugSphere(GetWorld(), Collision->GetComponentLocation(), Collision->GetUnscaledSphereRadius(), 20,
+	                FColor::Red);
 }
 
 // Called to bind functionality to input

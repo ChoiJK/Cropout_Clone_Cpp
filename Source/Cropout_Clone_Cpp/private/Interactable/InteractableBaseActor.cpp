@@ -12,10 +12,15 @@
 AInteractableBaseActor::AInteractableBaseActor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AInteractableBaseActor Constructor"));
+
+	USceneComponent* root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	SetRootComponent(root);
+
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
-	StaticMeshComponent->SetupAttachment(RootComponent);
-	BoxComponent->SetupAttachment(RootComponent);
+
+	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	BoxComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> TextureRenderTargetAsset(
 		TEXT("TextureRenderTarget2D'/Game/Blueprint/Extras/RT_GrassMove.RT_GrassMove'"));

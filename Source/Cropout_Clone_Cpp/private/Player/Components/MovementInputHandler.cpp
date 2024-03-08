@@ -327,14 +327,7 @@ void UMovementInputHandler::UpdateCursorPosition()
 
 	FTransform targetTransform;
 	AActor* targetActor = Cast<AActor>(Owner->GetHoverActor());
-	if(targetActor == nullptr)
-	{
-		// 지면
-		targetTransform = FTransform(Owner->Collision->GetComponentRotation(),
-		                             Owner->Collision->GetComponentLocation(),
-		                             FVector(2.f, 2.f, 1.f));
-	}
-	else
+	if(targetActor->IsValidLowLevel())
 	{
 		// 마우스 포인트에 위치한 객체가 존재함
 		FVector boundOrigin;
@@ -349,6 +342,13 @@ void UMovementInputHandler::UpdateCursorPosition()
 		targetTransform = FTransform(FRotator::ZeroRotator,
 		                             boundOrigin,
 		                             FVector(selectedScale, selectedScale, 1.f));
+	}
+	else
+	{
+		// 지면
+		targetTransform = FTransform(Owner->Collision->GetComponentRotation(),
+		                             Owner->Collision->GetComponentLocation(),
+		                             FVector(2.f, 2.f, 1.f));
 	}
 
 	// 시간의 흐름에 따라 부드럽게 이동 및 Scale 적용
