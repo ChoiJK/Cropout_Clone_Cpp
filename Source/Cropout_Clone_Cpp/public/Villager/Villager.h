@@ -10,8 +10,10 @@
 class UFloatingPawnMovement;
 class UCapsuleComponent;
 class USkeletalMesh;
+class UCropoutGameInstance;
+class UAnimBlueprint;
 
-UCLASS()
+UCLASS(BlueprintType)
 class CROPOUT_CLONE_CPP_API AVillager : public APawn
 {
 	GENERATED_BODY()
@@ -36,10 +38,10 @@ class CROPOUT_CLONE_CPP_API AVillager : public APawn
 	UPROPERTY(VisibleAnywhere)
 	UDecalComponent* ShadowDecal;
 
-	UPROPERTY(VisibleAnywhere)
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UFloatingPawnMovement* Movement;
 
-public:
 	AVillager();
 
 protected:
@@ -47,13 +49,35 @@ protected:
 	void Eat();
 	virtual void BeginPlay() override;
 
-	EVillagerJobType JobType = EVillagerJobType::None;
+public:
+	virtual void Destroyed() override;
+
+private:
+	UCropoutGameInstance* GameInstance;
+	EVillagerJobType CurrentJobType = EVillagerJobType::None;
+	FName CurrentJobName;
+
 	void ChangeJob(EVillagerJobType jobType);
+	void ResetJobState();
+	void StopJob();
+
+	void AsyncJobResourceLoaded(FName jobName);
 
 	TMap<FName, FVillagerJob> MapVillagerJob;
+	UAnimMontage* WorkAnim = nullptr;
+	UStaticMesh* TargetTool = nullptr;
+	UBehaviorTree* ActiveBehaviorTree = nullptr;
+	AActor* TargetRef = nullptr;
+
+	UAnimBlueprint* BodyAnimBlueprint = nullptr;
+	UAnimBlueprint* HairAnimBlueprint = nullptr;
+	UAnimBlueprint* HatAnimBlueprint = nullptr;
 
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void Action(AActor* jobAction);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Quantity = 0;
 };
