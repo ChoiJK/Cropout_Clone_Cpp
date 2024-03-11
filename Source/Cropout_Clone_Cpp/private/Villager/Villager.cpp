@@ -180,11 +180,11 @@ void AVillager::AsyncJobResourceLoaded(FName jobName)
 	UStaticMesh* toolStaticMesh = Cast<UStaticMesh>(currentJob.Tool.Get());
 
 	AAIController* aiController = Cast<AAIController>(GetController());
-	if(aiController->IsValidLowLevel())
+	if(aiController && aiController->IsValidLowLevel())
 	{
 		ActiveBehaviorTree = behaviorTree;
 		aiController->RunBehaviorTree(behaviorTree);
-		if(TargetRef->IsValidLowLevel())
+		if(TargetRef && TargetRef->IsValidLowLevel())
 		{
 			aiController->GetBlackboardComponent()->SetValueAsObject(FName("Target"), TargetRef);
 		}
@@ -221,7 +221,7 @@ void AVillager::StopJob()
 		animIns->Montage_StopGroupByName(0.f, TEXT("DefaultGroup"));
 	}
 	AAIController* aiController = Cast<AAIController>(GetController());
-	if(aiController->IsValidLowLevel())
+	if(aiController && aiController->IsValidLowLevel())
 	{
 		aiController->StopMovement();
 	}

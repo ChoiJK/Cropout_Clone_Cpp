@@ -79,7 +79,7 @@ void ACropoutPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                     const FHitResult& SweepResult)
 {
-	if(HoverActor->IsValidLowLevel())
+	if(HoverActor && HoverActor->IsValidLowLevel())
 	{
 		return;
 	}

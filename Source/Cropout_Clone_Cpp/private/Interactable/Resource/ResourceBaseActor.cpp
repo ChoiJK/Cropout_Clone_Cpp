@@ -6,7 +6,6 @@
 
 AResourceBaseActor::AResourceBaseActor()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AResourceBaseActor Constructor"));
 	if(IsInitResourceScaleCurveSuccess() == false)
 	{
 		Destroy();
@@ -113,5 +112,3 @@ void AResourceBaseActor::Interact()
 {
 	Super::Interact();
 }
-
-// @todo : Event Scale Up

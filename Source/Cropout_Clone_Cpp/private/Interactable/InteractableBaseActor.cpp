@@ -11,8 +11,6 @@
 
 AInteractableBaseActor::AInteractableBaseActor()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AInteractableBaseActor Constructor"));
-
 	USceneComponent* root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(root);
 

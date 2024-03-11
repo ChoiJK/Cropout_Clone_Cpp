@@ -114,7 +114,7 @@ void UVillagerHandler::OnVillagerActionEnd(const FInputActionValue& Value)
 {
 	Owner->MovementInputHandler->ReleaseDragMoveIMC();
 
-	if(SelectedVillager->IsValidLowLevel())
+	if(SelectedVillager && SelectedVillager->IsValidLowLevel())
 	{
 		Cast<AVillager>(SelectedVillager)->Action(VillagerAction);
 		VillagerRelease();
@@ -141,7 +141,7 @@ void UVillagerHandler::VillagerRelease()
 		Owner->GetWorldTimerManager().PauseTimer(PathTimerHandle);
 	}
 
-	if(NS_PathEffectComponent->IsValidLowLevel())
+	if(NS_PathEffectComponent && NS_PathEffectComponent->IsValidLowLevel())
 	{
 		NS_PathEffectComponent->DestroyComponent();
 	}
@@ -157,7 +157,7 @@ AActor* UVillagerHandler::VillagerOverlapCheck()
 	AActor* villagerActor = nullptr;
 	if(OverlappingActors.Num() > 0)
 	{
-		if(OverlappingActors[0]->IsValidLowLevel())
+		if(OverlappingActors[0] && OverlappingActors[0]->IsValidLowLevel())
 		{
 			villagerActor = OverlappingActors[0];
 		}

@@ -327,7 +327,7 @@ void UMovementInputHandler::UpdateCursorPosition()
 
 	FTransform targetTransform;
 	AActor* targetActor = Cast<AActor>(Owner->GetHoverActor());
-	if(targetActor->IsValidLowLevel())
+	if(targetActor && targetActor->IsValidLowLevel())
 	{
 		// 마우스 포인트에 위치한 객체가 존재함
 		FVector boundOrigin;
