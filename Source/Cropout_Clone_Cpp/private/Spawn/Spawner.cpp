@@ -73,6 +73,8 @@ void ASpawner::SpawnRandom()
 			world->GetTimerManager().SetTimer(CheckNavMeshAndAsyncLoadTimerHandle, FTimerDelegate::CreateLambda(
 				                                  [this, world]
 				                                  {
+					                                  // @TODO : 존재하는 이슈 : Navigation에서의 Overlap이 정상적으로 진행되지 않음
+					                                  // 객체간 겹치는 이슈 있음.
 					                                  if(AsyncLoadComplete == false)
 					                                  {
 						                                  return;
