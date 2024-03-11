@@ -17,6 +17,18 @@ AInteractableBaseActor::AInteractableBaseActor()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 
+	FCollisionResponseContainer collisionResponse;
+	collisionResponse.SetResponse(ECC_Visibility, ECR_Overlap);
+	collisionResponse.SetResponse(ECC_Camera, ECR_Overlap);
+	collisionResponse.SetResponse(ECC_WorldDynamic, ECR_Overlap);
+	collisionResponse.SetResponse(ECC_Pawn, ECR_Overlap);
+
+	collisionResponse.SetResponse(ECC_WorldStatic, ECR_Ignore);
+	collisionResponse.SetResponse(ECC_PhysicsBody, ECR_Ignore);
+	collisionResponse.SetResponse(ECC_Vehicle, ECR_Ignore);
+	collisionResponse.SetResponse(ECC_Destructible, ECR_Ignore);
+	BoxComponent->SetCollisionResponseToChannels(collisionResponse);
+
 	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	BoxComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
