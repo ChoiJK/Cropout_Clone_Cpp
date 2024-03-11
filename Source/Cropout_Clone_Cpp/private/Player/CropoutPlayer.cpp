@@ -44,6 +44,8 @@ ACropoutPlayer::ACropoutPlayer()
 	CursorMesh->SetupAttachment(GetRootComponent());
 	CursorMesh->SetRelativeLocation(FVector(0.f, 0.f, 10.f));
 	CursorMesh->SetRelativeScale3D(FVector(2.f, 2.f, 1.f));
+	CursorMesh->SetGenerateOverlapEvents(false);
+	CursorMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SMplane
 		(TEXT("Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
@@ -63,6 +65,7 @@ ACropoutPlayer::ACropoutPlayer()
 
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(GetRootComponent());
+	Collision->SetCollisionObjectType(ECC_Pawn);
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ACropoutPlayer::OnBeginOverlap);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ACropoutPlayer::OnEndOverlap);
 
