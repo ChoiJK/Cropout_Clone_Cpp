@@ -42,18 +42,20 @@ AVillager::AVillager()
 		(TEXT("Engine.AnimBlueprint'/Game/Characters/Animations/ABP_Villager.ABP_Villager'"));
 	check(ab_Villager.Succeeded());
 	BodyAnimBlueprint = ab_Villager.Object;
+	BodyMesh->SetAnimInstanceClass(BodyAnimBlueprint->GeneratedClass);
 
 
 	static ConstructorHelpers::FObjectFinder<UAnimBlueprint> ab_Hair
 		(TEXT("Engine.AnimBlueprint'/Game/Characters/Animations/ABP_Hair.ABP_Hair'"));
 	check(ab_Hair.Succeeded());
 	HairAnimBlueprint = ab_Hair.Object;
-
+	HairMesh->SetAnimInstanceClass(HairAnimBlueprint->GeneratedClass);
 
 	static ConstructorHelpers::FObjectFinder<UAnimBlueprint> ab_Hat
 		(TEXT("Engine.AnimBlueprint'/Game/Characters/Meshes/Hats/ABP_Hat.ABP_Hat'"));
 	check(ab_Hat.Succeeded());
 	HatAnimBlueprint = ab_Hat.Object;
+	HatMesh->SetAnimInstanceClass(HatAnimBlueprint->GeneratedClass);
 
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> sm_Villager
@@ -105,10 +107,6 @@ void AVillager::BeginPlay()
 	ChangeJob(EVillagerJobType::Idle);
 	HairMesh->SetSkeletalMesh(HairMeshes[FMath::RandRange(0, HairMeshes.Num() - 1)]);
 	HairMesh->SetCustomPrimitiveDataFloat(0, FMath::RandRange(0.f, 1.f));
-
-	BodyMesh->SetAnimInstanceClass(BodyAnimBlueprint->GeneratedClass);
-	HairMesh->SetAnimInstanceClass(HairAnimBlueprint->GeneratedClass);
-	HatMesh->SetAnimInstanceClass(HatAnimBlueprint->GeneratedClass);
 }
 
 void AVillager::Destroyed()
