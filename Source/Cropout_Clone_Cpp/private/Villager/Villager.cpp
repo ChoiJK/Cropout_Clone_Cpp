@@ -13,6 +13,8 @@ TArray<USkeletalMesh*> AVillager::HairMeshes;
 
 AVillager::AVillager()
 {
+	bUseControllerRotationYaw = true;
+
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	SetRootComponent(Capsule);
 	Capsule->InitCapsuleSize(30.f, 92.04f);
@@ -34,6 +36,7 @@ AVillager::AVillager()
 	//ShadowDecal->SetupAttachment(Capsule);
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
+	Movement->MaxSpeed = 300.f;
 
 	static ConstructorHelpers::FObjectFinder<UAnimBlueprint> ab_Villager
 		(TEXT("Engine.AnimBlueprint'/Game/Characters/Animations/ABP_Villager.ABP_Villager'"));

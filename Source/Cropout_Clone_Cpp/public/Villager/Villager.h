@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UFloatingPawnMovement* Movement;
 
+	UFUNCTION(BlueprintCallable)
+	UFloatingPawnMovement* GetMovement() const { return Movement; }
+
 	AVillager();
 
 protected:
