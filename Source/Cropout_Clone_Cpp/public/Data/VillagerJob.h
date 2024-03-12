@@ -14,16 +14,16 @@ struct FVillagerJob : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftClassPtr<UBehaviorTree> BehaviorTree;
+	TSoftObjectPtr<UBehaviorTree> BehaviorTree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftClassPtr<UAnimMontage> WorkAnim;
+	TSoftObjectPtr<UAnimMontage> WorkAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftClassPtr<USkeletalMesh> Hat;
+	TSoftObjectPtr<USkeletalMesh> Hat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftClassPtr<UStaticMesh> Tool;
+	TSoftObjectPtr<UStaticMesh> Tool;
 };
 
 enum class EVillagerJobType
