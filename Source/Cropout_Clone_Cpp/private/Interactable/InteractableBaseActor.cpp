@@ -15,9 +15,10 @@ AInteractableBaseActor::AInteractableBaseActor()
 	SetRootComponent(root);
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	StaticMeshComponent->SetGenerateOverlapEvents(false);
-	StaticMeshComponent->SetCanEverAffectNavigation(false);
+	StaticMeshComponent->SetCollisionProfileName(UCollisionProfile::BlockAllDynamic_ProfileName);
+	StaticMeshComponent->SetGenerateOverlapEvents(true);
+	StaticMeshComponent->SetCanEverAffectNavigation(true);
+
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 
