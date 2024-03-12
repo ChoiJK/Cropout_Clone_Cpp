@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "VillagerHandler.generated.h"
 
+class UNavigationPath;
 class UInputAction;
 class UInputComponent;
 class ACropoutPlayer;

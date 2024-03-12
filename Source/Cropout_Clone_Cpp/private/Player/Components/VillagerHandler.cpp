@@ -2,17 +2,25 @@
 #include "Player/CropoutPlayer.h"
 
 #include "Core/CropoutPlayerController.h"
+#include "Villager/Villager.h"
+#include "Player/Components/MovementInputHandler.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Villager/Villager.h"
-#include "Player/Components/MovementInputHandler.h"
 
+#include "NavigationPath.h"
+#include "NavigationData.h"
+#include "NavigationSystem.h"
+
+#include "NiagaraDataInterface.h"
+#include "NiagaraDataInterfaceRW.h"
+#include "NiagaraDataInterfaceArray.h"
+#include "NiagaraDataInterfaceArrayFloat.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
-
 
 UVillagerHandler::UVillagerHandler()
 {
@@ -152,7 +160,8 @@ void UVillagerHandler::VillagerRelease()
 AActor* UVillagerHandler::VillagerOverlapCheck()
 {
 	TArray<AActor*> OverlappingActors;
-	Owner->Collision->GetOverlappingActors(OverlappingActors, APawn::StaticClass());
+	FVector worldPos = Owner->Collision->GetComponentLocation();
+	Owner->Collision->GetOverlappingActors(OverlappingActors, AVillager::StaticClass());
 
 	AActor* villagerActor = nullptr;
 	if(OverlappingActors.Num() > 0)
@@ -163,9 +172,97 @@ AActor* UVillagerHandler::VillagerOverlapCheck()
 		}
 	}
 
-	return nullptr;
+	return villagerActor;
 }
 
 void UVillagerHandler::UpdatePath()
 {
+	UNavigationSystemV1* navigationSystem = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
+	FVector startPath = Owner->Collision->GetComponentLocation();
+	FVector endPath = SelectedVillager->GetActorLocation();
+	endPath.Z = startPath.Z;
+	UNavigationPath* pathResult = navigationSystem->FindPathToLocationSynchronously(GetWorld(), startPath, endPath);
+	if(pathResult == nullptr && pathResult->IsValid() == false)
+	{
+		return;
+	}
+
+	const TArray<FNavPathPoint> pathPoints = pathResult->GetPath()->GetPathPoints();
+
+	if(pathPoints.Num() < 0)
+	{
+		return;
+	}
+	TArray<FVector> vecPathPoints;
+	for(const FNavPathPoint& pathPoint : pathPoints)
+	{
+		vecPathPoints.Add(pathPoint.Location);
+	}
+
+	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(
+		NS_PathEffectComponent, "TargetPath", vecPathPoints);
 }
+
+
+//UNavigationPath* UVillagerHandler::FindPathToLocationSynchronously(UObject* WorldContextObject,
+//                                                                   const FVector& PathStart, const FVector& PathEnd)
+//{
+//	UWorld* World = nullptr;
+//	AActor* PathfindingContext = nullptr;
+//
+//	if(WorldContextObject != nullptr)
+//	{
+//		World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+//	}
+//	if(World == nullptr && PathfindingContext != nullptr)
+//	{
+//		World = GEngine->GetWorldFromContextObject(PathfindingContext, EGetWorldErrorMode::LogAndReturnNull);
+//	}
+//
+//	UNavigationPath* ResultPath = nullptr;
+//
+//	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
+//
+//	if(NavSys != nullptr && NavSys->GetDefaultNavDataInstance() != nullptr)
+//	{
+//		ResultPath = NewObject<UNavigationPath>(NavSys);
+//		bool bValidPathContext = false;
+//		const ANavigationData* NavigationData = nullptr;
+//
+//		if(PathfindingContext != nullptr)
+//		{
+//			INavAgentInterface* NavAgent = Cast<INavAgentInterface>(PathfindingContext);
+//
+//			if(NavAgent != nullptr)
+//			{
+//				const FNavAgentProperties& AgentProps = NavAgent->GetNavAgentPropertiesRef();
+//				NavigationData = NavSys->GetNavDataForProps(AgentProps, PathStart);
+//				bValidPathContext = true;
+//			}
+//			else if(Cast<ANavigationData>(PathfindingContext))
+//			{
+//				NavigationData = static_cast<ANavigationData*>(PathfindingContext);
+//				bValidPathContext = true;
+//			}
+//		}
+//		if(bValidPathContext == false)
+//		{
+//			// just use default
+//			NavigationData = NavSys->GetDefaultNavDataInstance();
+//		}
+//
+//		check(NavigationData);
+//
+//		const FPathFindingQuery Query(PathfindingContext, *NavigationData, PathStart, PathEnd,
+//		                              UNavigationQueryFilter::GetQueryFilter(
+//			                              *NavigationData, PathfindingContext, nullptr
+//		                              ));
+//		const FPathFindingResult Result = NavSys->FindPathSync(Query, EPathFindingMode::Regular);
+//		if(Result.IsSuccessful())
+//		{
+//			ResultPath->SetPath(Result.Path);
+//		}
+//	}
+//
+//	return ResultPath;
+//}
