@@ -5,9 +5,12 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/DecalComponent.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/CropoutGameMode.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StreamableManager.h"
+#include "Interactable/Resource/ResourceBaseActor.h"
+#include "Kismet/GameplayStatics.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;
 
@@ -99,6 +102,7 @@ void AVillager::BeginPlay()
 	Super::BeginPlay();
 
 	GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	GameMode = Cast<ACropoutGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	AddActorWorldOffset(FVector(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight()));
 
@@ -125,6 +129,8 @@ void AVillager::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AVillager::Eat()
 {
+	int withdrawnAmount = 0;
+	GameMode->ExtractResource(EResourceType::Food, 3, withdrawnAmount);
 }
 
 void AVillager::Action(AActor* jobAction)

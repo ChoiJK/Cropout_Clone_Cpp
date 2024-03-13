@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Interactable/Resource/ResourceBaseActor.h"
 #include "CropoutGameMode.generated.h"
 
 /**
@@ -21,6 +22,9 @@ UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+
+	TMap<EResourceType, int> ResourceBank;
+	void ResourceDebugMessage();
 
 public:
 	ACropoutGameMode();
@@ -41,6 +45,9 @@ public:
 	TSubclassOf<ABuildingBaseActor> TownHall_Ref;
 	TSubclassOf<ABuildingBaseActor> GetTownHallRef();
 	void SpawnTownHall();
+
+	void StoreResource(EResourceType type, int amount);
+	bool ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount);
 
 protected:
 	void OnIslandGenComplete();

@@ -64,6 +64,7 @@ public:
 	void DoScaleUp(float delay);
 	void DoDeath();
 	virtual void Interact() override;
+	TTuple<EResourceType, int> CollectResource();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCurveFloat* Curve; // timeline

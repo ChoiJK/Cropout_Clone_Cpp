@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Actor.h"
 #include "InteractableBaseActor.generated.h"
 
 class UBoxComponent;
 class UTextureRenderTarget2D;
 class UStaticMesh;
+class UCurveFloat;
+struct FTimeline;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AInteractableBaseActor : public AActor
@@ -33,9 +36,19 @@ protected:
 
 	void TransformToTexture(FVector2d InVec, FVector2d& OutVec, FVector2d& OutVec2) const;
 
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	bool IsInitWoobleCurveSuccess();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* Wooble_Curve; // timeline
+
+	FTimeline Wooble_Timeline;
+
+	UFUNCTION()
+	void Wooble_TimelineUpdate(float scaleValue) const;
+	UFUNCTION()
+	void Wooble_TimelineFinished();
 
 public:
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -43,6 +56,10 @@ public:
 	virtual void Interact()
 	{
 	};
+
+
+	void PlayWobble(FVector InVec);
+	void EndWooble();
 
 	UPROPERTY(EditAnywhere, Category = "Ground Blend")
 	TObjectPtr<UTextureRenderTarget2D> RT_Draw;

@@ -97,7 +97,7 @@ void UVillagerHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void UVillagerHandler::OnVillagerActionTriggered(const FInputActionValue& Value)
 {
-	VillagerActor = Owner->GetHoverActor();
+	VillagerAction = Owner->GetHoverActor();
 }
 
 void UVillagerHandler::OnVillagerAction(const FInputActionValue& Value)
@@ -187,7 +187,13 @@ void UVillagerHandler::UpdatePath()
 		return;
 	}
 
-	const TArray<FNavPathPoint> pathPoints = pathResult->GetPath()->GetPathPoints();
+	FNavPathSharedPtr sharedPtr = pathResult->GetPath();
+	if(sharedPtr.IsValid() == false)
+	{
+		return;
+	}
+
+	const TArray<FNavPathPoint> pathPoints = sharedPtr->GetPathPoints();
 
 	if(pathPoints.Num() < 0)
 	{
@@ -202,67 +208,3 @@ void UVillagerHandler::UpdatePath()
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector(
 		NS_PathEffectComponent, "TargetPath", vecPathPoints);
 }
-
-
-//UNavigationPath* UVillagerHandler::FindPathToLocationSynchronously(UObject* WorldContextObject,
-//                                                                   const FVector& PathStart, const FVector& PathEnd)
-//{
-//	UWorld* World = nullptr;
-//	AActor* PathfindingContext = nullptr;
-//
-//	if(WorldContextObject != nullptr)
-//	{
-//		World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
-//	}
-//	if(World == nullptr && PathfindingContext != nullptr)
-//	{
-//		World = GEngine->GetWorldFromContextObject(PathfindingContext, EGetWorldErrorMode::LogAndReturnNull);
-//	}
-//
-//	UNavigationPath* ResultPath = nullptr;
-//
-//	UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
-//
-//	if(NavSys != nullptr && NavSys->GetDefaultNavDataInstance() != nullptr)
-//	{
-//		ResultPath = NewObject<UNavigationPath>(NavSys);
-//		bool bValidPathContext = false;
-//		const ANavigationData* NavigationData = nullptr;
-//
-//		if(PathfindingContext != nullptr)
-//		{
-//			INavAgentInterface* NavAgent = Cast<INavAgentInterface>(PathfindingContext);
-//
-//			if(NavAgent != nullptr)
-//			{
-//				const FNavAgentProperties& AgentProps = NavAgent->GetNavAgentPropertiesRef();
-//				NavigationData = NavSys->GetNavDataForProps(AgentProps, PathStart);
-//				bValidPathContext = true;
-//			}
-//			else if(Cast<ANavigationData>(PathfindingContext))
-//			{
-//				NavigationData = static_cast<ANavigationData*>(PathfindingContext);
-//				bValidPathContext = true;
-//			}
-//		}
-//		if(bValidPathContext == false)
-//		{
-//			// just use default
-//			NavigationData = NavSys->GetDefaultNavDataInstance();
-//		}
-//
-//		check(NavigationData);
-//
-//		const FPathFindingQuery Query(PathfindingContext, *NavigationData, PathStart, PathEnd,
-//		                              UNavigationQueryFilter::GetQueryFilter(
-//			                              *NavigationData, PathfindingContext, nullptr
-//		                              ));
-//		const FPathFindingResult Result = NavSys->FindPathSync(Query, EPathFindingMode::Regular);
-//		if(Result.IsSuccessful())
-//		{
-//			ResultPath->SetPath(Result.Path);
-//		}
-//	}
-//
-//	return ResultPath;
-//}

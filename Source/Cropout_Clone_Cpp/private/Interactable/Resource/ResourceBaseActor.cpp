@@ -112,3 +112,27 @@ void AResourceBaseActor::Interact()
 {
 	Super::Interact();
 }
+
+TTuple<EResourceType, int> AResourceBaseActor::CollectResource()
+{
+	EndWooble();
+
+	int resultValue = 0;
+	if(ResourceAmount <= CollectionValue)
+	{
+		resultValue = ResourceAmount;
+		ResourceAmount = 0;
+	}
+	else
+	{
+		resultValue = CollectionValue;
+		ResourceAmount -= CollectionValue;
+	}
+
+	if(ResourceAmount <= 0)
+	{
+		DoDeath();
+	}
+
+	return MakeTuple(ResourceType, resultValue);
+}

@@ -41,6 +41,8 @@ void ACropoutGameMode::StartPlay()
 		}
 	}
 
+	StoreResource(EResourceType::Food, 100);
+
 	Super::StartPlay();
 }
 
@@ -117,7 +119,6 @@ void ACropoutGameMode::SpawnTownHall()
 	TownHall = Cast<ABuildingBaseActor>(GetWorld()->SpawnActor(townHallRef, &spawnLocation));
 }
 
-
 TSubclassOf<ABuildingBaseActor> ACropoutGameMode::GetTownHallRef()
 {
 	if(TownHall_Ref == nullptr)
@@ -132,6 +133,63 @@ TSubclassOf<ABuildingBaseActor> ACropoutGameMode::GetTownHallRef()
 	return TownHall_Ref;
 }
 
+void ACropoutGameMode::StoreResource(EResourceType type, int amount)
+{
+	if(!ResourceBank.Contains(type))
+	{
+		ResourceBank.Add(type, amount);
+	}
+	else
+	{
+		ResourceBank[type] += amount;
+	}
+
+	ResourceDebugMessage();
+}
+
+bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
+{
+	bool isWithdrawn = false;
+	if(ResourceBank.Contains(type) && ResourceBank[type] > 0)
+	{
+		isWithdrawn = true;
+		if(ResourceBank[type] <= requestedAmount)
+		{
+			withdrawnAmount = ResourceBank[type];
+			ResourceBank[type] = 0;
+		}
+		else
+		{
+			withdrawnAmount = requestedAmount;
+			ResourceBank[type] -= requestedAmount;
+		}
+	}
+
+	ResourceDebugMessage();
+
+	return isWithdrawn;
+}
+
+void ACropoutGameMode::ResourceDebugMessage()
+{
+	if(ResourceBank.Contains(EResourceType::Food))
+	{
+		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Food), 5.f, FColor::Green,
+		                                 FString::Printf(TEXT("Food %d"), ResourceBank[EResourceType::Food]));
+	}
+
+	if(ResourceBank.Contains(EResourceType::Wood))
+	{
+		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Wood), 5.f, FColor::Red,
+		                                 FString::Printf(TEXT("Wood %d"), ResourceBank[EResourceType::Wood]));
+	}
+
+	if(ResourceBank.Contains(EResourceType::Stone))
+	{
+		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Stone), 5.f, FColor::Black,
+		                                 FString::Printf(TEXT("Stone %d"), ResourceBank[EResourceType::Stone]));
+	}
+}
 
 void ACropoutGameMode::OnIslandGenComplete()
 {

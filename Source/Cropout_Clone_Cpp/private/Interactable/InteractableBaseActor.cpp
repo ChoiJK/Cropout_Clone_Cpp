@@ -43,12 +43,26 @@ AInteractableBaseActor::AInteractableBaseActor()
 	{
 		RT_Draw = TextureRenderTargetAsset.Object;
 	}
+
+	if(IsInitWoobleCurveSuccess() == false)
+	{
+		Destroy();
+		return;
+	}
 }
 
 // Called when the game starts or when spawned
 void AInteractableBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FOnTimelineFloat TimelineProgress;
+	TimelineProgress.BindUFunction(this, FName("Wooble_TimelineUpdate"));
+	FOnTimelineEvent TimelineFinished;
+	TimelineFinished.BindUFunction(this, FName("Wooble_TimelineFinished"));
+
+	Wooble_Timeline.AddInterpFloat(Wooble_Curve, TimelineProgress);
+	Wooble_Timeline.SetTimelineFinishedFunc(TimelineFinished);
 
 	ReCalcBoxExtent();
 
@@ -112,14 +126,46 @@ void AInteractableBaseActor::BeginPlay()
 	}
 }
 
+bool AInteractableBaseActor::IsInitWoobleCurveSuccess()
+{
+	if(Wooble_Curve == nullptr)
+	{
+		const FName CurveName = TEXT("CurveFloat'/Game/Resources/Curve/Woodle_Curve.Woodle_Curve'");
+		Wooble_Curve = LoadObject<UCurveFloat>(nullptr, *CurveName.ToString());
+	}
+
+	return Wooble_Curve != nullptr;
+}
+
+void AInteractableBaseActor::Wooble_TimelineUpdate(float scaleValue) const
+{
+	StaticMeshComponent->SetScalarParameterValueOnMaterials("Wobble", scaleValue);
+}
+
+void AInteractableBaseActor::Wooble_TimelineFinished()
+{
+	StaticMeshComponent->SetScalarParameterValueOnMaterials("Wobble", 1.f);
+}
+
 void AInteractableBaseActor::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	ReCalcBoxExtent();
 }
 
-// @todo : Event Play Wobble
-// @todo : Event End Wobble
+void AInteractableBaseActor::PlayWobble(FVector InVec)
+{
+	FVector temVec = InVec - GetActorLocation();
+	temVec.Normalize();
+	StaticMeshComponent->SetVectorParameterValueOnMaterials("Wobble Vector", temVec);
+	Wooble_Timeline.PlayFromStart();
+}
+
+void AInteractableBaseActor::EndWooble()
+{
+	Wooble_Timeline.Reverse();
+}
+
 
 // @todo : Placement Mode
 
