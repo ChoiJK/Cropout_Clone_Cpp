@@ -82,6 +82,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void Action(AActor* jobAction);
+	void SetDefaultJob();
+	AActor* GetTargetRef() const { return TargetRef; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Quantity = 0;

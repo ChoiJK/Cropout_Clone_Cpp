@@ -135,12 +135,37 @@ void AVillager::Eat()
 
 void AVillager::Action(AActor* jobAction)
 {
+	if(jobAction == nullptr || jobAction->IsValidLowLevel() == false || jobAction->Tags.Num() == 0)
+	{
+		return;
+	}
+
+	EVillagerJobType nextJobType = GetVillagerJobTypeFromString(jobAction->Tags[0].ToString());
+	if(nextJobType == EVillagerJobType::None)
+	{
+		return;
+	}
+
+	TargetRef = jobAction;
+
+	ChangeJob(nextJobType);
+}
+
+void AVillager::SetDefaultJob()
+{
+	ChangeJob(EVillagerJobType::Idle);
 }
 
 void AVillager::ChangeJob(EVillagerJobType jobType)
 {
 	if(CurrentJobType == jobType)
 	{
+		return;
+	}
+
+	if(MapVillagerJob.Find(CurrentJobName) == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Villager %s has no job"), *GetName());
 		return;
 	}
 
