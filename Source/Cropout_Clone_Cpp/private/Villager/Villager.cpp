@@ -163,14 +163,14 @@ void AVillager::ChangeJob(EVillagerJobType jobType)
 		return;
 	}
 
+	CurrentJobType = jobType;
+	CurrentJobName = FName(GetVillagerJobTypeString(CurrentJobType));
+
 	if(MapVillagerJob.Find(CurrentJobName) == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Villager %s has no job"), *GetName());
 		return;
 	}
-
-	CurrentJobType = jobType;
-	CurrentJobName = FName(GetVillagerJobTypeString(CurrentJobType));
 
 	if(CurrentJobType == EVillagerJobType::None)
 	{
