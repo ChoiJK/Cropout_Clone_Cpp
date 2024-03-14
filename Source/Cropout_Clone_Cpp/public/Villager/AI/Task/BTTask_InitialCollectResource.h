@@ -20,6 +20,9 @@ class CROPOUT_CLONE_CPP_API UBTTask_InitialCollectResource : public UBTTaskNode
 	FBlackboardKeySelector Key_ResourceTag;
 
 	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector Key_CollectionTarget;
+
+	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector Key_CollectionClass;
 
 	UPROPERTY(EditAnywhere)

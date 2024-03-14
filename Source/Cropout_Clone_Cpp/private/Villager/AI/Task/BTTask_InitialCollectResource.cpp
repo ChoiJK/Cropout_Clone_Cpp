@@ -65,6 +65,7 @@ EBTNodeResult::Type UBTTask_InitialCollectResource::ExecuteTask(UBehaviorTreeCom
 		if(TownHallActor != nullptr)
 		{
 			BlackboardComp->SetValueAsObject(Key_TownHall.SelectedKeyName, TownHallActor);
+			BlackboardComp->SetValueAsObject(Key_CollectionTarget.SelectedKeyName, TownHallActor);
 			BlackboardComp->SetValueAsClass(Key_CollectionClass.SelectedKeyName, TownHallActor->GetClass());
 			bSuccess = true;
 		}
