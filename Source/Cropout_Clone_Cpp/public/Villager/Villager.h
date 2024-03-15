@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Data/VillagerJob.h"
+#include "Interactable/Resource/ResourcebaseActor.h"
 #include "Villager.generated.h"
 
 class UFloatingPawnMovement;
@@ -78,12 +79,22 @@ private:
 	UAnimBlueprint* HairAnimBlueprint = nullptr;
 	UAnimBlueprint* HatAnimBlueprint = nullptr;
 
+	UFUNCTION()
+	void PlayMontageCallback(FName NotifyName);
+
+	EResourceType StoreResourceType;
+	int StoreAmount;
+
 public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void PlayWorkAnim(float delay);
 	void Action(AActor* jobAction);
 	void SetDefaultJob();
 	AActor* GetTargetRef() const { return TargetRef; }
+
+	void StoreResource(EResourceType type, int amount);
+	void DeliverResource();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Quantity = 0;

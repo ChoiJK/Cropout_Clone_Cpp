@@ -53,8 +53,10 @@ protected:
 public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	virtual void Interact()
+	// returnVal : work time
+	virtual float Interact()
 	{
+		return 0.0f;
 	};
 
 

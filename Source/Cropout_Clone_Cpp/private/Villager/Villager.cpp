@@ -11,12 +11,14 @@
 #include "Engine/StreamableManager.h"
 #include "Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "PlayMontageCallbackProxy.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;
 
 AVillager::AVillager()
 {
 	bUseControllerRotationYaw = true;
+	StoreResourceType = EResourceType::None;
 
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	SetRootComponent(Capsule);
@@ -27,10 +29,10 @@ AVillager::AVillager()
 	BodyMesh->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -92.04f), FRotator(0.f, -90.f, 0.f));
 
 	ToolMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ToolMesh"));
-	ToolMesh->SetupAttachment(BodyMesh);
+	ToolMesh->AttachToComponent(BodyMesh, FAttachmentTransformRules::KeepRelativeTransform,TEXT("hand_rSocket"));
 
 	HatMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HatMesh"));
-	HatMesh->SetupAttachment(BodyMesh);
+	HatMesh->AttachToComponent(BodyMesh, FAttachmentTransformRules::KeepRelativeTransform,TEXT("headSocket"));
 
 	HairMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HairMesh"));
 	HairMesh->SetupAttachment(BodyMesh);
@@ -151,9 +153,49 @@ void AVillager::Action(AActor* jobAction)
 	ChangeJob(nextJobType);
 }
 
+void AVillager::PlayWorkAnim(float delay)
+{
+	UPlayMontageCallbackProxy* playMontageCallbackProxy = UPlayMontageCallbackProxy::CreateProxyObjectForPlayMontage(
+		BodyMesh, WorkAnim, 1.f, 0.f, NAME_None);
+
+	playMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &AVillager::PlayMontageCallback);
+	playMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &AVillager::PlayMontageCallback);
+
+	FTimerHandle WorkAnimTimerHandle;
+	GetWorldTimerManager().SetTimer(WorkAnimTimerHandle, FTimerDelegate::CreateWeakLambda(this, [this]
+	{
+		BodyMesh->GetAnimInstance()->Montage_StopGroupByName(
+			0.f, TEXT("DefaultGroup"));
+	}), delay, false);
+
+	ToolMesh->SetVisibility(true);
+	ToolMesh->SetStaticMesh(TargetTool);
+}
+
+void AVillager::PlayMontageCallback(FName NotifyName)
+{
+	ToolMesh->SetVisibility(false);
+}
+
 void AVillager::SetDefaultJob()
 {
 	ChangeJob(EVillagerJobType::Idle);
+}
+
+void AVillager::StoreResource(EResourceType type, int amount)
+{
+	StoreResourceType = type;
+	StoreAmount = amount;
+}
+
+void AVillager::DeliverResource()
+{
+	if(StoreResourceType != EResourceType::None)
+	{
+		GameMode->StoreResource(StoreResourceType, StoreAmount);
+		StoreResourceType = EResourceType::None;
+		StoreAmount = 0;
+	}
 }
 
 void AVillager::ChangeJob(EVillagerJobType jobType)
@@ -222,8 +264,8 @@ void AVillager::AsyncJobResourceLoaded(FName jobName)
 		}
 	}
 
-	HatMesh->SetSkeletalMesh(hatSkeletalMesh);
 	HatMesh->SetVisibility(true);
+	HatMesh->SetSkeletalMesh(hatSkeletalMesh);
 
 	WorkAnim = workAnimMontage;
 	TargetTool = toolStaticMesh;

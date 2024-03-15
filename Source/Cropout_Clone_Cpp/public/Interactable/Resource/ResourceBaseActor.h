@@ -63,7 +63,7 @@ protected:
 public:
 	void DoScaleUp(float delay);
 	void DoDeath();
-	virtual void Interact() override;
+	virtual float Interact() override;
 	TTuple<EResourceType, int> CollectResource();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

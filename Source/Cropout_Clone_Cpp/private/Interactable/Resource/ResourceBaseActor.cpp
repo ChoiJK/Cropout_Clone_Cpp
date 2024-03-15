@@ -108,9 +108,11 @@ void AResourceBaseActor::DoDeath()
 	Destroy();
 }
 
-void AResourceBaseActor::Interact()
+float AResourceBaseActor::Interact()
 {
 	Super::Interact();
+
+	return CollectionTime;
 }
 
 TTuple<EResourceType, int> AResourceBaseActor::CollectResource()

@@ -1,25 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithTownHall.h"
+#include "Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithResourceTarget.h"
 
-#include "Core/CropoutGameMode.h"
-#include "GameFramework/GameModeBase.h"
-#include "Interactable/Building/BuildingBaseActor.h"
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(EnvQueryGenerator_SimpleGridWithTownHall)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(EnvQueryGenerator_SimpleGridWithResourceTarget)
 
 #define LOCTEXT_NAMESPACE "EnvQueryGenerator"
 
-UEnvQueryGenerator_SimpleGridWithTownHall::UEnvQueryGenerator_SimpleGridWithTownHall(
+UEnvQueryGenerator_SimpleGridWithResourceTarget::UEnvQueryGenerator_SimpleGridWithResourceTarget(
 	const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	GridSize.DefaultValue = 500.0f;
 	SpaceBetween.DefaultValue = 100.0f;
 }
 
-void UEnvQueryGenerator_SimpleGridWithTownHall::GenerateItems(FEnvQueryInstance& QueryInstance) const
+void UEnvQueryGenerator_SimpleGridWithResourceTarget::GenerateItems(FEnvQueryInstance& QueryInstance) const
 {
 	UObject* BindOwner = QueryInstance.Owner.Get();
 	GridSize.BindData(BindOwner, QueryInstance.QueryID);
@@ -32,11 +31,22 @@ void UEnvQueryGenerator_SimpleGridWithTownHall::GenerateItems(FEnvQueryInstance&
 	const int32 ItemCountHalf = ItemCount / 2;
 
 	TArray<FVector> ContextLocations;
-
-	const AActor* TownHallActor = Cast<ACropoutGameMode>(UGameplayStatics::GetGameMode(QueryInstance.World))->TownHall;
-	if(TownHallActor != nullptr)
+	AActor* QuerierActor = Cast<AActor>(BindOwner);
+	AAIController* AIController = Cast<AAIController>(QuerierActor->GetInstigatorController());
+	if(AIController == nullptr)
 	{
-		ContextLocations.Add(TownHallActor->GetActorLocation());
+		return;
+	}
+	UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent();
+	if(BlackboardComp == nullptr)
+	{
+		return;
+	}
+
+	AActor* targetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(FName("Target")));
+	if(targetActor != nullptr)
+	{
+		ContextLocations.Add(targetActor->GetActorLocation());
 	}
 
 	TArray<FNavLocation> GridPoints;
@@ -60,12 +70,12 @@ void UEnvQueryGenerator_SimpleGridWithTownHall::GenerateItems(FEnvQueryInstance&
 	StoreNavPoints(GridPoints, QueryInstance);
 }
 
-FText UEnvQueryGenerator_SimpleGridWithTownHall::GetDescriptionTitle() const
+FText UEnvQueryGenerator_SimpleGridWithResourceTarget::GetDescriptionTitle() const
 {
 	return FText::Format(LOCTEXT("SimpleGridDescriptionGenerateAroundContext", "{0}"), Super::GetDescriptionTitle());
 };
 
-FText UEnvQueryGenerator_SimpleGridWithTownHall::GetDescriptionDetails() const
+FText UEnvQueryGenerator_SimpleGridWithResourceTarget::GetDescriptionDetails() const
 {
 	FText Desc = FText::Format(LOCTEXT("SimpleGridDescription", "radius: {0}, space between: {1}"),
 	                           FText::FromString(GridSize.ToString()), FText::FromString(SpaceBetween.ToString()));
