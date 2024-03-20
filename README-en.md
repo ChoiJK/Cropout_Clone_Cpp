@@ -66,7 +66,7 @@ We are currently about 60% of the way through the task.
 - Save/Load functionality
 - Cross-Platform Testing
 
-![cropoutSample](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/ReadmeResource/cropout%20cpp%20sample.mp4)
+https://github.com/ChoiJK/Cropout_Clone_Cpp/assets/14192551/dd1c1670-f1d3-467f-9a97-75af6d196a46
 
     
 --- 
