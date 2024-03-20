@@ -68,4 +68,4 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 - Save/Load 기능
 - 크로스 플랫폼 테스트
 
-![cropoutSample](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/ReadmeResource/cropout%20cpp%20sample.mp4)
+https://github.com/ChoiJK/Cropout_Clone_Cpp/assets/14192551/dd1c1670-f1d3-467f-9a97-75af6d196a46
