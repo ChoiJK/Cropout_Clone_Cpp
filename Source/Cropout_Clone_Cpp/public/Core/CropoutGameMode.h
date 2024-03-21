@@ -7,16 +7,13 @@
 #include "Interactable/Resource/ResourceBaseActor.h"
 #include "CropoutGameMode.generated.h"
 
-/**
- *
- */
-
 class UCropoutGameInstance;
 class FGlobalEventDispatcher;
 class FGlobalSharedVariable;
 class ABuildingBaseActor;
 class ASpawner;
 class AVillager;
+class UInGameLayerWidget;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
@@ -64,4 +61,5 @@ protected:
 public:
 	UCropoutGameInstance* GameInstance;
 	ASpawner* SpawnerRef;
+	UInGameLayerWidget* UI_HUD;
 };

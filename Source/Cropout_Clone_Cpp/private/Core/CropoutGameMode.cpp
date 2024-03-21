@@ -15,6 +15,9 @@
 #include "Spawn/Spawner.h"
 #include "Villager/Villager.h"
 #include "AudioModulationStatics.h"
+#include "Editor/UMGEditor/Public/WidgetBlueprint.h"
+#include "UI/InGameLayerWidget.h"
+#include "UI/UiManager.h"
 
 ACropoutGameMode::ACropoutGameMode()
 {
@@ -62,7 +65,16 @@ void ACropoutGameMode::BeginPlay()
 		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
 
-	// @ TODO : Add Game HUD to screen
+	// Create Main HUD
+	if(IsValid(AUiManager::Instance->InGameLayerWidgetClass))
+	{
+		UI_HUD = Cast<UInGameLayerWidget>(
+			CreateWidget(GetWorld(), AUiManager::Instance->InGameLayerWidgetClass));
+		check(IsValid(UI_HUD))
+
+		UI_HUD->AddToViewport();
+		UI_HUD->SetVisibility(ESlateVisibility::Visible);
+	}
 }
 
 void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
