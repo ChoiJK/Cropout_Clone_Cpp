@@ -2,6 +2,8 @@
 
 
 #include "UI/InGameLayerWidget.h"
+
+#include "CommonTextBlock.h"
 #include "Components/VerticalBox.h"
 #include "UI/ResourceWidget.h"
 #include "Interactable/Resource/ResourceBaseActor.h"
@@ -33,4 +35,12 @@ UResourceWidget* UInGameLayerWidget::GetResourceWidget(int index) const
 	}
 
 	return nullptr;
+}
+
+void UInGameLayerWidget::SetVillagerCount(int count) const
+{
+	if(IsValid(VillagerCountText))
+	{
+		VillagerCountText->SetText(FText::FromString(FString::FromInt(count)));
+	}
 }

@@ -290,25 +290,21 @@ void ACropoutGameMode::OnIslandGenComplete()
 		// else
 		{
 			SpawnTownHall();
-			SpawnVillagers();
+			SpawnVillagersInBegin();
 
 			SpawnerRef->SpawnRandom();
 		}
 	}));
 }
 
-void ACropoutGameMode::SpawnVillagers()
+void ACropoutGameMode::SpawnVillagersInBegin()
 {
 	for(int i = 0; i < 3; ++i)
 	{
-		auto villager = SpawnVillager();
-		if(villager != nullptr)
-		{
-			Villagers.Add(villager);
-			// @TODO : gameInstance를 통해 저장
-		}
+		SpawnVillager();
 	}
 }
+
 
 AVillager* ACropoutGameMode::SpawnVillager()
 {
@@ -339,8 +335,25 @@ AVillager* ACropoutGameMode::SpawnVillager()
 			// NOTE: SpawnDefaultController ALSO calls Possess() to possess the pawn (if a controller is successfully spawned).
 			NewPawn->SpawnDefaultController();
 		}
+
+		if(NewPawn != nullptr)
+		{
+			Villagers.Add(NewPawn);
+			UpdateVillagerCount();
+		}
+
 		return NewPawn;
 	}
 
 	return nullptr;
+}
+
+void ACropoutGameMode::UpdateVillagerCount()
+{
+	if(IsValid(UI_HUD))
+	{
+		UI_HUD->SetVillagerCount(Villagers.Num());
+	}
+
+	// @TODO : gameInstance를 통해 저장
 }

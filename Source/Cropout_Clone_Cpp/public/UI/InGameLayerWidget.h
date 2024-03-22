@@ -8,6 +8,7 @@
 
 class UVerticalBox;
 class UResourceWidget;
+class UCommonTextBlock;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UInGameLayerWidget : public UUserWidget
@@ -20,10 +21,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UVerticalBox* ResourceContainer;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UCommonTextBlock* VillagerCountText;
 
-	
 	virtual void NativeConstruct() override;
 
 public:
 	UResourceWidget* GetResourceWidget(int index) const;
+	void SetVillagerCount(int count) const;
 };

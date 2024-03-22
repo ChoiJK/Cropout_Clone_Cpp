@@ -36,8 +36,9 @@ public:
 
 	TSubclassOf<AVillager> Villager_Ref;
 	TArray<AVillager*> Villagers;
-	void SpawnVillagers();
+	void SpawnVillagersInBegin();
 	AVillager* SpawnVillager();
+	void UpdateVillagerCount();
 
 	ABuildingBaseActor* TownHall;
 	TSubclassOf<ABuildingBaseActor> TownHall_Ref;
