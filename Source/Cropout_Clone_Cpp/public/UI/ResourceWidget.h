@@ -35,5 +35,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void SetValue(EResourceType type, int amount);
+	void SetResourceType(EResourceType type);
+	void SetValue(int amount);
 };

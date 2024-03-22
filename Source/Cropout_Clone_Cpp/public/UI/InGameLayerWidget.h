@@ -20,5 +20,10 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UVerticalBox* ResourceContainer;
 
+
+	
 	virtual void NativeConstruct() override;
+
+public:
+	UResourceWidget* GetResourceWidget(int index) const;
 };

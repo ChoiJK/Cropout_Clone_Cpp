@@ -21,6 +21,7 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 	TMap<EResourceType, int> ResourceBank;
+	void UpdateResourcesWidget(EResourceType type);
 	void ResourceDebugMessage();
 
 public:

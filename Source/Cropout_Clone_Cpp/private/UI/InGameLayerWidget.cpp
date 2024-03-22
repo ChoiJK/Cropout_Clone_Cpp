@@ -19,7 +19,18 @@ void UInGameLayerWidget::NativeConstruct()
 		{
 			ResourceWidget[i] = CreateWidget<UResourceWidget>(this, AUiManager::Instance->ResourceWidgetClass);
 			ResourceContainer->AddChildToVerticalBox(ResourceWidget[i]);
-			ResourceWidget[i]->SetValue(static_cast<EResourceType>(i + 1), 0);
+			ResourceWidget[i]->SetResourceType(static_cast<EResourceType>(i + 1));
+			ResourceWidget[i]->SetValue(0);
 		}
 	}
+}
+
+UResourceWidget* UInGameLayerWidget::GetResourceWidget(int index) const
+{
+	if(index >= 0 && index < 3)
+	{
+		return ResourceWidget[index];
+	}
+
+	return nullptr;
 }

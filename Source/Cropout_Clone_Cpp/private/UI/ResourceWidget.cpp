@@ -29,19 +29,27 @@ void UResourceWidget::NativeConstruct()
 	check(ResourceTexture[2]);
 }
 
+
 void UResourceWidget::SetAmountText() const
 {
-	ResourceAmountText->SetText(FText::FromString(FString::FromInt(ResourceAmount)));
+	if(IsValid(ResourceAmountText))
+	{
+		ResourceAmountText->SetText(FText::FromString(FString::FromInt(ResourceAmount)));
+	}
 }
 
-void UResourceWidget::SetValue(EResourceType type, int amount)
+
+void UResourceWidget::SetResourceType(EResourceType type)
 {
 	if(ResourceType != type)
 	{
 		ResourceType = type;
 		ResourceImage->SetBrushFromTexture(ResourceTexture[static_cast<int>(type) - 1]);
 	}
+}
 
+void UResourceWidget::SetValue(int amount)
+{
 	if(ResourceAmount != amount)
 	{
 		ResourceAmount = amount;

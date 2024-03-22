@@ -15,8 +15,10 @@
 #include "Spawn/Spawner.h"
 #include "Villager/Villager.h"
 #include "AudioModulationStatics.h"
+#include "ShaderPrintParameters.h"
 #include "Editor/UMGEditor/Public/WidgetBlueprint.h"
 #include "UI/InGameLayerWidget.h"
+#include "UI/ResourceWidget.h"
 #include "UI/UiManager.h"
 
 ACropoutGameMode::ACropoutGameMode()
@@ -44,8 +46,6 @@ void ACropoutGameMode::StartPlay()
 			UE_LOG(LogTemp, Error, TEXT( "Failed to add listener for IslandGenComplete" ));
 		}
 	}
-
-	StoreResource(EResourceType::Food, 100);
 
 	Super::StartPlay();
 }
@@ -75,6 +75,9 @@ void ACropoutGameMode::BeginPlay()
 		UI_HUD->AddToViewport();
 		UI_HUD->SetVisibility(ESlateVisibility::Visible);
 	}
+
+	// Save Resrouce with creation complete up to the UI
+	StoreResource(EResourceType::Food, 100);
 }
 
 void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -212,7 +215,8 @@ void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 		ResourceBank[type] += amount;
 	}
 
-	ResourceDebugMessage();
+	UpdateResourcesWidget(type);
+	//ResourceDebugMessage();
 }
 
 bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
@@ -233,10 +237,25 @@ bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, 
 		}
 	}
 
-	ResourceDebugMessage();
+	UpdateResourcesWidget(type);
+	//ResourceDebugMessage();
 
 	return isWithdrawn;
 }
+
+void ACropoutGameMode::UpdateResourcesWidget(EResourceType type)
+{
+	const int resourceIndex = static_cast<int>(type) - 1;
+	if(IsValid(UI_HUD))
+	{
+		UResourceWidget* resourceWidget = UI_HUD->GetResourceWidget(resourceIndex);
+		if(IsValid(resourceWidget))
+		{
+			resourceWidget->SetValue(ResourceBank[type]);
+		}
+	}
+}
+
 
 void ACropoutGameMode::ResourceDebugMessage()
 {
