@@ -68,4 +68,34 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 - Save/Load 기능
 - 크로스 플랫폼 테스트
 
+## 6. 정리, 아이디어
+- Unreal
+    - GamePlay Framework
+    - Actor, ActorComponent
+    - Resource Load
+    - 갖가지 Pointer
+    - Tick, Time & FlowControl
+    - Lambda, Delegate
+    - Curve, Timeline
+    - Input
+        - Legacy Input
+        - Enhanced Input
+        - UMG Input - link
+        - CommonUI Input - link
+    - Behaviour Tree
+    - UI
+        - UMG
+        - CommonUI
+        - UMG Input - link
+        - CommonUI Input - link
+    - Sound
+- 아이디어
+    - UI With MVP
+    - Resource Loader
+        - Resource를 Table로 빼서 관리
+        - 모든 리소스의 Load를 일원화
+        - Async Load/ Load이후의 처리까지 Lambda로 받아서 처리
+    - Localization 처리
+        - 외부 엑셀 테이블을 Localization Dashboard 데이터로 Import
+
 https://github.com/ChoiJK/Cropout_Clone_Cpp/assets/14192551/dd1c1670-f1d3-467f-9a97-75af6d196a46

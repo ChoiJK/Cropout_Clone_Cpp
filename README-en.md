@@ -50,7 +50,8 @@ It includes the following features
 ## 5. Progress
 We are currently about 60% of the way through the task.   
 
-<What has been worked on
+[ What has been worked on ]   
+
 - Geometry Script to generate terrain
 - Spawning of all Entities
 - Interaction using Enhanced Input
@@ -58,7 +59,8 @@ We are currently about 60% of the way through the task.
 - Attach & Dettach Objects based on Villager's behavior
 - Sound Play
 
-<What to work on
+[ What to work on ]   
+
 - Adding UI System
     - Developing Game Logic with UI
 - Switching between Levels
