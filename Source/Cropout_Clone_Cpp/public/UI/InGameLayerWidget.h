@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InGameLayerWidget.generated.h"
 
+class UButtonWidget;
 class UVerticalBox;
 class UResourceWidget;
 class UCommonTextBlock;
@@ -23,6 +24,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCommonTextBlock* VillagerCountText;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UButtonWidget* PauseButton;
 
 	virtual void NativeConstruct() override;
 

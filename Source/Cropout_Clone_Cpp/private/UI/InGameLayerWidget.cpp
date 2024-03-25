@@ -7,6 +7,8 @@
 #include "Components/VerticalBox.h"
 #include "UI/ResourceWidget.h"
 #include "Interactable/Resource/ResourceBaseActor.h"
+#include "Kismet/GameplayStatics.h"
+#include "UI/ButtonWidget.h"
 #include "UI/UiManager.h"
 
 void UInGameLayerWidget::NativeConstruct()
@@ -25,6 +27,12 @@ void UInGameLayerWidget::NativeConstruct()
 			ResourceWidget[i]->SetValue(0);
 		}
 	}
+
+	// @Todo : GamePad상태일 때 PauseButton을 hide한다.
+	//if(IsValid(PauseButton))
+	//{
+	//	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bind
+	//}
 }
 
 UResourceWidget* UInGameLayerWidget::GetResourceWidget(int index) const
