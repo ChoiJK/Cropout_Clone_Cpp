@@ -14,8 +14,9 @@
 - 활성화 가능한 위젯 시스템
 - 여러가지 유용한 위젯
 
-## 고비를 처리하자
-- 
+## 생각 생각
+- Input처리에 대한 작업이 생각보다 많다
+- Viewport Input은 InGame Input과 분리되어있다
 
 
 ## 작업 순서
@@ -49,15 +50,7 @@
             - White
             - Dark
             - Etc...
-- CommonActivatableWidget
-    - 
-
-- UI 배치
-    - Overlay
-        - Overlay 안에는 여러 위젯을 배치할 수 있음.
-        - 서로 겹쳐서 렌더링 됨
-    -Common Activatable Widget Stack
-        - 기본적으로 메뉴 스택을 구축할 수 있게 해주는 위젯
+- 이제 UI들을 배치하고 로직을 작성해보자.
 
 ## 팁
 - 텍스쳐를 UI용으로 설정 일괄 변경
@@ -77,5 +70,5 @@
 
 ## 기타
 #### CommonUI가 활성화될 때마다 기본적인 이동입력이 비활성화 되는 것 같음. 해결 방법은?
-- 
+- @ TODO
 
