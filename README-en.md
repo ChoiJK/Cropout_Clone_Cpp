@@ -1,7 +1,7 @@
 # Cropout_Clone_Cpp
 
-[![en](https://img.shields.io/badge/lang-en-red)](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/README-en.md)
-[![kr](https://img.shields.io/badge/lang-kr-blue)](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/README.md)
+[![en](https://img.shields.io/badge/lang-en-red)](README-en.md)
+[![kr](https://img.shields.io/badge/lang-kr-blue)](README.md)
 
 ## 1. Introduction
 

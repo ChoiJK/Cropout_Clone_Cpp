@@ -1,7 +1,7 @@
 # Cropout with Cpp
 
-[![en](https://img.shields.io/badge/lang-en-red)](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/README-en.md)
-[![kr](https://img.shields.io/badge/lang-kr-blue)](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/README.md)
+[![en](https://img.shields.io/badge/lang-en-red)](README-en.md)
+[![kr](https://img.shields.io/badge/lang-kr-blue)](README.md)
 
 ---
 
@@ -70,7 +70,7 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 
 ## 6. 정리, 아이디어
 - Unreal
-    - GamePlay Framework
+    - [GamePlay Framework](Pages/GamePlay%20Framework.md)
     - Actor, ActorComponent
     - Resource Load
     - 갖가지 Pointer
@@ -81,13 +81,13 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
         - Legacy Input
         - Enhanced Input
         - UMG Input - link
-        - [CommonUI Input](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/Pages/CommonUI.md)
+        - [CommonUI Input](Pages/CommonUI.md)
     - Behaviour Tree
     - UI
         - UMG
-        - [CommonUI](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/Pages/CommonUI.md)
+        - [CommonUI](Pages/CommonUI.md)
         - UMG Input - link
-        - [CommonUI Input](https://github.com/ChoiJK/Cropout_Clone_Cpp/blob/develop/Pages/CommonUI.md)
+        - [CommonUI Input](Pages/CommonUI.md)
     - Sound
 - 아이디어
     - UI With MVP
