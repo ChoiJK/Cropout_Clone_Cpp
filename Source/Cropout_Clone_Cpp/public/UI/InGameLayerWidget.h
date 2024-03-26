@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "CommonActivatableWidget.h"
 #include "InGameLayerWidget.generated.h"
 
 class UButtonWidget;
@@ -12,7 +12,7 @@ class UResourceWidget;
 class UCommonTextBlock;
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API UInGameLayerWidget : public UUserWidget
+class CROPOUT_CLONE_CPP_API UInGameLayerWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 

@@ -2,6 +2,7 @@
 
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Components/TimelineComponent.h"
+#include "Enum/ResourceType.h"
 
 AResourceBaseActor::AResourceBaseActor()
 {

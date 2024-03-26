@@ -2,7 +2,7 @@
 #include "Player/CropoutPlayer.h"
 
 #include "Core/CropoutPlayerController.h"
-#include "Villager/Villager.h"
+#include "Entity/Villager/Villager.h"
 #include "Player/Components/MovementInputHandler.h"
 
 #include "InputMappingContext.h"

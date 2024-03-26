@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Data/VillagerJob.h"
-#include "Interactable/Resource/ResourcebaseActor.h"
+#include "Enum/ResourceType.h"
 #include "Villager.generated.h"
 
 class UFloatingPawnMovement;

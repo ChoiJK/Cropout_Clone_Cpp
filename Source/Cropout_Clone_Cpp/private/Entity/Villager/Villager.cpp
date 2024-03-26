@@ -8,9 +8,9 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StreamableManager.h"
-#include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayMontageCallbackProxy.h"
+#include "Enum/ResourceType.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;
 

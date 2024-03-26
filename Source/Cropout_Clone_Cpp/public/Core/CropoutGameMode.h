@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Interactable/Resource/ResourceBaseActor.h"
+#include "Enum/ResourceType.h"
 #include "CropoutGameMode.generated.h"
 
 class UCropoutGameInstance;
@@ -14,14 +14,16 @@ class ABuildingBaseActor;
 class ASpawner;
 class AVillager;
 class UInGameLayerWidget;
+class AUiManager;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	AUiManager* UIManager;
+
 	TMap<EResourceType, int> ResourceBank;
-	void UpdateResourcesWidget(EResourceType type);
 	void ResourceDebugMessage();
 
 public:
@@ -38,13 +40,14 @@ public:
 	TArray<AVillager*> Villagers;
 	void SpawnVillagersInBegin();
 	AVillager* SpawnVillager();
-	void UpdateVillagerCount();
+	int GetVillagerCount() { return Villagers.Num(); }
 
 	ABuildingBaseActor* TownHall;
 	TSubclassOf<ABuildingBaseActor> TownHall_Ref;
 	TSubclassOf<ABuildingBaseActor> GetTownHallRef();
 	void SpawnTownHall();
 
+	int GetResourceAmount(EResourceType type);
 	void StoreResource(EResourceType type, int amount);
 	bool ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount);
 
@@ -63,5 +66,4 @@ protected:
 public:
 	UCropoutGameInstance* GameInstance;
 	ASpawner* SpawnerRef;
-	UInGameLayerWidget* UI_HUD;
 };

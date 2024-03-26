@@ -9,17 +9,15 @@
 #include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutPlayerController.h"
-#include "Interactable/Building/BuildingBaseActor.h"
+#include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/CropoutPlayer.h"
 #include "Spawn/Spawner.h"
-#include "Villager/Villager.h"
+#include "Entity/Villager/Villager.h"
 #include "AudioModulationStatics.h"
 #include "ShaderPrintParameters.h"
-#include "Editor/UMGEditor/Public/WidgetBlueprint.h"
-#include "UI/InGameLayerWidget.h"
-#include "UI/ResourceWidget.h"
 #include "UI/UiManager.h"
+#include "Enum/ResourceType.h"
 
 ACropoutGameMode::ACropoutGameMode()
 {
@@ -27,6 +25,10 @@ ACropoutGameMode::ACropoutGameMode()
 	PlayerControllerClass = ACropoutPlayerController::StaticClass();
 
 	Villager_Ref = AVillager::StaticClass();
+	UIManager = Cast<AUiManager>(
+		GetWorld()->SpawnActor(AUiManager::StaticClass(), &FVector::ZeroVector, &FRotator::ZeroRotator));
+
+	check(UIManager);
 }
 
 void ACropoutGameMode::StartPlay()
@@ -65,16 +67,6 @@ void ACropoutGameMode::BeginPlay()
 		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
 
-	// Create Main HUD
-	if(IsValid(AUiManager::Instance->InGameLayerWidgetClass))
-	{
-		UI_HUD = Cast<UInGameLayerWidget>(
-			CreateWidget(GetWorld(), AUiManager::Instance->InGameLayerWidgetClass));
-		check(IsValid(UI_HUD))
-
-		UI_HUD->AddToViewport();
-		UI_HUD->SetVisibility(ESlateVisibility::Visible);
-	}
 
 	// Save Resrouce with creation complete up to the UI
 	StoreResource(EResourceType::Food, 100);
@@ -190,6 +182,11 @@ void ACropoutGameMode::SpawnTownHall()
 	TownHall = Cast<ABuildingBaseActor>(GetWorld()->SpawnActor(townHallRef, &spawnLocation));
 }
 
+int ACropoutGameMode::GetResourceAmount(EResourceType type)
+{
+	return ResourceBank.Contains(type) ? ResourceBank[type] : 0;
+}
+
 TSubclassOf<ABuildingBaseActor> ACropoutGameMode::GetTownHallRef()
 {
 	if(TownHall_Ref == nullptr)
@@ -215,7 +212,7 @@ void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 		ResourceBank[type] += amount;
 	}
 
-	UpdateResourcesWidget(type);
+	UIManager->UpdateResourcesWidget(type);
 	//ResourceDebugMessage();
 }
 
@@ -237,25 +234,11 @@ bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, 
 		}
 	}
 
-	UpdateResourcesWidget(type);
+	UIManager->UpdateResourcesWidget(type);
 	//ResourceDebugMessage();
 
 	return isWithdrawn;
 }
-
-void ACropoutGameMode::UpdateResourcesWidget(EResourceType type)
-{
-	const int resourceIndex = static_cast<int>(type) - 1;
-	if(IsValid(UI_HUD))
-	{
-		UResourceWidget* resourceWidget = UI_HUD->GetResourceWidget(resourceIndex);
-		if(IsValid(resourceWidget))
-		{
-			resourceWidget->SetValue(ResourceBank[type]);
-		}
-	}
-}
-
 
 void ACropoutGameMode::ResourceDebugMessage()
 {
@@ -339,21 +322,11 @@ AVillager* ACropoutGameMode::SpawnVillager()
 		if(NewPawn != nullptr)
 		{
 			Villagers.Add(NewPawn);
-			UpdateVillagerCount();
+			UIManager->UpdateVillagerCount();
 		}
 
 		return NewPawn;
 	}
 
 	return nullptr;
-}
-
-void ACropoutGameMode::UpdateVillagerCount()
-{
-	if(IsValid(UI_HUD))
-	{
-		UI_HUD->SetVillagerCount(Villagers.Num());
-	}
-
-	// @TODO : gameInstance를 통해 저장
 }

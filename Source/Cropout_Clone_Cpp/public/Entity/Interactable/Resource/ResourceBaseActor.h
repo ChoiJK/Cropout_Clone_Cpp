@@ -6,16 +6,8 @@
 #include "Entity/Interactable/InteractableBaseActor.h"
 #include "Components/TimelineComponent.h"
 #include "VisualLogger/VisualLoggerTypes.h"
+#include "Enum/ResourceType.h"
 #include "ResourceBaseActor.generated.h"
-
-UENUM()
-enum class EResourceType : uint8
-{
-	None UMETA(DisplayName = "None"),
-	Food UMETA(DisplayName = "Food"),
-	Wood UMETA(DisplayName = "Wood"),
-	Stone UMETA(DisplayName = "Stone"),
-};
 
 inline FString EnumToString(EResourceType Value)
 {

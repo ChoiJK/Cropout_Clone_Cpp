@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Enum/ResourceType.h"
 #include "ResourceWidget.generated.h"
 
 class UImage;
 class UCommonTextBlock;
-enum class EResourceType : uint8;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UResourceWidget : public UUserWidget

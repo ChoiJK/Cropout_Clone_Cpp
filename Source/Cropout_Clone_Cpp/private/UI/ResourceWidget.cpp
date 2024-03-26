@@ -4,7 +4,7 @@
 #include "UI/ResourceWidget.h"
 #include "CommonTextBlock.h"
 #include "Components/Image.h"
-#include "Interactable/Resource/ResourceBaseActor.h"
+#include "Enum/ResourceType.h"
 
 void UResourceWidget::NativeConstruct()
 {

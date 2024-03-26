@@ -6,8 +6,7 @@
 #include "CommonTextBlock.h"
 #include "Components/VerticalBox.h"
 #include "UI/ResourceWidget.h"
-#include "Interactable/Resource/ResourceBaseActor.h"
-#include "Kismet/GameplayStatics.h"
+#include "Enum/ResourceType.h"
 #include "UI/ButtonWidget.h"
 #include "UI/UiManager.h"
 

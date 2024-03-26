@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable/Resource/ResourceBaseActor.h"
+#include "Entity/Interactable/Resource/ResourceBaseActor.h"
 
 #include "SpawnData.generated.h"
 
