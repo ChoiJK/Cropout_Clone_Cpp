@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable/InteractableBaseActor.h"
+#include "Entity/Interactable/InteractableBaseActor.h"
 #include "Components/TimelineComponent.h"
 #include "VisualLogger/VisualLoggerTypes.h"
 #include "ResourceBaseActor.generated.h"

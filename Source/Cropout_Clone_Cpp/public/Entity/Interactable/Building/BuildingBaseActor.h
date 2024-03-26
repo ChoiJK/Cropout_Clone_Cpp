@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable/InteractableBaseActor.h"
+#include "Entity/Interactable/InteractableBaseActor.h"
 #include "BuildingBaseActor.generated.h"
 
 class UBoxComponent;

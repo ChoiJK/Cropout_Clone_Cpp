@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Villager/AI/Task/BTTask_ReturnToIdle.h"
+#include "Entity/Villager/AI/Task/BTTask_ReturnToIdle.h"
 
 #include "AIController.h"
-#include "VIllager/Villager.h"
+#include "Entity/VIllager/Villager.h"
 
 
 UBTTask_ReturnToIdle::UBTTask_ReturnToIdle(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

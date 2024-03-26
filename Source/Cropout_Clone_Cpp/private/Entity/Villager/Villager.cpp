@@ -1,15 +1,14 @@
-#include "VIllager/Villager.h"
+#include "Entity/VIllager/Villager.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/DecalComponent.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StreamableManager.h"
-#include "Interactable/Resource/ResourceBaseActor.h"
+#include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayMontageCallbackProxy.h"
 

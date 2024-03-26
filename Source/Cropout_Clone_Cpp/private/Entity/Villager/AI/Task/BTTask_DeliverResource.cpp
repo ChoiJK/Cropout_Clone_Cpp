@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Villager/AI/Task/BTTask_DeliverResource.h"
+#include "Entity/Villager/AI/Task/BTTask_DeliverResource.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "VIllager/Villager.h"
+#include "Entity/VIllager/Villager.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BTTask_DeliverResource)
 

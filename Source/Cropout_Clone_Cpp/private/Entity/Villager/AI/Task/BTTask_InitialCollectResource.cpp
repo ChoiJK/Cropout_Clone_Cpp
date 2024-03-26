@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Villager/AI/Task/BTTask_InitialCollectResource.h"
+#include "Entity/Villager/AI/Task/BTTask_InitialCollectResource.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Core/CropoutGameMode.h"
-#include "Interactable/Building/BuildingBaseActor.h"
-#include "Interactable/Resource/ResourceBaseActor.h"
+#include "Entity/Interactable/Building/BuildingBaseActor.h"
+#include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "VIllager/Villager.h"
+#include "Entity/VIllager/Villager.h"
 
 
 class AVillager;
