@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Enum/ResourceType.h"
+#include "Data/WidgetTableData.h"
 #include "UiManager.generated.h"
 
 class ACropoutGameMode;
@@ -21,17 +22,12 @@ class CROPOUT_CLONE_CPP_API AUiManager : public AActor
 
 	UUiBase* UIBase;
 	UInGameLayerWidget* UI_HUD;
+	TMap<EWidgetType, TSubclassOf<UUserWidget>> WidgetTable;
 
 public:
 	// Sets default values for this actor's properties
-	AUiManager();
 	static AUiManager* Instance;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UInGameLayerWidget> InGameLayerWidgetClass;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UResourceWidget> ResourceWidgetClass;
+	AUiManager();
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,6 +35,8 @@ protected:
 	virtual void Destroyed() override;
 
 public:
+	TSubclassOf<UUserWidget>* GetWidgetClass(EWidgetType type);
+
 	void UpdateResourcesWidget(EResourceType type);
 	void UpdateVillagerCount();
 };

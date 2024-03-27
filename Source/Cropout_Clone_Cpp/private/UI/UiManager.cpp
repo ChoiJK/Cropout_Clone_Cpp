@@ -4,6 +4,7 @@
 #include "UI/UiManager.h"
 
 #include "Core/CropoutGameMode.h"
+#include "Data/WidgetTableData.h"
 #include "UI/InGameLayerWidget.h"
 #include "UI/ResourceWidget.h"
 #include "UI/UiBase.h"
@@ -15,6 +16,24 @@ AUiManager* AUiManager::Instance = nullptr;
 AUiManager::AUiManager()
 {
 	Instance = this;
+
+	ConstructorHelpers::FObjectFinder<UDataTable> villagerJob
+		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTable'"));
+	check(villagerJob.Succeeded());
+
+	if(villagerJob.Succeeded())
+	{
+		TArray<FName> rowNames = villagerJob.Object->GetRowNames();
+		for(auto rowName : rowNames)
+		{
+			FWidgetTableData* widgetData = villagerJob.Object->FindRow<FWidgetTableData>(
+				rowName, TEXT("WidgetDataTable"));
+			if(widgetData && widgetData->WidgetType != EWidgetType::None)
+			{
+				WidgetTable.Add(widgetData->WidgetType, widgetData->WidgetClass);
+			}
+		}
+	}
 }
 
 // Called when the game starts or when spawned
@@ -24,17 +43,26 @@ void AUiManager::BeginPlay()
 
 	GameMode = Cast<ACropoutGameMode>(GetWorld()->GetAuthGameMode());
 
-	check(IsValid(InGameLayerWidgetClass));
-	check(IsValid(ResourceWidgetClass));
-	// Create Main HUD
-	if(IsValid(Instance->InGameLayerWidgetClass))
+	//TSubclassOf<UUserWidget>* ingameMain = WidgetTable.Find(EWidgetType::InGameMain);
+	//UI_HUD = Cast<UInGameLayerWidget>(CreateWidget(GetWorld(), ingameMain->Get()));
+	//if(IsValid(UI_HUD))
+	//{
+	//	UI_HUD->AddToViewport();
+	//	UI_HUD->SetVisibility(ESlateVisibility::Visible);
+	//}
+
+	TSubclassOf<UUserWidget>* uiBase = WidgetTable.Find(EWidgetType::UiBase);
+	UIBase = Cast<UUiBase>(CreateWidget(GetWorld(), uiBase->Get()));
+	if(IsValid(UIBase))
 	{
-		UIBase = Cast<UUiBase>(
-			CreateWidget(GetWorld(), Instance->InGameLayerWidgetClass));
 		UIBase->AddToViewport();
 		UIBase->SetVisibility(ESlateVisibility::Visible);
+	}
 
-		UIBase->PushActivatableWidget(InGameLayerWidgetClass);
+	TSubclassOf<UUserWidget>* userWidget = WidgetTable.Find(EWidgetType::InGameMain);
+	if(userWidget)
+	{
+		UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushActivatableWidgetClass(userWidget->Get()));
 	}
 }
 
@@ -42,6 +70,11 @@ void AUiManager::Destroyed()
 {
 	Super::Destroyed();
 	Instance = this;
+}
+
+TSubclassOf<UUserWidget>* AUiManager::GetWidgetClass(EWidgetType type)
+{
+	return WidgetTable.Find(type);
 }
 
 void AUiManager::UpdateResourcesWidget(EResourceType type)

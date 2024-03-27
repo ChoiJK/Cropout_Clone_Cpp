@@ -25,10 +25,6 @@ ACropoutGameMode::ACropoutGameMode()
 	PlayerControllerClass = ACropoutPlayerController::StaticClass();
 
 	Villager_Ref = AVillager::StaticClass();
-	UIManager = Cast<AUiManager>(
-		GetWorld()->SpawnActor(AUiManager::StaticClass(), &FVector::ZeroVector, &FRotator::ZeroRotator));
-
-	check(UIManager);
 }
 
 void ACropoutGameMode::StartPlay()
@@ -67,6 +63,10 @@ void ACropoutGameMode::BeginPlay()
 		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
 
+	UIManager = Cast<AUiManager>(
+		GetWorld()->SpawnActor(AUiManager::StaticClass(), &FVector::ZeroVector, &FRotator::ZeroRotator));
+
+	check(UIManager);
 
 	// Save Resrouce with creation complete up to the UI
 	StoreResource(EResourceType::Food, 100);

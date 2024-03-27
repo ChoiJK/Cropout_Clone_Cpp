@@ -14,6 +14,10 @@ class UCommonTextBlock;
 UCLASS()
 class CROPOUT_CLONE_CPP_API UInGameLayerWidget : public UCommonActivatableWidget
 {
+public:
+	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
+
+private:
 	GENERATED_BODY()
 
 	UResourceWidget* ResourceWidget[3];

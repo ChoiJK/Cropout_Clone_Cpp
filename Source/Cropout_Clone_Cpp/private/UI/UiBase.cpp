@@ -3,26 +3,14 @@
 
 #include "UI/UiBase.h"
 
-#include "Blueprint/WidgetTree.h"
 #include "Widgets/CommonactivatableWidgetContainer.h"
-#include "Components/Overlay.h"
 
 void UUiBase::NativeConstruct()
 {
 	Super::NativeConstruct();
-	UPanelWidget* RootWidget = Cast<UPanelWidget>(GetRootWidget());
-	Overlay = WidgetTree->ConstructWidget<UOverlay>(UOverlay::StaticClass(), TEXT("Overlay"));
-	MenuStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
-		UCommonActivatableWidgetStack::StaticClass(), TEXT("MenuStack"));
-	PromptStack = WidgetTree->ConstructWidget<UCommonActivatableWidgetStack>(
-		UCommonActivatableWidgetStack::StaticClass(), TEXT("PromptStack"));
-
-	RootWidget->AddChild(Overlay);
-	Overlay->AddChild(MenuStack);
-	Overlay->AddChild(PromptStack);
 }
 
-void UUiBase::PushActivatableWidget(TSubclassOf<UCommonActivatableWidget> Menu)
+UCommonActivatableWidget* UUiBase::PushActivatableWidgetClass(TSubclassOf<UCommonActivatableWidget> widgetClass)
 {
-	MenuStack->AddWidget(Menu);
+	return MenuStack->AddWidget(widgetClass);
 }

@@ -16,11 +16,13 @@ void UInGameLayerWidget::NativeConstruct()
 
 	check(ResourceContainer);
 
-	if(IsValid(AUiManager::Instance->ResourceWidgetClass))
+	TSubclassOf<UUserWidget>* resourceWidget = AUiManager::Instance->GetWidgetClass(EWidgetType::ResourceElement);
+
+	if(resourceWidget)
 	{
 		for(int i = 0; i < 3; ++i)
 		{
-			ResourceWidget[i] = CreateWidget<UResourceWidget>(this, AUiManager::Instance->ResourceWidgetClass);
+			ResourceWidget[i] = CreateWidget<UResourceWidget>(this, resourceWidget->Get());
 			ResourceContainer->AddChildToVerticalBox(ResourceWidget[i]);
 			ResourceWidget[i]->SetResourceType(static_cast<EResourceType>(i + 1));
 			ResourceWidget[i]->SetValue(0);
@@ -30,8 +32,15 @@ void UInGameLayerWidget::NativeConstruct()
 	// @Todo : GamePad상태일 때 PauseButton을 hide한다.
 	//if(IsValid(PauseButton))
 	//{
-	//	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bind
+	//	UGameplayStatics::GetPlayerController(GetWorld(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ), 0)->bind
 	//}
+}
+
+TOptional<FUIInputConfig> UInGameLayerWidget::GetDesiredInputConfig() const
+{
+	FUIInputConfig config = FUIInputConfig(ECommonInputMode::All, EMouseCaptureMode::NoCapture);
+
+	return config;
 }
 
 UResourceWidget* UInGameLayerWidget::GetResourceWidget(int index) const
