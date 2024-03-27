@@ -25,5 +25,6 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	UCommonActivatableWidget* PushActivatableWidgetClass(TSubclassOf<UCommonActivatableWidget> widgetClass);
+	UCommonActivatableWidget* PushMenuClass(TSubclassOf<UCommonActivatableWidget> widgetClass);
+	UCommonActivatableWidget* PushPromptClass(TSubclassOf<UCommonActivatableWidget> widgetClass);
 };

@@ -6,10 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "Enum/ResourceType.h"
 #include "Data/WidgetTableData.h"
+#include "UI/UiBase.h"
 #include "UiManager.generated.h"
 
 class ACropoutGameMode;
-class UUiBase;
 class UInGameLayerWidget;
 class UResourceWidget;
 
@@ -36,6 +36,8 @@ protected:
 
 public:
 	TSubclassOf<UUserWidget>* GetWidgetClass(EWidgetType type);
+
+	UUiBase* GetUIBase() const;
 
 	void UpdateResourcesWidget(EResourceType type);
 	void UpdateVillagerCount();

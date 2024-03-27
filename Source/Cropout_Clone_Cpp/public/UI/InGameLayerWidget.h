@@ -34,6 +34,9 @@ protected:
 
 	virtual void NativeConstruct() override;
 
+	UFUNCTION()
+	void OnPauseButtonClicked();
+
 public:
 	UResourceWidget* GetResourceWidget(int index) const;
 	void SetVillagerCount(int count) const;

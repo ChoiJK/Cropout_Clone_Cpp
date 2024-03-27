@@ -10,7 +10,12 @@ void UUiBase::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-UCommonActivatableWidget* UUiBase::PushActivatableWidgetClass(TSubclassOf<UCommonActivatableWidget> widgetClass)
+UCommonActivatableWidget* UUiBase::PushMenuClass(TSubclassOf<UCommonActivatableWidget> widgetClass)
 {
 	return MenuStack->AddWidget(widgetClass);
+}
+
+UCommonActivatableWidget* UUiBase::PushPromptClass(TSubclassOf<UCommonActivatableWidget> widgetClass)
+{
+	return PromptStack->AddWidget(widgetClass);
 }

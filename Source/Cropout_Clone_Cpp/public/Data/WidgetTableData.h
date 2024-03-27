@@ -11,6 +11,7 @@ enum class EWidgetType : uint8
 	UiBase UMETA(DisplayName = "UiBase"),
 	InGameMain UMETA(DisplayName = "InGameMainWidget"),
 	ResourceElement UMETA(DisplayName = "ResourceElementWidget"),
+	PauseMenu UMETA(DisplayName = "PauseMenuWidget"),
 };
 
 USTRUCT(BlueprintType)

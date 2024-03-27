@@ -2,7 +2,9 @@
 
 
 #include "Core/CropoutGameInstance.h"
-#include "../../public/Global/GlobalEventDispatcher.h"
+#include "Global/GlobalEventDispatcher.h"
+#include "Global/GlobalSharedVariable.h"
+#include "Data/SaveData.h"
 
 void UCropoutGameInstance::Init()
 {
@@ -10,6 +12,8 @@ void UCropoutGameInstance::Init()
 
 	GlobalEventDispatcher = MakeShared<FGlobalEventDispatcher>();
 	GlobalSharedVariable = MakeShared<FGlobalSharedVariable>(this);
+
+	SaveData = NewObject<USaveData>();
 
 	UE_LOG(LogTemp, Warning, TEXT( "GameInstance Init" ));
 }

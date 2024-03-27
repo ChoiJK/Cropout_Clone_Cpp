@@ -7,7 +7,6 @@
 #include "Data/WidgetTableData.h"
 #include "UI/InGameLayerWidget.h"
 #include "UI/ResourceWidget.h"
-#include "UI/UiBase.h"
 #include "Enum/ResourceType.h"
 
 AUiManager* AUiManager::Instance = nullptr;
@@ -62,7 +61,7 @@ void AUiManager::BeginPlay()
 	TSubclassOf<UUserWidget>* userWidget = WidgetTable.Find(EWidgetType::InGameMain);
 	if(userWidget)
 	{
-		UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushActivatableWidgetClass(userWidget->Get()));
+		UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
 	}
 }
 
@@ -75,6 +74,11 @@ void AUiManager::Destroyed()
 TSubclassOf<UUserWidget>* AUiManager::GetWidgetClass(EWidgetType type)
 {
 	return WidgetTable.Find(type);
+}
+
+UUiBase* AUiManager::GetUIBase() const
+{
+	return UIBase;
 }
 
 void AUiManager::UpdateResourcesWidget(EResourceType type)

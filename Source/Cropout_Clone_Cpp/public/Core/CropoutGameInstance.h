@@ -7,20 +7,17 @@
 #include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Engine/StreamableManager.h"
+#include "Data/SaveData.h"
 
 #include "CropoutGameInstance.generated.h"
 
-/**
- *
- */
-
 UCLASS()
-
 class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-private:
+	USaveData* SaveData;
+
 	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
 	TSharedPtr<FGlobalSharedVariable> GlobalSharedVariable;
 	FStreamableManager streamableManager;
@@ -42,5 +39,10 @@ public:
 	TWeakPtr<FGlobalSharedVariable> GetGlobalSharedVariable() const
 	{
 		return GlobalSharedVariable;
+	}
+
+	USaveData* GetSaveData() const
+	{
+		return SaveData;
 	}
 };

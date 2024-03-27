@@ -129,7 +129,7 @@ void ACropoutGameMode::PlayMusic()
 	UAudioModulationStatics::SetGlobalBusMixValue(GetWorld(), percVolControlBus, 1.f, 1.f);
 	UAudioModulationStatics::SetGlobalBusMixValue(GetWorld(), stringsVolControlBus, 0.f, 1.f);
 
-	UAudioModulationStatics::SetGlobalBusMixValue(GetWorld(), winLoseControlBus, 05.f, 0.f);
+	UAudioModulationStatics::SetGlobalBusMixValue(GetWorld(), winLoseControlBus, 0.5f, 0.f);
 	UAudioModulationStatics::SetGlobalBusMixValue(GetWorld(), musicStopControlBus, 0.f, 0.f);
 
 	UAudioModulationStatics::SetGlobalBusMixValue(GetWorld(), newMapControlBus, 1.f);

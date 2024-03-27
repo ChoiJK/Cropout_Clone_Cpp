@@ -9,6 +9,7 @@
 #include "Enum/ResourceType.h"
 #include "UI/ButtonWidget.h"
 #include "UI/UiManager.h"
+#include "CommonButtonBase.h"
 
 void UInGameLayerWidget::NativeConstruct()
 {
@@ -34,6 +35,15 @@ void UInGameLayerWidget::NativeConstruct()
 	//{
 	//	UGameplayStatics::GetPlayerController(GetWorld(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ), 0)->bind
 	//}
+
+	PauseButton->OnClicked().AddUObject(this, &UInGameLayerWidget::OnPauseButtonClicked);
+}
+
+void UInGameLayerWidget::OnPauseButtonClicked()
+{
+	TSubclassOf<UUserWidget>* pauseMenu = AUiManager::Instance->GetWidgetClass(EWidgetType::PauseMenu);
+
+	AUiManager::Instance->GetUIBase()->PushPromptClass(pauseMenu->Get());
 }
 
 TOptional<FUIInputConfig> UInGameLayerWidget::GetDesiredInputConfig() const
