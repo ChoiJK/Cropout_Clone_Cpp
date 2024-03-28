@@ -6,6 +6,7 @@
 #include "CommonTextBlock.h"
 #include "Components/Slider.h"
 #include "Core/CropoutGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void USoundSliderWidget::NativePreConstruct()
@@ -44,6 +45,7 @@ void USoundSliderWidget::OnValueChanged(float Value)
 		if(IsValid(saveData))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SoundMix: %f"), Value);
+			UGameplayStatics::SetSoundMixClassOverride(GetWorld(), InSoundMixModifier, InSoundClass, Value);
 			saveData->SetSoundMix(static_cast<int>(Index), Value);
 		}
 	}

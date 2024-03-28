@@ -15,6 +15,11 @@ class CROPOUT_CLONE_CPP_API UPauseMenuWidget : public UCommonActivatableWidget
 	GENERATED_BODY()
 
 protected:
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnResumeButtonClicked();
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButtonWidget* ResumeButton;
 
