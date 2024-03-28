@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/ResourceWidget.h"
+#include "UI/Element/ResourceWidget.h"
 #include "CommonTextBlock.h"
 #include "Components/Image.h"
 #include "Enum/ResourceType.h"

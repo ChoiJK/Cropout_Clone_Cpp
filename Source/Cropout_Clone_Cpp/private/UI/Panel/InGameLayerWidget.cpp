@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/InGameLayerWidget.h"
+#include "UI/Panel/InGameLayerWidget.h"
 
 #include "CommonTextBlock.h"
 #include "Components/VerticalBox.h"
-#include "UI/ResourceWidget.h"
+#include "UI/Element/ResourceWidget.h"
 #include "Enum/ResourceType.h"
-#include "UI/ButtonWidget.h"
+#include "UI/Element/ButtonWidget.h"
 #include "UI/UiManager.h"
 #include "CommonButtonBase.h"
 

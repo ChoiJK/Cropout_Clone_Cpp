@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/SoundSliderWidget.h"
+#include "UI/Element/SoundSliderWidget.h"
 
 #include "CommonTextBlock.h"
 #include "Components/Slider.h"
@@ -18,6 +18,7 @@ void USoundSliderWidget::NativePreConstruct()
 void USoundSliderWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
 	UpdateSlider();
 	Slider->OnValueChanged.AddDynamic(this, &USoundSliderWidget::OnValueChanged);
 }

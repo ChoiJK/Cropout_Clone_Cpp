@@ -5,8 +5,8 @@
 
 #include "Core/CropoutGameMode.h"
 #include "Data/WidgetTableData.h"
-#include "UI/InGameLayerWidget.h"
-#include "UI/ResourceWidget.h"
+#include "UI/Panel/InGameLayerWidget.h"
+#include "UI/Element/ResourceWidget.h"
 #include "Enum/ResourceType.h"
 
 AUiManager* AUiManager::Instance = nullptr;

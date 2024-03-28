@@ -15,16 +15,25 @@ class CROPOUT_CLONE_CPP_API UUiBase : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 
+private:
+	bool OnlyUIInput = false;
+
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	UCommonActivatableWidgetStack* MenuStack;
+	UCommonActivatableWidgetStack* MainStack;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCommonActivatableWidgetStack* PromptStack;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UCommonActivatableWidgetStack* BottomStack;
+
+	UFUNCTION()
+	void OnPromptStackChanged(UCommonActivatableWidget* CommonActivatableWidget);
 	virtual void NativeConstruct() override;
 
 public:
 	UCommonActivatableWidget* PushMenuClass(TSubclassOf<UCommonActivatableWidget> widgetClass);
 	UCommonActivatableWidget* PushPromptClass(TSubclassOf<UCommonActivatableWidget> widgetClass);
+	UCommonActivatableWidget* PushBottomClass(TSubclassOf<UCommonActivatableWidget> widgetClass);
 };
