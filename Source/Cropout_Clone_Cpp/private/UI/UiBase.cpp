@@ -53,6 +53,7 @@ void UUiBase::OnPromptStackChanged(UCommonActivatableWidget* CommonActivatableWi
 		{
 			UGameplayStatics::SetGamePaused(this, false);
 			playerController->SetInputMode(FInputModeGameAndUI());
+			playerController->bShowMouseCursor = false;
 		}
 
 		OnlyUIInput = isUIInput;
