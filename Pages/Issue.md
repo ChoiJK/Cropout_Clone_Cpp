@@ -20,4 +20,3 @@
    - ![alt text](Images/Issue_3.png)
 
 </details>
-

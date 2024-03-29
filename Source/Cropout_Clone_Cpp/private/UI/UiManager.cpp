@@ -63,6 +63,14 @@ void AUiManager::BeginPlay()
 	{
 		UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
 	}
+
+
+	TSubclassOf<UUserWidget>* buildOpenButton = Instance->GetWidgetClass(EWidgetType::BuildOpenButton);
+
+	if(buildOpenButton)
+	{
+		UIBase->PushPromptClass(buildOpenButton->Get());
+	}
 }
 
 void AUiManager::Destroyed()
