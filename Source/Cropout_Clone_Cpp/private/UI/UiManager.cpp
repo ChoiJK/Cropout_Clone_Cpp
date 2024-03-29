@@ -16,8 +16,13 @@ AUiManager::AUiManager()
 {
 	Instance = this;
 
+	if(this->GetFlags() & RF_ClassDefaultObject)
+	{
+		return;
+	}
+
 	ConstructorHelpers::FObjectFinder<UDataTable> villagerJob
-		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTable'"));
+		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTabl_C'"));
 	check(villagerJob.Succeeded());
 
 	if(villagerJob.Succeeded())
