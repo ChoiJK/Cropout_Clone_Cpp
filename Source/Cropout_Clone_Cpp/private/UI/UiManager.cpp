@@ -71,10 +71,9 @@ void AUiManager::BeginPlay()
 
 
 	TSubclassOf<UUserWidget>* buildOpenButton = Instance->GetWidgetClass(EWidgetType::BuildOpenButton);
-
 	if(buildOpenButton)
 	{
-		UIBase->PushPromptClass(buildOpenButton->Get());
+		UIBase->PushBottomClass(buildOpenButton->Get());
 	}
 }
 

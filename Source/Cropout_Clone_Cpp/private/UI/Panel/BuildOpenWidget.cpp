@@ -17,5 +17,5 @@ void UBuildOpenWidget::OnOpenButtonClicked()
 {
 	TSubclassOf<UUserWidget>* buildPanel = AUiManager::Instance->GetWidgetClass(EWidgetType::BuildPanel);
 
-	AUiManager::Instance->GetUIBase()->PushPromptClass(buildPanel->Get());
+	AUiManager::Instance->GetUIBase()->PushBottomClass(buildPanel->Get());
 }
