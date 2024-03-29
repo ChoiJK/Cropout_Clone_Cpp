@@ -22,7 +22,7 @@ AUiManager::AUiManager()
 	}
 
 	ConstructorHelpers::FObjectFinder<UDataTable> villagerJob
-		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTabl_C'"));
+		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTable'"));
 	check(villagerJob.Succeeded());
 
 	if(villagerJob.Succeeded())
