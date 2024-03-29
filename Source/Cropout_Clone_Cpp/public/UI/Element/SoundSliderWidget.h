@@ -19,8 +19,10 @@ class CROPOUT_CLONE_CPP_API USoundSliderWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCommonTextBlock* Descriptor;

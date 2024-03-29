@@ -23,6 +23,12 @@ void USoundSliderWidget::NativeConstruct()
 	Slider->OnValueChanged.AddDynamic(this, &USoundSliderWidget::OnValueChanged);
 }
 
+void USoundSliderWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+	Slider->OnValueChanged.RemoveDynamic(this, &USoundSliderWidget::OnValueChanged);
+}
+
 void USoundSliderWidget::UpdateSlider()
 {
 	UCropoutGameInstance* gi = Cast<UCropoutGameInstance>(GetGameInstance());
