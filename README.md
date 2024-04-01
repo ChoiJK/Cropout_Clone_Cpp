@@ -67,6 +67,8 @@ We are currently about 60% of the way through the task.
 - Setting win/loss conditions for the game
 - Save/Load functionality
 - Cross-Platform Testing
+- Data flow refactoring for Interactable, Buildable, and Build UIs
+    - ![alt text](Pages/Images/README_1.png)
 
 https://github.com/ChoiJK/Cropout_Clone_Cpp/assets/14192551/dd1c1670-f1d3-467f-9a97-75af6d196a46
 

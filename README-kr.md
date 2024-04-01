@@ -67,6 +67,8 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 - Game의 승리/패배 조건 설정
 - Save/Load 기능
 - 크로스 플랫폼 테스트
+- Interactable, Buildable, Build UI를 위한 데이터 흐름 리팩토링
+    - ![alt text](Pages/Images/README_1.png)
 
 ## 6. 정리, 아이디어
 - Unreal
