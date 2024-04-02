@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/LevelScriptActor.h"
+#include "CropoutLevelScriptBase.h"
 #include "UObject/UObjectBase.h"
 
 #include "InGameLavel.generated.h"
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API AInGameLavel : public ALevelScriptActor
+class CROPOUT_CLONE_CPP_API AInGameLavel : public ACropoutLevelScriptBase
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
 };
