@@ -95,6 +95,7 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
     - [이슈](Pages/Issue.md)
 - 아이디어
     - UI With MVP
+        - [UniRx러운 무언가](Pages/UeRxPlugin.md)
     - Resource Loader
         - Resource를 Table로 빼서 관리
         - 모든 리소스의 Load를 일원화

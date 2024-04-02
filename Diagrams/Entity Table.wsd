@@ -1,111 +1,121 @@
 @startuml
 
-    enum ResourceType{
-    }
+set namespaceSeparator ::
 
-    struct ConstructionCost{
-        ResourceType Type
-        float Cost
-    }
-    ResourceType <-- ConstructionCost
+enum ResourceType{
+}
 
-    struct BuildableInfo{
-        FName Name
-        BuildType type
-        Image icon
-        Color InfoBackgroundColor
-        List<ConstructionCost> CostArr
-    }
-    ConstructionCost <-- BuildableInfo
+struct Data::ConstructionCost{
+    ResourceType Type
+    float Cost
+}
 
-    struct SpawnInfo{
-        List<FName> BiomeEntityNames
-        float BiomeScale
-        int BiomeCount
-        int SpawnPerBiome
-        float RandomRotatingRange
-        float ScaleRange
-    }
+struct Data::BuildableInfo{
+    FName Name
+    BuildType type
+    Image icon
+    Color InfoBackgroundColor
+    List<ConstructionCost> CostArr
+}
 
-    struct InteractableInfo{
-        FName Name
-        bool RequireBuild
-        bool EnableGroundBlend
+struct Data::SpawnInfo{
+    List<FName> BiomeEntityNames
+    float BiomeScale
+    int BiomeCount
+    int SpawnPerBiome
+    float RandomRotatingRange
+    float ScaleRange
+}
 
-        UStaticMeshArray MeshList
+struct Data::InteractableInfo{
+    FName Name
+    bool RequireBuild
+    bool EnableGroundBlend
 
-        ResourceType type
+    UStaticMeshArray MeshList
 
-        float ResourceAmount
-        float CollectionTime
-        float CollectionValue
-        bool EnableGroundBlend
-        bool UseRandomMesh
-    }
-    ResourceType <-- InteractableInfo
+    ResourceType type
 
-    class TableManager{
-        List<BuildableInfo>BuildableInfoArr
-        List<InteractableInfo> InteractableInfoArr
-        List<SpawnInfo> SpawnInfoArr
+    float ResourceAmount
+    float CollectionTime
+    float CollectionValue
+    bool EnableGroundBlend
+    bool UseRandomMesh
+}
 
-        + GetValidBuildableInfos() : List<BuildableInfo>
-        + GetValidSpawnInfos() : List<SpawnInfo>
-        + GetValidInteractable(FName name) : InteractableInfo
-    }
-    note bottom : Includes sifting through the contents of a table for valid items --\n ex) GetValidBuildableInfos: removes and returns items that are \nin the BuildableInfoArr but not in the InteractableInfoArr, based on Name
-   
+class TableManager{
+    List<BuildableInfo>BuildableInfoArr
+    List<InteractableInfo> InteractableInfoArr
+    List<SpawnInfo> SpawnInfoArr
 
-    BuildableInfo <-- TableManager
-    InteractableInfo <-- TableManager
-    SpawnInfo <-- TableManager
-
-    class InteractableBase{
-        InteractableInfo Info
-    }
-    InteractableInfo <-- InteractableBase
-
-    class BuildingBase{
-
-    }
-    InteractableBase <|-- BuildingBase
-
-    class ResourceBase{
-
-    }
-    InteractableBase <|-- ResourceBase
-
-    class EntityManager{
-        List<InteractableBase> instances;
-
-        + AddInteractable(InteractableBase) : void
-    }
-    EntityManager --> InteractableBase
-
-    class Spawner{
-        + SpawnInteractable(FName name) : InteractableBase
-    }
-    note top : Factory
-    Spawner ..> TableManager : GetValidSpawnInfos
-    Spawner ..> TableManager : GetValidInteractable
-    Spawner ..> EntityManager : AddInteractable
-    Spawner --> InteractableBase
+    + GetValidBuildableInfos() : List<BuildableInfo>
+    + GetValidSpawnInfos() : List<SpawnInfo>
+    + GetValidInteractable(FName name) : InteractableInfo
+}
+'note up : Includes sifting through the contents of a table for valid items --\n ex) GetValidBuildableInfos: removes and returns items that are \nin the BuildableInfoArr but not in the InteractableInfoArr, based on Name
 
 
-    class BuildEntityCardWidget{
-        BuildableInfo Info
-    }
-    BuildEntityCardWidget --> BuildableInfo
-    BuildEntityCardWidget ..> Spawner
+class Entity::InteractableBase{
+    InteractableInfo Info
+}
 
-    
-    class BuildPanelWidget{
-        List<BuildEntityCardWidget> Cards
-    }
-    note left : By using GetValidBuildableItems, \n any BuildEntityCard can create an \n instance of InteractableBas
+class Entity::BuildingBase{
 
-    TableManager <.. BuildPanelWidget : GetValidBuildableItems
-    BuildEntityCardWidget <-- BuildPanelWidget : Create
+}
+
+class Entity::ResourceBase{
+
+}
+
+class Entity::EntityManager{
+    List<InteractableBase> instances;
+
+    + AddInteractable(InteractableBase) : void
+}
+
+class Spawner{
+    + SpawnInteractable(FName name) : InteractableBase
+}
+note top : Factory
+
+class UI::BuildEntityCardWidget{
+    BuildableInfo Info
+}
+
+
+class UI::BuildPanelWidget{
+    List<BuildEntityCardWidget> Cards
+}
+note left : By using GetValidBuildableItems, \n any BuildEntityCard can create an \n instance of InteractableBas
+
+
+ConstructionCost -down-> ResourceType
+BuildableInfo -down-> ConstructionCost
+InteractableInfo -down-> ResourceType
+
+TableManager --> BuildableInfo 
+TableManager --> InteractableInfo
+TableManager --> SpawnInfo
+SpawnInfo -[hidden]right-> BuildableInfo
+SpawnInfo -[hidden]down-> InteractableInfo
+ConstructionCost -[hidden]right-> SpawnInfo
+
+InteractableBase -left-> InteractableInfo
+BuildingBase -up-|> InteractableBase
+ResourceBase -up-|> InteractableBase
+
+EntityManager --> InteractableBase
+
+Spawner ..> TableManager : GetValidSpawnInfos
+Spawner ..> TableManager : GetValidInteractable
+Spawner ..> EntityManager : AddInteractable
+Spawner --> InteractableBase
+
+BuildEntityCardWidget --> BuildableInfo
+BuildEntityCardWidget ..> Spawner
+
+BuildPanelWidget ..> TableManager : GetValidBuildableItems
+BuildPanelWidget --> BuildEntityCardWidget : Create
 
 
 @enduml
