@@ -5,14 +5,18 @@ set namespaceSeparator ::
 enum ResourceType{
 }
 
+enum InteractableType{
+
+}
+
 struct Data::ConstructionCost{
     ResourceType Type
-    float Cost
+    int Cost
 }
 
 struct Data::BuildableInfo{
     FName Name
-    BuildType type
+    InteractableType type
     Image icon
     Color InfoBackgroundColor
     List<ConstructionCost> CostArr
@@ -29,6 +33,7 @@ struct Data::SpawnInfo{
 
 struct Data::InteractableInfo{
     FName Name
+    InteractableType type
     bool RequireBuild
     bool EnableGroundBlend
 
@@ -76,7 +81,7 @@ class Entity::EntityManager{
 class Spawner{
     + SpawnInteractable(FName name) : InteractableBase
 }
-note top : Factory
+note right : Factory
 
 class UI::BuildEntityCardWidget{
     BuildableInfo Info
@@ -91,7 +96,9 @@ note left : By using GetValidBuildableItems, \n any BuildEntityCard can create a
 
 ConstructionCost -down-> ResourceType
 BuildableInfo -down-> ConstructionCost
+BuildableInfo --> InteractableType
 InteractableInfo -down-> ResourceType
+InteractableInfo --> InteractableType
 
 TableManager --> BuildableInfo 
 TableManager --> InteractableInfo
