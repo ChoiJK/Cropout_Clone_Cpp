@@ -9,21 +9,27 @@
 
 class UBuildEntityInfoWidget;
 class UImage;
+class UTexture2D;
+struct FBuildableInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBuildEntityCardWidget : public UCommonButtonBase
 {
 	GENERATED_BODY()
 
+	const FBuildableInfo* BuildableInfo;
+
 	UPROPERTY(EditAnywhere)
 	EBuildEntityType BuildEntityType;
 
 protected:
 	virtual void NativeConstruct() override;
-
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* BuildEntityImage;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UBuildEntityInfoWidget* BuildEntityInfoWidget;
+
+public:
+	void SetBuildableInfo(const FBuildableInfo* buildableInfo);
 };

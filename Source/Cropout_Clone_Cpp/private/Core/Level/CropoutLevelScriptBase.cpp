@@ -3,16 +3,19 @@
 
 #include "Core/Level/CropoutLevelScriptBase.h"
 #include "Manager/Base/LevelManager.h"
+#include "Core/CropoutGameInstance.h"
 
 
 ACropoutLevelScriptBase::ACropoutLevelScriptBase()
 {
 }
 
-
 void ACropoutLevelScriptBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	gameInstance->SetCurrentLevelScript(this);
 
 	InitializeLevelManagers();
 }
@@ -24,23 +27,37 @@ void ACropoutLevelScriptBase::Destroyed()
 		Pair.Value->Release();
 	}
 
+	for(auto& Pair : LevelManagerMap)
+	{
+		Pair.Value->Destroy();
+	}
+
 	Super::Destroyed();
 }
 
 void ACropoutLevelScriptBase::InitializeLevelManagers()
 {
+	UCropoutGameInstance* gi = Cast<UCropoutGameInstance>(GetGameInstance());
+
 	for(TObjectIterator<UClass> It; It; ++It)
 	{
 		UClass* Class = *It;
 		if(Class->IsChildOf(ULevelManager::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
-			LevelManagerMap.Add(Class, NewObject<ULevelManager>(this, Class));
+			//UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
+			ULevelManager* LevelManager = NewObject<ULevelManager>(this, Class);
+			LevelManager->SetGameInstance(gi);
+			LevelManagerMap.Add(Class, LevelManager);
 		}
 	}
 
 	for(auto& Pair : LevelManagerMap)
 	{
-		Pair.Value->Initialize();
+		Pair.Value->Init();
+	}
+
+	for(auto& Pair : LevelManagerMap)
+	{
+		Pair.Value->Prepare();
 	}
 }

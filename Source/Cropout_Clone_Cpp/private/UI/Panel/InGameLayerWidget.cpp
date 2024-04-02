@@ -3,6 +3,9 @@
 
 #include "UI/Panel/InGameLayerWidget.h"
 
+#include "Core/CropoutGameInstance.h"
+#include "Manager/TableManager.h"
+
 #include "CommonTextBlock.h"
 #include "Components/VerticalBox.h"
 #include "UI/Element/ResourceWidget.h"
@@ -17,7 +20,11 @@ void UInGameLayerWidget::NativeConstruct()
 
 	check(ResourceContainer);
 
-	TSubclassOf<UUserWidget>* resourceWidget = UUiManager::Instance->GetWidgetClass(EWidgetType::ResourceElement);
+	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	TableManager = gameInstance->GetSystemManager<UTableManager>();
+	UiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
+
+	TSubclassOf<UUserWidget>* resourceWidget = TableManager->GetWidgetClass(EWidgetType::ResourceElement);
 
 	if(resourceWidget)
 	{
@@ -41,9 +48,14 @@ void UInGameLayerWidget::NativeConstruct()
 
 void UInGameLayerWidget::OnPauseButtonClicked()
 {
-	TSubclassOf<UUserWidget>* pauseMenu = UUiManager::Instance->GetWidgetClass(EWidgetType::PauseMenu);
+	if(TableManager == nullptr || UiManager == nullptr)
+	{
+		return;
+	}
 
-	UUiManager::Instance->GetUIBase()->PushPromptClass(pauseMenu->Get());
+	TSubclassOf<UUserWidget>* pauseMenu = TableManager->GetWidgetClass(EWidgetType::PauseMenu);
+
+	UiManager->GetUIBase()->PushPromptClass(pauseMenu->Get());
 }
 
 TOptional<FUIInputConfig> UInGameLayerWidget::GetDesiredInputConfig() const

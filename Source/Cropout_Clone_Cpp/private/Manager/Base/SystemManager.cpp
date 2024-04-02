@@ -3,12 +3,22 @@
 
 #include "Manager/Base/SystemManager.h"
 
-void USystemManager::Initialize()
+void USystemManager::Init()
 {
-	Super::Initialize();
+	Super::Init();
+}
+
+void USystemManager::Prepare()
+{
+	Super::Prepare();
 }
 
 void USystemManager::Release()
 {
 	Super::Release();
+}
+
+void USystemManager::Destroy()
+{
+	Super::Destroy();
 }

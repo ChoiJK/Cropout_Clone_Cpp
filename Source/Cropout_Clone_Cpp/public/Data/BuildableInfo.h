@@ -26,7 +26,7 @@ struct FBuildableInfo : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Name;
+	FName Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EInteractableType InteractableType; // for filtering

@@ -10,6 +10,8 @@ class UButtonWidget;
 class UVerticalBox;
 class UResourceWidget;
 class UCommonTextBlock;
+class UTableManager;
+class UUiManager;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UInGameLayerWidget : public UCommonActivatableWidget
@@ -21,6 +23,8 @@ private:
 	GENERATED_BODY()
 
 	UResourceWidget* ResourceWidget[3];
+	UTableManager* TableManager;
+	UUiManager* UiManager;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

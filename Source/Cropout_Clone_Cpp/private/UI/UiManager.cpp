@@ -3,59 +3,20 @@
 
 #include "UI/UiManager.h"
 
+#include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
-#include "Data/WidgetTableData.h"
 #include "UI/Panel/InGameLayerWidget.h"
 #include "UI/Element/ResourceWidget.h"
 #include "Enum/ResourceType.h"
 
-UUiManager* UUiManager::Instance = nullptr;
-
-// Sets default values
-UUiManager::UUiManager()
-{
-	Instance = this;
-
-	if(this->GetFlags() & RF_ClassDefaultObject)
-	{
-		return;
-	}
-
-	ConstructorHelpers::FObjectFinder<UDataTable> villagerJob
-		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTable'"));
-	check(villagerJob.Succeeded());
-
-	if(villagerJob.Succeeded())
-	{
-		TArray<FName> rowNames = villagerJob.Object->GetRowNames();
-		for(auto rowName : rowNames)
-		{
-			FWidgetTableData* widgetData = villagerJob.Object->FindRow<FWidgetTableData>(
-				rowName, TEXT("WidgetDataTable"));
-			if(widgetData && widgetData->WidgetType != EWidgetType::None)
-			{
-				WidgetTable.Add(widgetData->WidgetType, widgetData->WidgetClass);
-			}
-		}
-	}
-}
-
 // Called when the game starts or when spawned
-void UUiManager::Initialize()
+void UUiManager::Init()
 {
-	Super::Initialize();
+	Super::Init();
 
-	GameMode = Cast<ACropoutGameMode>(GetWorld()->GetAuthGameMode());
+	TableManager = GameInstance->GetSystemManager<UTableManager>();
 
-	//TSubclassOf<UUserWidget>* ingameMain = WidgetTable.Find(EWidgetType::InGameMain);
-	//UI_HUD = Cast<UInGameLayerWidget>(CreateWidget(GetWorld(), ingameMain->Get()));
-	//if(IsValid(UI_HUD))
-	//{
-	//	UI_HUD->AddToViewport();
-	//	UI_HUD->SetVisibility(ESlateVisibility::Visible);
-	//}
-
-	TSubclassOf<UUserWidget>* uiBase = WidgetTable.Find(EWidgetType::UiBase);
+	TSubclassOf<UUserWidget>* uiBase = TableManager->GetWidgetClass(EWidgetType::UiBase);
 	UIBase = Cast<UUiBase>(CreateWidget(GetWorld(), uiBase->Get()));
 	if(IsValid(UIBase))
 	{
@@ -63,29 +24,33 @@ void UUiManager::Initialize()
 		UIBase->SetVisibility(ESlateVisibility::Visible);
 	}
 
-	TSubclassOf<UUserWidget>* userWidget = WidgetTable.Find(EWidgetType::InGameMain);
+	TSubclassOf<UUserWidget>* userWidget = TableManager->GetWidgetClass(EWidgetType::InGameMain);
 	if(userWidget)
 	{
 		UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
 	}
 
 
-	TSubclassOf<UUserWidget>* buildOpenButton = Instance->GetWidgetClass(EWidgetType::BuildOpenButton);
+	TSubclassOf<UUserWidget>* buildOpenButton = TableManager->GetWidgetClass(EWidgetType::BuildOpenButton);
 	if(buildOpenButton)
 	{
 		UIBase->PushBottomClass(buildOpenButton->Get());
 	}
 }
 
+void UUiManager::Prepare()
+{
+	Super::Prepare();
+}
+
 void UUiManager::Release()
 {
 	Super::Release();
-	Instance = this;
 }
 
-TSubclassOf<UUserWidget>* UUiManager::GetWidgetClass(EWidgetType type)
+void UUiManager::Destroy()
 {
-	return WidgetTable.Find(type);
+	Super::Destroy();
 }
 
 UUiBase* UUiManager::GetUIBase() const
@@ -101,7 +66,7 @@ void UUiManager::UpdateResourcesWidget(EResourceType type)
 		UResourceWidget* resourceWidget = UI_HUD->GetResourceWidget(resourceIndex);
 		if(IsValid(resourceWidget))
 		{
-			resourceWidget->SetValue(GameMode->GetResourceAmount(type));
+			resourceWidget->SetValue(GameInstance->GetCurrentGameMode()->GetResourceAmount(type));
 		}
 	}
 }
@@ -110,7 +75,7 @@ void UUiManager::UpdateVillagerCount()
 {
 	if(IsValid(UI_HUD))
 	{
-		UI_HUD->SetVillagerCount(GameMode->GetVillagerCount());
+		UI_HUD->SetVillagerCount(GameInstance->GetCurrentGameMode()->GetVillagerCount());
 	}
 
 	// @TODO : gameInstance를 통해 저장

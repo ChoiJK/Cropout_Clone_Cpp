@@ -12,26 +12,22 @@
 class ACropoutGameMode;
 class UInGameLayerWidget;
 class UResourceWidget;
+class UTableManager;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UUiManager : public ULevelManager
 {
 	GENERATED_BODY()
 
-	ACropoutGameMode* GameMode;
-
 	UUiBase* UIBase;
 	UInGameLayerWidget* UI_HUD;
-	TMap<EWidgetType, TSubclassOf<UUserWidget>> WidgetTable;
-
-public:
-	// Sets default values for this actor's properties
-	static UUiManager* Instance;
-	UUiManager();
+	UTableManager* TableManager;
 
 protected:
-	virtual void Initialize() override;
+	virtual void Init() override;
+	virtual void Prepare() override;
 	virtual void Release() override;
+	virtual void Destroy() override;
 
 public:
 	TSubclassOf<UUserWidget>* GetWidgetClass(EWidgetType type);

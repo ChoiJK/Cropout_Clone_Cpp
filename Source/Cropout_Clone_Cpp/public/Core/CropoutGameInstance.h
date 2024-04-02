@@ -9,9 +9,12 @@
 #include "Engine/StreamableManager.h"
 #include "Manager/TableManager.h"
 #include "Data/SaveData.h"
+#include "Level/CropoutLevelScriptBase.h"
 
 #include "CropoutGameInstance.generated.h"
 
+class ACropoutGameMode;
+class ACropoutLevelScriptBase;
 class USystemManager;
 
 UCLASS()
@@ -26,6 +29,9 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	FStreamableManager streamableManager;
 
 	TMap<UClass*, USystemManager*> SystemManagerMap;
+
+	ACropoutGameMode* CurrentGameMode;
+	ACropoutLevelScriptBase* CurrentLevelScript;
 
 	virtual void Init() override;
 	virtual void Shutdown() override;
@@ -65,5 +71,25 @@ public:
 	USaveData* GetSaveData() const
 	{
 		return SaveData;
+	}
+
+	void SetCurrentGameMode(ACropoutGameMode* gameMode)
+	{
+		CurrentGameMode = gameMode;
+	}
+
+	ACropoutGameMode* GetCurrentGameMode() const
+	{
+		return CurrentGameMode;
+	}
+
+	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase)
+	{
+		CurrentLevelScript = cropoutLevelScriptBase;
+	}
+
+	ACropoutLevelScriptBase* GetCurrentLevelScript() const
+	{
+		return CurrentLevelScript;
 	}
 };

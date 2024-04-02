@@ -12,6 +12,8 @@ class CROPOUT_CLONE_CPP_API ULevelManager : public UManagerBase
 	GENERATED_BODY()
 
 public:
-	virtual void Initialize() override;
+	virtual void Init() override;
+	virtual void Prepare() override;
 	virtual void Release() override;
+	virtual void Destroy() override;
 };

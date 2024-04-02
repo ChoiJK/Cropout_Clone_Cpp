@@ -29,6 +29,11 @@ void UCropoutGameInstance::Shutdown()
 		Pair.Value->Release();
 	}
 
+	for(auto& Pair : SystemManagerMap)
+	{
+		Pair.Value->Destroy();
+	}
+
 	Super::Shutdown();
 }
 
@@ -39,13 +44,20 @@ void UCropoutGameInstance::InitializeSystemManagers()
 		UClass* Class = *It;
 		if(Class->IsChildOf(USystemManager::StaticClass()))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
-			SystemManagerMap.Add(Class, NewObject<USystemManager>(this, Class));
+			//UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
+			USystemManager* SystemManager = NewObject<USystemManager>(this, Class);
+			SystemManager->SetGameInstance(this);
+			SystemManagerMap.Add(Class, SystemManager);
 		}
 	}
 
 	for(auto& Pair : SystemManagerMap)
 	{
-		Pair.Value->Initialize();
+		Pair.Value->Init();
+	}
+
+	for(auto& Pair : SystemManagerMap)
+	{
+		Pair.Value->Prepare();
 	}
 }

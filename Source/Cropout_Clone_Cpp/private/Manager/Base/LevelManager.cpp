@@ -3,12 +3,22 @@
 
 #include "Manager/Base/LevelManager.h"
 
-void ULevelManager::Initialize()
+void ULevelManager::Init()
 {
-	Super::Initialize();
+	Super::Init();
+}
+
+void ULevelManager::Prepare()
+{
+	Super::Prepare();
 }
 
 void ULevelManager::Release()
 {
 	Super::Release();
+}
+
+void ULevelManager::Destroy()
+{
+	Super::Destroy();
 }

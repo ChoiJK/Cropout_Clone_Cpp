@@ -2,9 +2,13 @@
 
 
 #include "UI/Panel/BuildOpenWidget.h"
+
+#include "Core/CropoutGameInstance.h"
+#include "Manager/TableManager.h"
 #include "UI/UiBase.h"
 #include "UI/UiManager.h"
 #include "UI/Element/ButtonWidget.h"
+
 
 void UBuildOpenWidget::NativeConstruct()
 {
@@ -15,7 +19,10 @@ void UBuildOpenWidget::NativeConstruct()
 
 void UBuildOpenWidget::OnOpenButtonClicked()
 {
-	TSubclassOf<UUserWidget>* buildPanel = UUiManager::Instance->GetWidgetClass(EWidgetType::BuildPanel);
+	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
+	UUiManager* uiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
 
-	UUiManager::Instance->GetUIBase()->PushBottomClass(buildPanel->Get());
+	TSubclassOf<UUserWidget>* buildPanel = tableManager->GetWidgetClass(EWidgetType::BuildPanel);
+	uiManager->GetUIBase()->PushBottomClass(buildPanel->Get());
 }

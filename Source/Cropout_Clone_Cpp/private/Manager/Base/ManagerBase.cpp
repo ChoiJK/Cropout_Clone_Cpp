@@ -2,3 +2,8 @@
 
 
 #include "Manager/Base/ManagerBase.h"
+
+void UManagerBase::SetGameInstance(UCropoutGameInstance* instance)
+{
+	GameInstance = instance;
+}

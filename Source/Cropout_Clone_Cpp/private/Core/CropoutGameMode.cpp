@@ -33,6 +33,7 @@ void ACropoutGameMode::StartPlay()
 {
 	if(auto gameInstance = GetGameInstance())
 	{
+		gameInstance->SetCurrentGameMode(this);
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
 		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
 	}

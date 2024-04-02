@@ -10,6 +10,7 @@
 class UImage;
 class UHorizontalBox;
 class UCommonTextBlock;
+struct FBuildableInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBuildEntityInfoWidget : public UUserWidget
@@ -30,4 +31,7 @@ protected:
 	UHorizontalBox* ResourceBox;
 
 	virtual void NativeConstruct() override;
+
+public:
+	void SetBuildableInfo(const FBuildableInfo* buildableInfo);
 };
