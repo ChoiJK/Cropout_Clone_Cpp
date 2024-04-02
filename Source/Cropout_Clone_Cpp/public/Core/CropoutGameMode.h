@@ -14,17 +14,18 @@ class ABuildingBaseActor;
 class ASpawner;
 class AVillager;
 class UInGameLayerWidget;
-class AUiManager;
+class UUiManager;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	AUiManager* UIManager;
-
 	TMap<EResourceType, int> ResourceBank;
 	void ResourceDebugMessage();
+
+	UUiManager* UiManager = nullptr;
+	UUiManager* GetUiManager();
 
 public:
 	ACropoutGameMode();

@@ -9,10 +9,10 @@
 #include "UI/Element/ResourceWidget.h"
 #include "Enum/ResourceType.h"
 
-AUiManager* AUiManager::Instance = nullptr;
+UUiManager* UUiManager::Instance = nullptr;
 
 // Sets default values
-AUiManager::AUiManager()
+UUiManager::UUiManager()
 {
 	Instance = this;
 
@@ -41,9 +41,9 @@ AUiManager::AUiManager()
 }
 
 // Called when the game starts or when spawned
-void AUiManager::BeginPlay()
+void UUiManager::Initialize()
 {
-	Super::BeginPlay();
+	Super::Initialize();
 
 	GameMode = Cast<ACropoutGameMode>(GetWorld()->GetAuthGameMode());
 
@@ -77,23 +77,23 @@ void AUiManager::BeginPlay()
 	}
 }
 
-void AUiManager::Destroyed()
+void UUiManager::Release()
 {
-	Super::Destroyed();
+	Super::Release();
 	Instance = this;
 }
 
-TSubclassOf<UUserWidget>* AUiManager::GetWidgetClass(EWidgetType type)
+TSubclassOf<UUserWidget>* UUiManager::GetWidgetClass(EWidgetType type)
 {
 	return WidgetTable.Find(type);
 }
 
-UUiBase* AUiManager::GetUIBase() const
+UUiBase* UUiManager::GetUIBase() const
 {
 	return UIBase;
 }
 
-void AUiManager::UpdateResourcesWidget(EResourceType type)
+void UUiManager::UpdateResourcesWidget(EResourceType type)
 {
 	const int resourceIndex = static_cast<int>(type) - 1;
 	if(IsValid(UI_HUD))
@@ -106,7 +106,7 @@ void AUiManager::UpdateResourcesWidget(EResourceType type)
 	}
 }
 
-void AUiManager::UpdateVillagerCount()
+void UUiManager::UpdateVillagerCount()
 {
 	if(IsValid(UI_HUD))
 	{

@@ -15,7 +15,7 @@ void UBuildOpenWidget::NativeConstruct()
 
 void UBuildOpenWidget::OnOpenButtonClicked()
 {
-	TSubclassOf<UUserWidget>* buildPanel = AUiManager::Instance->GetWidgetClass(EWidgetType::BuildPanel);
+	TSubclassOf<UUserWidget>* buildPanel = UUiManager::Instance->GetWidgetClass(EWidgetType::BuildPanel);
 
-	AUiManager::Instance->GetUIBase()->PushBottomClass(buildPanel->Get());
+	UUiManager::Instance->GetUIBase()->PushBottomClass(buildPanel->Get());
 }

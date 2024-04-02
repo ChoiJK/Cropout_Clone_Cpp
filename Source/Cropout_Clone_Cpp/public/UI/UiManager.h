@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Manager/Base/LevelManager.h"
 #include "Enum/ResourceType.h"
 #include "Data/WidgetTableData.h"
 #include "UI/UiBase.h"
@@ -14,7 +14,7 @@ class UInGameLayerWidget;
 class UResourceWidget;
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API AUiManager : public AActor
+class CROPOUT_CLONE_CPP_API UUiManager : public ULevelManager
 {
 	GENERATED_BODY()
 
@@ -26,12 +26,12 @@ class CROPOUT_CLONE_CPP_API AUiManager : public AActor
 
 public:
 	// Sets default values for this actor's properties
-	static AUiManager* Instance;
-	AUiManager();
+	static UUiManager* Instance;
+	UUiManager();
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void Destroyed() override;
+	virtual void Initialize() override;
+	virtual void Release() override;
 
 public:
 	TSubclassOf<UUserWidget>* GetWidgetClass(EWidgetType type);

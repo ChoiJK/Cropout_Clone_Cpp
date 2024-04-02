@@ -16,8 +16,10 @@
 #include "Entity/Villager/Villager.h"
 #include "AudioModulationStatics.h"
 #include "ShaderPrintParameters.h"
+#include "Core/Level/CropoutLevelScriptBase.h"
 #include "UI/UiManager.h"
 #include "Enum/ResourceType.h"
+
 
 ACropoutGameMode::ACropoutGameMode()
 {
@@ -62,11 +64,6 @@ void ACropoutGameMode::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("SpawnerRef is nullptr"));
 		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
-
-	UIManager = Cast<AUiManager>(
-		GetWorld()->SpawnActor(AUiManager::StaticClass(), &FVector::ZeroVector, &FRotator::ZeroRotator));
-
-	check(UIManager);
 
 	// Save Resrouce with creation complete up to the UI
 	StoreResource(EResourceType::Food, 100);
@@ -212,8 +209,10 @@ void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 		ResourceBank[type] += amount;
 	}
 
-	UIManager->UpdateResourcesWidget(type);
-	//ResourceDebugMessage();
+	if(UUiManager* uiManager = GetUiManager())
+	{
+		uiManager->UpdateResourcesWidget(type);
+	}
 }
 
 bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
@@ -234,8 +233,10 @@ bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, 
 		}
 	}
 
-	UIManager->UpdateResourcesWidget(type);
-	//ResourceDebugMessage();
+	if(UUiManager* uiManager = GetUiManager())
+	{
+		uiManager->UpdateResourcesWidget(type);
+	}
 
 	return isWithdrawn;
 }
@@ -322,11 +323,38 @@ AVillager* ACropoutGameMode::SpawnVillager()
 		if(NewPawn != nullptr)
 		{
 			Villagers.Add(NewPawn);
-			UIManager->UpdateVillagerCount();
+			if(UUiManager* uiManager = GetUiManager())
+			{
+				uiManager->UpdateVillagerCount();
+			}
 		}
 
 		return NewPawn;
 	}
 
 	return nullptr;
+}
+
+UUiManager* ACropoutGameMode::GetUiManager()
+{
+	if(UiManager != nullptr)
+	{
+		return UiManager;
+	}
+
+	UWorld* world = GetWorld();
+	if(world == nullptr)
+	{
+		return nullptr;
+	}
+
+	ACropoutLevelScriptBase* clsb = Cast<ACropoutLevelScriptBase>(world->GetLevelScriptActor());
+	if(clsb == nullptr)
+	{
+		return nullptr;
+	}
+
+	UiManager = clsb->GetLevelManager<UUiManager>();
+
+	return UiManager;
 }

@@ -17,7 +17,7 @@ void UInGameLayerWidget::NativeConstruct()
 
 	check(ResourceContainer);
 
-	TSubclassOf<UUserWidget>* resourceWidget = AUiManager::Instance->GetWidgetClass(EWidgetType::ResourceElement);
+	TSubclassOf<UUserWidget>* resourceWidget = UUiManager::Instance->GetWidgetClass(EWidgetType::ResourceElement);
 
 	if(resourceWidget)
 	{
@@ -41,9 +41,9 @@ void UInGameLayerWidget::NativeConstruct()
 
 void UInGameLayerWidget::OnPauseButtonClicked()
 {
-	TSubclassOf<UUserWidget>* pauseMenu = AUiManager::Instance->GetWidgetClass(EWidgetType::PauseMenu);
+	TSubclassOf<UUserWidget>* pauseMenu = UUiManager::Instance->GetWidgetClass(EWidgetType::PauseMenu);
 
-	AUiManager::Instance->GetUIBase()->PushPromptClass(pauseMenu->Get());
+	UUiManager::Instance->GetUIBase()->PushPromptClass(pauseMenu->Get());
 }
 
 TOptional<FUIInputConfig> UInGameLayerWidget::GetDesiredInputConfig() const
