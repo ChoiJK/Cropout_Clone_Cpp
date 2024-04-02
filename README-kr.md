@@ -76,8 +76,9 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
     - Actor, ActorComponent
     - Resource Load
     - 갖가지 Pointer
+    - [Unreal Reflection](Pages/Unreal%20Reflection.md)
     - Tick, Time & FlowControl
-    - Lambda, Delegate
+    - [Lambda, Delegate](Pages/Lambda&Delegate.md)
     - Curve, Timeline
     - Input
         - [Engine Side](Pages/Input_Engine.md)
@@ -95,7 +96,7 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
     - [이슈](Pages/Issue.md)
 - 아이디어
     - UI With MVP
-        - [UniRx러운 무언가](Pages/UeRxPlugin.md)
+        - [UniRx스러운 무언가](Pages/UeRxPlugin.md)
     - Resource Loader
         - Resource를 Table로 빼서 관리
         - 모든 리소스의 Load를 일원화
