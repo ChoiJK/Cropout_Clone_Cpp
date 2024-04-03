@@ -49,6 +49,7 @@ void UResourceWidget::SetResourceType(EResourceType type)
 	if(ResourceType != type)
 	{
 		ResourceType = type;
+		SetImage();
 	}
 }
 

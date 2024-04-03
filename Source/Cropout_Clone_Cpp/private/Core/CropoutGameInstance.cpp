@@ -16,14 +16,10 @@ void UCropoutGameInstance::Init()
 	SaveData = NewObject<USaveData>();
 
 	InitializeSystemManagers();
-
-	UE_LOG(LogTemp, Warning, TEXT( "GameInstance Init" ));
 }
 
 void UCropoutGameInstance::Shutdown()
 {
-	UE_LOG(LogTemp, Warning, TEXT( "GameInstance Shutdown" ));
-
 	for(auto& Pair : SystemManagerMap)
 	{
 		Pair.Value->Release();
