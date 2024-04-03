@@ -10,13 +10,6 @@ void UResourceWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	check(ResourceImage);
-	check(ResourceAmountText);
-
-	ResourceType = EResourceType::None;
-	ResourceAmount = 0;
-	SetAmountText();
-
 	ResourceTexture[0] = LoadObject<UTexture2D>(
 		nullptr, TEXT("Texture2D'/Game/UI/Materials/Textures/T_Rsrc_Food_DA.T_Rsrc_Food_DA'"));
 	ResourceTexture[1] = LoadObject<UTexture2D>(
@@ -24,11 +17,16 @@ void UResourceWidget::NativeConstruct()
 	ResourceTexture[2] = LoadObject<UTexture2D>(
 		nullptr, TEXT("Texture2D'/Game/UI/Materials/Textures/T_Rsrc_Stone_DA.T_Rsrc_Stone_DA'"));
 
+	check(ResourceImage);
+	check(ResourceAmountText);
+
 	check(ResourceTexture[0]);
 	check(ResourceTexture[1]);
 	check(ResourceTexture[2]);
-}
 
+	SetImage();
+	SetAmountText();
+}
 
 void UResourceWidget::SetAmountText() const
 {
@@ -38,13 +36,19 @@ void UResourceWidget::SetAmountText() const
 	}
 }
 
+void UResourceWidget::SetImage() const
+{
+	if(IsValid(ResourceImage))
+	{
+		ResourceImage->SetBrushFromTexture(ResourceTexture[static_cast<int>(ResourceType) - 1]);
+	}
+}
 
 void UResourceWidget::SetResourceType(EResourceType type)
 {
 	if(ResourceType != type)
 	{
 		ResourceType = type;
-		ResourceImage->SetBrushFromTexture(ResourceTexture[static_cast<int>(type) - 1]);
 	}
 }
 

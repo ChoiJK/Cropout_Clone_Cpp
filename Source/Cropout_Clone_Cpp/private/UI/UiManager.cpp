@@ -17,7 +17,7 @@ void UUiManager::Init()
 	TableManager = GameInstance->GetSystemManager<UTableManager>();
 
 	TSubclassOf<UUserWidget>* uiBase = TableManager->GetWidgetClass(EWidgetType::UiBase);
-	UIBase = Cast<UUiBase>(CreateWidget(GetWorld(), uiBase->Get()));
+	UIBase = (CreateWidget<UUiBase>(GetWorld(), uiBase->Get()));
 	if(IsValid(UIBase))
 	{
 		UIBase->AddToViewport();

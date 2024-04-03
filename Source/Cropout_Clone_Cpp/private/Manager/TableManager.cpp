@@ -25,7 +25,7 @@ void UTableManager::Init()
 void UTableManager::InitializeWidgetTable()
 {
 	ConstructorHelpers::FObjectFinder<UDataTable> widgetDataTable
-		(TEXT("Engine.DataTable'/Game/UI/Table/WidgetDataTable.WidgetDataTable'"));
+		(TEXT("Engine.DataTable'/Game/Table/WidgetDataTable.WidgetDataTable'"));
 	if(widgetDataTable.Succeeded())
 	{
 		TArray<FName> rowNames = widgetDataTable.Object->GetRowNames();

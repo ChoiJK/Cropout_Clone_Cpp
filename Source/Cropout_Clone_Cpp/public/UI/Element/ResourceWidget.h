@@ -24,6 +24,7 @@ class CROPOUT_CLONE_CPP_API UResourceWidget : public UUserWidget
 	UTexture2D* ResourceTexture[3];
 
 	void SetAmountText() const;
+	void SetImage() const;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

@@ -32,7 +32,7 @@ void UBuildPanelWidget::NativeOnActivated()
 
 		TSubclassOf<UUserWidget>* buildEntityCardClass = TableManager->GetWidgetClass(EWidgetType::BuildEntityCard);
 
-		UBuildEntityCardWidget* card = Cast<UBuildEntityCardWidget>(CreateWidget(this, buildEntityCardClass->Get()));
+		UBuildEntityCardWidget* card = CreateWidget<UBuildEntityCardWidget>(this, buildEntityCardClass->Get());
 		if(card)
 		{
 			card->SetBuildableInfo(buildableInfo);
