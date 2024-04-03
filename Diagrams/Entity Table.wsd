@@ -117,6 +117,7 @@ Spawner ..> TableManager : GetValidSpawnInfos
 Spawner ..> TableManager : GetValidInteractable
 Spawner ..> EntityManager : AddInteractable
 Spawner --> InteractableBase
+Spawner --> InteractableInfo
 
 BuildEntityCardWidget --> BuildableInfo
 BuildEntityCardWidget ..> Spawner

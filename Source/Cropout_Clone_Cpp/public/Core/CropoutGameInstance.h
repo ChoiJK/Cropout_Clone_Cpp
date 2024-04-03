@@ -34,7 +34,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	ACropoutLevelScriptBase* CurrentLevelScript;
 
 	virtual void Init() override;
-	virtual void Shutdown() override;
+	virtual void FinishDestroy() override;
 
 private:
 	void InitializeSystemManagers();

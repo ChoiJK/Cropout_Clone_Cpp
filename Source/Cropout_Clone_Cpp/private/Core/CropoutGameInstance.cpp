@@ -18,7 +18,7 @@ void UCropoutGameInstance::Init()
 	InitializeSystemManagers();
 }
 
-void UCropoutGameInstance::Shutdown()
+void UCropoutGameInstance::FinishDestroy()
 {
 	for(auto& Pair : SystemManagerMap)
 	{
@@ -29,8 +29,7 @@ void UCropoutGameInstance::Shutdown()
 	{
 		Pair.Value->Destroy();
 	}
-
-	Super::Shutdown();
+	Super::FinishDestroy();
 }
 
 void UCropoutGameInstance::InitializeSystemManagers()

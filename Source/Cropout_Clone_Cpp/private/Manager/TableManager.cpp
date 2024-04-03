@@ -44,7 +44,7 @@ void UTableManager::InitializeWidgetTable()
 void UTableManager::InitializeBuildableTable()
 {
 	ConstructorHelpers::FObjectFinder<UDataTable> buildableInfos
-		(TEXT("Engine.DataTable'/Game/Table/BuildableInfos.BuildableInfos'"));
+		(TEXT("Engine.DataTable'/Game/Table/BuildableInfoTable.BuildableInfoTable'"));
 
 	if(buildableInfos.Succeeded())
 	{
