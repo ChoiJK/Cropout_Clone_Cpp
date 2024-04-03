@@ -15,6 +15,8 @@ class CROPOUT_CLONE_CPP_API UBuildOpenWidget : public UCommonActivatableWidget
 
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
 
 	UFUNCTION()
 	void OnOpenButtonClicked();

@@ -16,7 +16,8 @@ class CROPOUT_CLONE_CPP_API UPauseMenuWidget : public UCommonActivatableWidget
 
 protected:
 	virtual void NativeConstruct() override;
-
+	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
 	UFUNCTION()
 	void OnResumeButtonClicked();
 

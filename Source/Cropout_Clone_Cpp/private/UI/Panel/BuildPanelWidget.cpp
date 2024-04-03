@@ -1,11 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
+#include "UI/Panel/BuildPanelWidget.h"
 #include "Core/CropoutGameInstance.h"
 #include "Manager/TableManager.h"
-#include "UI/Panel/BuildPanelWidget.h"
+
 
 #include "Components/HorizontalBox.h"
+#include "Components/Spacer.h"
 #include "UI/Element/ButtonWidget.h"
 #include "UI/Element/BuildEntityCardWidget.h"
 
@@ -16,19 +15,44 @@ void UBuildPanelWidget::NativeConstruct()
 	BackButton->OnClicked().AddUObject(this, &UBuildPanelWidget::OnBackButtonClicked);
 
 	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
-	UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
-	TArray<const FBuildableInfo*> buildableInfos = tableManager->GetBuildableInfos();
-	for(const FBuildableInfo* buildableInfo : buildableInfos)
+	TableManager = gameInstance->GetSystemManager<UTableManager>();
+}
+
+void UBuildPanelWidget::NativeOnActivated()
+{
+	Super::NativeOnActivated();
+
+	BuildItemBox->ClearChildren();
+
+	TArray<const FBuildableInfo*> BuildableInfos = TableManager->GetBuildableInfos();
+	bool isLastEntity = false;
+	for(const FBuildableInfo* buildableInfo : BuildableInfos)
 	{
-		TSubclassOf<UUserWidget>* buildEntityCardClass = tableManager->GetWidgetClass(EWidgetType::BuildEntityCard);
+		isLastEntity = buildableInfo == BuildableInfos.Last();
+
+		TSubclassOf<UUserWidget>* buildEntityCardClass = TableManager->GetWidgetClass(EWidgetType::BuildEntityCard);
 
 		UBuildEntityCardWidget* card = Cast<UBuildEntityCardWidget>(CreateWidget(this, buildEntityCardClass->Get()));
 		if(card)
 		{
 			card->SetBuildableInfo(buildableInfo);
 			BuildItemBox->AddChild(card);
+
+			if(isLastEntity == false)
+			{
+				USpacer* spacer = NewObject<USpacer>(this);
+				spacer->SetSize(FVector2D(20, 0));
+				BuildItemBox->AddChild(spacer);
+			}
 		}
 	}
+}
+
+void UBuildPanelWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	BuildItemBox->ClearChildren();
 }
 
 void UBuildPanelWidget::OnBackButtonClicked()

@@ -13,8 +13,18 @@
 void UBuildOpenWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
 
+void UBuildOpenWidget::NativeOnActivated()
+{
+	Super::NativeOnActivated();
 	BuildOpenButton->OnClicked().AddUObject(this, &UBuildOpenWidget::OnOpenButtonClicked);
+}
+
+void UBuildOpenWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+	BuildOpenButton->OnClicked().Clear();
 }
 
 void UBuildOpenWidget::OnOpenButtonClicked()

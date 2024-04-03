@@ -8,8 +8,18 @@
 void UPauseMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
 
+void UPauseMenuWidget::NativeOnActivated()
+{
+	Super::NativeOnActivated();
 	ResumeButton->OnClicked().AddUObject(this, &UPauseMenuWidget::OnResumeButtonClicked);
+}
+
+void UPauseMenuWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+	ResumeButton->OnClicked().RemoveAll(this);
 }
 
 void UPauseMenuWidget::OnResumeButtonClicked()

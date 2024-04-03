@@ -8,16 +8,19 @@
 
 class UHorizontalBox;
 class UButtonWidget;
-/**
- * 
- */
+class UTableManager;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBuildPanelWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 
+	UTableManager* TableManager;
+
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeOnActivated() override;
+	virtual void NativeOnDeactivated() override;
 
 	UFUNCTION()
 	void OnBackButtonClicked();
