@@ -7,3 +7,9 @@
 {} : Function Body
 ```
 
+### Lambda in Unreal
+- Timer
+
+- FStreamableManager
+
+- Delegate
