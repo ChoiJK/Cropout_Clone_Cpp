@@ -8,6 +8,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Engine/Canvas.h"
 #include "cmath"
+#include "Core/CropoutGameInstance.h"
+#include "Data/InteractableInfo.h"
 
 AInteractableBaseActor::AInteractableBaseActor()
 {
@@ -51,6 +53,114 @@ AInteractableBaseActor::AInteractableBaseActor()
 	}
 }
 
+void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
+{
+	EnableGroundBlend = InInfo->EnableGroundBlend;
+	OutlineDraw = InInfo->OutlineDraw;
+	RequireBuild = InInfo->RequirBuildable;
+	ProgressionState = 0.f;
+
+	BoundGap = InInfo->BoundGap;
+
+	UCropoutGameInstance* cropoutGameInstance = GetGameInstance<UCropoutGameInstance>();
+	TArray<FSoftObjectPath> MeshPathList;
+	for(const TSoftObjectPtr<UStaticMesh>& mesh : InInfo->MeshList)
+	{
+		MeshPathList.Add(mesh.ToSoftObjectPath());
+	}
+	cropoutGameInstance->GetStreamableManager().RequestAsyncLoad(MeshPathList,
+		FStreamableDelegate::CreateLambda([InInfo, this]()
+		{
+			for(const TSoftObjectPtr<UStaticMesh>& mesh : InInfo->MeshList)
+			{
+				this->MeshList.Add(mesh.Get());
+			}
+
+			InitializeStaticMesh();
+
+			if(const UWorld* world = GetWorld())
+			{
+				world->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+				{
+					InitializeWithInteractableInfo();
+				}));
+			}
+		}));
+}
+
+void AInteractableBaseActor::InitializeWithInteractableInfo()
+{
+	ReCalcBoxExtent();
+
+	if(UWorld* world = GetWorld())
+	{
+		world->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+		{
+			DoGrundBlend();
+			CheckOverlappingActor();
+		}));
+	}
+}
+
+void AInteractableBaseActor::DoGrundBlend()
+{
+	if(EnableGroundBlend && OutlineDraw > 0.f)
+	{
+		// Remove grass and paint dirty around asset
+		UCanvas* Canvas = nullptr;
+		FVector2D Size;
+		FDrawToRenderTargetContext Context;
+		UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(GetWorld(), RT_Draw, Canvas, Size, Context);
+		UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
+
+		FVector2D ScreenPosition;
+		FVector2D ScreenSize;
+		TransformToTexture(Size, ScreenPosition, ScreenSize);
+
+		UMaterial* shapeDrawMaterial = GetShapeDrawMaterial();
+		shapeDrawMaterial->EnsureIsComplete();
+
+		FVector2D coordinatePosition = FVector2D(0, 0);
+		FVector2D coordinateSize = FVector2D(1, 1);
+		FCanvasTileItem TileItem(ScreenPosition, shapeDrawMaterial->GetRenderProxy(), ScreenSize,
+			coordinatePosition, coordinatePosition + coordinateSize);
+		TileItem.Rotation = FRotator(0, 0, 0);
+		TileItem.PivotPoint = FVector2D(0.5f, 0.5f);
+		TileItem.SetColor(FLinearColor::White);
+		Canvas->DrawItem(TileItem);
+		Canvas->K2_DrawMaterial(shapeDrawMaterial, ScreenPosition, ScreenSize, FVector2D(0, 0));
+
+		UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
+	}
+}
+
+void AInteractableBaseActor::CheckOverlappingActor()
+{
+	// Check if actor is overlapped with other actors
+	// @ CHECK : Remove when using PCG
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, StaticClass());
+	const FName targetTag = TEXT("PlacementMode");
+	bool isDestroy = false;
+	for(const AActor* actor : OverlappingActors)
+	{
+		if(actor->ActorHasTag(targetTag))
+		{
+			const bool isOverlapped = FVector::Distance(GetActorLocation(), actor->GetActorLocation()) < 5;
+			if(isOverlapped)
+			{
+				isDestroy = true;
+				break;
+			}
+		}
+	}
+
+	if(isDestroy)
+	{
+		Destroy();
+	}
+}
+
 // Called when the game starts or when spawned
 void AInteractableBaseActor::BeginPlay()
 {
@@ -63,67 +173,6 @@ void AInteractableBaseActor::BeginPlay()
 
 	Wooble_Timeline.AddInterpFloat(Wooble_Curve, TimelineProgress);
 	Wooble_Timeline.SetTimelineFinishedFunc(TimelineFinished);
-
-	ReCalcBoxExtent();
-
-	if(UWorld* world = GetWorld())
-	{
-		world->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
-		{
-			if(EnableGroundBlend && OutlineDraw > 0.f)
-			{
-				// Remove grass and paint dirty around asset
-				UCanvas* Canvas = nullptr;
-				FVector2D Size;
-				FDrawToRenderTargetContext Context;
-				UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(GetWorld(), RT_Draw, Canvas, Size, Context);
-				UMaterialInterface* Material = StaticMeshComponent->GetMaterial(0);
-
-				FVector2D ScreenPosition;
-				FVector2D ScreenSize;
-				TransformToTexture(Size, ScreenPosition, ScreenSize);
-
-				UMaterial* shapeDrawMaterial = GetShapeDrawMaterial();
-				shapeDrawMaterial->EnsureIsComplete();
-
-				FVector2D coordinatePosition = FVector2D(0, 0);
-				FVector2D coordinateSize = FVector2D(1, 1);
-				FCanvasTileItem TileItem(ScreenPosition, shapeDrawMaterial->GetRenderProxy(), ScreenSize,
-				                         coordinatePosition, coordinatePosition + coordinateSize);
-				TileItem.Rotation = FRotator(0, 0, 0);
-				TileItem.PivotPoint = FVector2D(0.5f, 0.5f);
-				TileItem.SetColor(FLinearColor::White);
-				Canvas->DrawItem(TileItem);
-				Canvas->K2_DrawMaterial(shapeDrawMaterial, ScreenPosition, ScreenSize, FVector2D(0, 0));
-
-				UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(GetWorld(), Context);
-			}
-
-			// Check if actor is overlapped with other actors
-			// @ CHECK : Remove when using PCG
-			TArray<AActor*> OverlappingActors;
-			GetOverlappingActors(OverlappingActors, StaticClass());
-			const FName targetTag = TEXT("PlacementMode");
-			bool isDestroy = false;
-			for(const AActor* actor : OverlappingActors)
-			{
-				if(actor->ActorHasTag(targetTag))
-				{
-					const bool isOverlapped = FVector::Distance(GetActorLocation(), actor->GetActorLocation()) < 5;
-					if(isOverlapped)
-					{
-						isDestroy = true;
-						break;
-					}
-				}
-			}
-
-			if(isDestroy)
-			{
-				Destroy();
-			}
-		}));
-	}
 }
 
 bool AInteractableBaseActor::IsInitWoobleCurveSuccess()

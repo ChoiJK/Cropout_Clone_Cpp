@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enum/InteractableType.h"
+#include "Enum/ResourceType.h"
 #include "InteractableInfo.generated.h"
 
 USTRUCT(BlueprintType)

@@ -12,6 +12,7 @@ class UTextureRenderTarget2D;
 class UStaticMesh;
 class UCurveFloat;
 struct FTimeline;
+struct FInteractableInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AInteractableBaseActor : public AActor
@@ -20,6 +21,11 @@ class CROPOUT_CLONE_CPP_API AInteractableBaseActor : public AActor
 
 public:
 	AInteractableBaseActor();
+
+private:
+	void InitializeWithInteractableInfo();
+	void CheckOverlappingActor();
+	void DoGrundBlend();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -30,6 +36,9 @@ protected:
 
 	void ReCalcBoxExtent() const;
 
+	virtual void InitializeStaticMesh()
+	{
+	}
 
 	UMaterial* ShapeDrawMaterial = nullptr;
 	UMaterial* GetShapeDrawMaterial();
@@ -59,6 +68,7 @@ public:
 		return 0.0f;
 	};
 
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo);
 
 	void PlayWobble(FVector InVec);
 	void EndWooble();

@@ -9,6 +9,9 @@
 #include "Data/BuildableInfo.h"
 #include "TableManager.generated.h"
 
+struct FSpawnerInfo;
+struct FInteractableInfo;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API UTableManager : public USystemManager
 {
@@ -20,6 +23,12 @@ private:
 
 	TMap<FName, FBuildableInfo*> BuildableTable;
 	void InitializeBuildableTable();
+
+	TMap<FName, FInteractableInfo*> InteractableTable;
+	void InitializeInteractableTable();
+
+	TMap<FName, FSpawnerInfo*> SpawnerTable;
+	void InitializeSpawnerTable();
 
 public:
 	UTableManager();
@@ -33,4 +42,11 @@ public:
 
 	// Buildable
 	TArray<const FBuildableInfo*> GetBuildableInfos();
+
+	// Interactable
+	TArray<const FInteractableInfo*> GetInteractableInfos();
+	const FInteractableInfo* GetInteractableInfo(FName name);
+
+	// Spawner
+	TArray<const FSpawnerInfo*> GetSpawnerInfo();
 };

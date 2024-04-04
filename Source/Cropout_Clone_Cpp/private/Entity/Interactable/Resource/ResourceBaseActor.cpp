@@ -2,6 +2,7 @@
 
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Components/TimelineComponent.h"
+#include "Data/InteractableInfo.h"
 #include "Enum/ResourceType.h"
 
 AResourceBaseActor::AResourceBaseActor()
@@ -15,17 +16,32 @@ AResourceBaseActor::AResourceBaseActor()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AResourceBaseActor::OnConstruction(const FTransform& Transform)
+void AResourceBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 {
-	Super::OnConstruction(Transform);
+	Super::SetInteractableInfo(InInfo);
+
+	ResourceType = InInfo->ResourceType;
+	ResourceAmount = InInfo->ResourceAmount;
+	CollectionTime = InInfo->CollectionTime;
+	CollectionValue = InInfo->CollectionValue;
+	UseRandomMesh = InInfo->UseRandomMesh;
 
 	FName resurceType = FName(EnumToString(ResourceType));
 	Tags.Add(resurceType);
+}
 
+void AResourceBaseActor::InitializeStaticMesh()
+{
+	Super::InitializeStaticMesh();
 	if(UseRandomMesh)
 	{
 		StaticMeshComponent->SetStaticMesh(MeshList[FMath::RandRange(0, MeshList.Num() - 1)]);
 	}
+}
+
+void AResourceBaseActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
 }
 
 // Called when the game starts or when spawned

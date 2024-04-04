@@ -10,6 +10,10 @@
 #include "Spawner.generated.h"
 
 class UCropoutGameInstance;
+class UTableManager;
+
+struct FSpawnerInfo;
+struct FInteractableInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ASpawner : public AActor
@@ -26,40 +30,38 @@ protected:
 
 private:
 	UCropoutGameInstance* GameInstance;
+	UTableManager* TableManager;
 	FTimerHandle CheckNavMeshAndAsyncLoadTimerHandle;
 
-	void AsyncLoadClasses();
-	void AsyncLoad();
-	void AsyncLoadDeferred();
+	TArray<const FSpawnerInfo*> SpawnerInfos;
+	int InteractableSpawnCount = 0;
+	int DecorationSpawnCount = 0;
+
 	void CheckNavMeshAndAsyncLoadFinished();
-	void SpawnAssets(const FSpawnData& SpawnData);
+	void SpawnAssets(const FSpawnerInfo* SpawnData, const FInteractableInfo* InteractableInfo);
 	void SpawnInstance(UInstancedStaticMeshComponent* iSMC, const float radius, const int biomeCount,
 	                   const int maxSpawnCount);
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	void SpawnRandom();
 
-	UPROPERTY(EditAnywhere)
-	TArray<FSpawnData> SpawnTypes;
+	//UPROPERTY(EditAnywhere)
+	//TArray<FSpawnData> SpawnTypes;
 
-	UPROPERTY(EditAnywhere)
-	TArray<FSpawnInstance> SpawnInstances;
+	//UPROPERTY(EditAnywhere)
+	//TArray<FSpawnInstance> SpawnInstances;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ANavigationData> NavData;
 
 	// Class Load
 	int ClassRefIndex;
-	bool AsyncLoadComplete;
+	//bool AsyncLoadComplete;
 
 	int Counter;
 	int IndexCounter;
 	float TotalCount = 50.f;
 
-	bool ActorSwitch = true;
 	bool AutoSpawn = false;
 
 	FRandomStream Seed;

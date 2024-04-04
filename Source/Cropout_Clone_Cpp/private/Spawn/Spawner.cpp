@@ -6,14 +6,15 @@
 #include "NavigationSystem.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Core/CropoutGameInstance.h"
+#include "Data/InteractableInfo.h"
+#include "Manager/TableManager.h"
+#include "Data/SpawnerInfo.h"
 #include "Engine/StreamableManager.h"
 
 
 // Sets default values
 ASpawner::ASpawner()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
@@ -21,44 +22,25 @@ void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	TableManager = GameInstance->GetSystemManager<UTableManager>();
+	SpawnerInfos = TableManager->GetSpawnerInfo();
 
-	AsyncLoadClasses();
+	for(const FSpawnerInfo* spawnerInfo : SpawnerInfos)
+	{
+		if(spawnerInfo->SpawnEntityType == ESpawnEntityType::Interactable)
+		{
+			InteractableSpawnCount++;
+		}
+		else if(spawnerInfo->SpawnEntityType == ESpawnEntityType::Decoration)
+		{
+			DecorationSpawnCount++;
+		}
+	}
 
 	if(AutoSpawn)
 	{
 		SpawnRandom();
 	}
-}
-
-void ASpawner::AsyncLoadClasses()
-{
-	ClassRefIndex = 0;
-	AsyncLoadComplete = false;
-
-	AsyncLoad();
-}
-
-void ASpawner::AsyncLoad()
-{
-	TArray<FSoftObjectPath> classRefs;
-	for(auto& spawnType : SpawnTypes)
-	{
-		classRefs.Add(spawnType.ClassRef.ToSoftObjectPath());
-	}
-
-	auto handle = GameInstance->GetStreamableManager().RequestAsyncLoad(classRefs, FStreamableDelegate::CreateUObject(
-		                                                                    this, &ASpawner::AsyncLoadDeferred));
-}
-
-void ASpawner::AsyncLoadDeferred()
-{
-	AsyncLoadComplete = true;
-}
-
-// Called every frame
-void ASpawner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 void ASpawner::SpawnRandom()
@@ -75,10 +57,6 @@ void ASpawner::SpawnRandom()
 				                                  {
 					                                  // @TODO : 존재하는 이슈 : Navigation에서의 Overlap이 정상적으로 진행되지 않음
 					                                  // 객체간 겹치는 이슈 있음.
-					                                  if(AsyncLoadComplete == false)
-					                                  {
-						                                  return;
-					                                  }
 
 					                                  auto navigationSystem = world->GetNavigationSystem();
 					                                  if(navigationSystem == nullptr)
@@ -105,51 +83,59 @@ void ASpawner::SpawnRandom()
 
 void ASpawner::CheckNavMeshAndAsyncLoadFinished()
 {
-	if(ActorSwitch)
+	const FSpawnerInfo* spawnerInfo = SpawnerInfos[IndexCounter];
+	const FInteractableInfo* interactableInfo = TableManager->GetInteractableInfo(spawnerInfo->Name);
+
+	if(spawnerInfo != nullptr && interactableInfo != nullptr)
 	{
-		// Spawn of Class
-		UE_LOG(LogTemp, Warning, TEXT("Spawn of Class"));
-
-		// 하나씩 스폰하고, 다시 IsNavigationBuilt를 async로 체크한다. 이렇게 안하면 무슨일이 발생하지..?
-		SpawnAssets(SpawnTypes[IndexCounter++]);
-
-		if(IndexCounter == SpawnTypes.Num())
+		if(spawnerInfo->SpawnEntityType == ESpawnEntityType::Interactable)
 		{
-			IndexCounter = 0;
-			ActorSwitch = false;
-		}
+			// Spawn of Class
+			UE_LOG(LogTemp, Warning, TEXT("Spawn of Class"));
 
-		GetWorldTimerManager().UnPauseTimer(
-			CheckNavMeshAndAsyncLoadTimerHandle);
+			SpawnAssets(spawnerInfo, interactableInfo);
+		}
+		else if(spawnerInfo->SpawnEntityType == ESpawnEntityType::Decoration)
+		{
+			// Spawn Instances
+			UE_LOG(LogTemp, Warning, TEXT("Spawn Instances"));
+
+			if(interactableInfo->MeshList.Num() != 0)
+			{
+				FTransform transform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
+				UInstancedStaticMeshComponent* instancedSMC = Cast<UInstancedStaticMeshComponent>(
+					AddComponentByClass(UInstancedStaticMeshComponent::StaticClass(), false, transform, false));
+
+				GameInstance->GetStreamableManager().RequestAsyncLoad(interactableInfo->MeshList[0].ToSoftObjectPath(),
+				                                                      FStreamableDelegate::CreateLambda(
+					                                                      [interactableInfo, instancedSMC]()
+					                                                      {
+						                                                      instancedSMC->SetStaticMesh(
+							                                                      interactableInfo->MeshList[0].Get());
+					                                                      }));
+
+				SpawnInstance(instancedSMC, spawnerInfo->BiomeScale, spawnerInfo->BiomeCount,
+				              spawnerInfo->SpawnPerBiome);
+			}
+		}
+	}
+
+	IndexCounter++;
+
+	// 하나씩 스폰하고, 다시 IsNavigationBuilt를 async로 체크한다. 이렇게 안하면 무슨일이 발생하지..?
+	if(SpawnerInfos.Num() == IndexCounter)
+	{
+		IndexCounter = 0;
 	}
 	else
 	{
-		// Spawn Instances
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Instances"));
-
-		FTransform transform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
-		UInstancedStaticMeshComponent* instancedSMC = Cast<UInstancedStaticMeshComponent>(
-			AddComponentByClass(UInstancedStaticMeshComponent::StaticClass(), false, transform, false));
-		FSpawnInstance spawnInstance = SpawnInstances[IndexCounter++];
-		instancedSMC->SetStaticMesh(spawnInstance.ClassRef);
-
-		SpawnInstance(instancedSMC, spawnInstance.BiomeScale, spawnInstance.BiomeCount, spawnInstance.SpawnPerBiome);
-
-		if(IndexCounter == SpawnTypes.Num())
-		{
-			IndexCounter = 0;
-			ActorSwitch = true;
-		}
-		else
-		{
-			GetWorldTimerManager().UnPauseTimer(
-				CheckNavMeshAndAsyncLoadTimerHandle);
-		}
+		GetWorldTimerManager().UnPauseTimer(
+			CheckNavMeshAndAsyncLoadTimerHandle);
 	}
 }
 
 
-void ASpawner::SpawnAssets(const FSpawnData& SpawnData)
+void ASpawner::SpawnAssets(const FSpawnerInfo* SpawnData, const FInteractableInfo* InteractableInfo)
 {
 	UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
 	if(NavSys == nullptr)
@@ -162,13 +148,7 @@ void ASpawner::SpawnAssets(const FSpawnData& SpawnData)
 		return;
 	}
 
-	UClass* ActorClass = SpawnData.ClassRef.LoadSynchronous();
-	if(ActorClass == nullptr)
-	{
-		return;
-	}
-
-	for(int i = 0; i < SpawnData.BiomeCount; ++i)
+	for(int i = 0; i < SpawnData->BiomeCount; ++i)
 	{
 		// GetRandomLocationInNavigableRadius
 		FNavLocation RandomPoint;
@@ -177,22 +157,23 @@ void ASpawner::SpawnAssets(const FSpawnData& SpawnData)
 		{
 			FVector randomLocation = RandomPoint.Location;
 
-			int targetIndex = Seed.RandRange(0, SpawnData.SpawnPerBiome);
+			int targetIndex = Seed.RandRange(0, SpawnData->SpawnPerBiome);
 			for(int j = 0; j < targetIndex; ++j)
 			{
-				if(NavSys->GetRandomPointInNavigableRadius(randomLocation, SpawnData.BiomeScale, RandomPoint,
+				if(NavSys->GetRandomPointInNavigableRadius(randomLocation, SpawnData->BiomeScale, RandomPoint,
 				                                           NavData, nullptr))
 				{
 					FVector spawnPos = RandomPoint.Location;
-					float rotYaw = FMath::FRandRange(0, SpawnData.RandomRotationRange);
-					float scale = FMath::FRandRange(1, 1 + SpawnData.ScaleRange);
+					float rotYaw = FMath::FRandRange(0, SpawnData->RandomRotationRange);
+					float scale = FMath::FRandRange(1, 1 + SpawnData->ScaleRange);
 
 					FTransform spawnTransform = FTransform(FRotator(0, rotYaw, 0),
 					                                       spawnPos,
 					                                       FVector(scale, scale, scale));
 
 					AResourceBaseActor* spawnedActor = Cast<AResourceBaseActor>(
-						GetWorld()->SpawnActor(ActorClass, &spawnTransform));
+						GetWorld()->SpawnActor(AResourceBaseActor::StaticClass(), &spawnTransform));
+					spawnedActor->SetInteractableInfo(InteractableInfo);
 					spawnedActor->DoScaleUp(Counter / TotalCount);
 					Counter++;
 				}

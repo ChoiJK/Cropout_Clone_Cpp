@@ -9,15 +9,6 @@
 #include "Enum/ResourceType.h"
 #include "ResourceBaseActor.generated.h"
 
-inline FString EnumToString(EResourceType Value)
-{
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
-	if(!EnumPtr)
-	{
-		return FString("Invalid");
-	}
-	return EnumPtr->GetNameStringByIndex(static_cast<uint8>(Value));
-}
 
 class UCurveFLoat;
 class FGlobalEventDispatcher;
@@ -55,6 +46,8 @@ protected:
 public:
 	void DoScaleUp(float delay);
 	void DoDeath();
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo) override;
+	virtual void InitializeStaticMesh() override;
 	virtual float Interact() override;
 	TTuple<EResourceType, int> CollectResource();
 
