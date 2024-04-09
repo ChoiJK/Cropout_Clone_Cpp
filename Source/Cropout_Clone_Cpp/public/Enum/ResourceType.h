@@ -14,7 +14,7 @@ enum class EResourceType : uint8
 
 inline FString EnumToString(EResourceType Value)
 {
-	const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EResourceType"), true);
+	const UEnum* EnumPtr = StaticEnum<EResourceType>();
 	if(!EnumPtr)
 	{
 		return FString("Invalid");
