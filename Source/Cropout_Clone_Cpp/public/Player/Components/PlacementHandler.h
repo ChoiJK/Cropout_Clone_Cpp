@@ -22,6 +22,8 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 	AInteractableBaseActor* PlacementTargetEntity = nullptr;
 
 	UGlobalSharedVariable* GlobalSharedVariable = nullptr;
+
+	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PlacementSMC = nullptr;
 
 public:

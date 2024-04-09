@@ -70,8 +70,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	UFloatingPawnMovement* Movement = nullptr;
 
+	UPROPERTY(EditAnywhere)
 	UMovementInputHandler* MovementInputHandler = nullptr;
+	UPROPERTY(EditAnywhere)
 	UVillagerHandler* VillagerHandler = nullptr;
+	UPROPERTY(EditAnywhere)
 	UPlacementHandler* PlacementHandler = nullptr;
 
 	ACropoutPlayerController* GetPlayerController();

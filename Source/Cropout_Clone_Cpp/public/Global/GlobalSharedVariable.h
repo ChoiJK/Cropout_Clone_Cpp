@@ -24,7 +24,7 @@ private:
 	{
 		static_assert(TIsDerivedFrom<T, UObject>::IsDerived, "T must be derived from UObject");
 
-		static ConstructorHelpers::FObjectFinder<T> loadedObj(*path);
+		ConstructorHelpers::FObjectFinder<T> loadedObj(*path);
 		checkf(loadedObj.Succeeded(), TEXT("Failed to load object: %s"), *path);
 
 		return Cast<T>(loadedObj.Object);
@@ -35,7 +35,7 @@ private:
 	{
 		static_assert(TIsDerivedFrom<T, UObject>::IsDerived, "T must be derived from UObject");
 
-		static ConstructorHelpers::FClassFinder<T> loadedObj(*path);
+		ConstructorHelpers::FClassFinder<T> loadedObj(*path);
 		checkf(loadedObj.Succeeded(), TEXT("Failed to load object: %s"), *path);
 
 		UClass* loadedClass = loadedObj.Class;
