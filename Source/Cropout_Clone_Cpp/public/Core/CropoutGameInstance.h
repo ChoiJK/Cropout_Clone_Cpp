@@ -22,6 +22,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
+
 	USaveData* SaveData;
 
 	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
@@ -33,13 +34,21 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	ACropoutGameMode* CurrentGameMode;
 	ACropoutLevelScriptBase* CurrentLevelScript;
 
+
 	virtual void Init() override;
-	virtual void FinishDestroy() override;
+	virtual void BeginDestroy() override;
 
 private:
 	void InitializeSystemManagers();
 
 public:
+	static UCropoutGameInstance* Instance;
+
+	static UCropoutGameInstance* GetInstance()
+	{
+		return Instance;
+	}
+
 	template <typename Type>
 	Type* GetSystemManager()
 	{

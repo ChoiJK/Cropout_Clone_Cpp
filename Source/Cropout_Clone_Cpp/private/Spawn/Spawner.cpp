@@ -10,6 +10,7 @@
 #include "Manager/TableManager.h"
 #include "Data/SpawnerInfo.h"
 #include "Engine/StreamableManager.h"
+#include "Entity/Interactable/Building/BuildingBaseActor.h"
 
 
 // Sets default values
@@ -21,7 +22,7 @@ ASpawner::ASpawner()
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	GameInstance = UCropoutGameInstance::GetInstance();
 	TableManager = GameInstance->GetSystemManager<UTableManager>();
 	SpawnerInfos = TableManager->GetSpawnerInfo();
 
@@ -53,32 +54,59 @@ void ASpawner::SpawnRandom()
 			IndexCounter = 0;
 
 			world->GetTimerManager().SetTimer(CheckNavMeshAndAsyncLoadTimerHandle, FTimerDelegate::CreateLambda(
-				                                  [this, world]
-				                                  {
-					                                  // @TODO : 존재하는 이슈 : Navigation에서의 Overlap이 정상적으로 진행되지 않음
-					                                  // 객체간 겹치는 이슈 있음.
+				[this, world]
+				{
+					// @TODO : 존재하는 이슈 : Navigation에서의 Overlap이 정상적으로 진행되지 않음
+					// 객체간 겹치는 이슈 있음.
 
-					                                  auto navigationSystem = world->GetNavigationSystem();
-					                                  if(navigationSystem == nullptr)
-					                                  {
-						                                  return;
-					                                  }
+					auto navigationSystem = world->GetNavigationSystem();
+					if(navigationSystem == nullptr)
+					{
+						return;
+					}
 
-					                                  auto worldSettings = GetWorldSettings();
-					                                  bool isNavigationBuilt = navigationSystem->IsNavigationBuilt(
-						                                  worldSettings);
-					                                  if(isNavigationBuilt == false)
-					                                  {
-						                                  return;
-					                                  }
+					auto worldSettings = GetWorldSettings();
+					bool isNavigationBuilt = navigationSystem->IsNavigationBuilt(
+						worldSettings);
+					if(isNavigationBuilt == false)
+					{
+						return;
+					}
 
-					                                  GetWorldTimerManager().PauseTimer(
-						                                  CheckNavMeshAndAsyncLoadTimerHandle);
+					GetWorldTimerManager().PauseTimer(
+						CheckNavMeshAndAsyncLoadTimerHandle);
 
-					                                  CheckNavMeshAndAsyncLoadFinished();
-				                                  }), 0.5f, true, -0.5);
+					CheckNavMeshAndAsyncLoadFinished();
+				}), 0.5f, true, -0.5);
 		}));
 	}
+}
+
+AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* InteractableInfo)
+{
+	AInteractableBaseActor* spawnedActor = nullptr;
+	if(InteractableInfo->InteractableType == EInteractableType::Resource)
+	{
+		spawnedActor = Cast<AInteractableBaseActor>(
+			GetWorld()->SpawnActor(AResourceBaseActor::StaticClass()));
+	}
+	else if(InteractableInfo->InteractableType == EInteractableType::Building)
+	{
+		spawnedActor = Cast<AInteractableBaseActor>(
+			GetWorld()->SpawnActor(ABuildingBaseActor::StaticClass()));
+	}
+	else if(InteractableInfo->InteractableType == EInteractableType::Field)
+	{
+		spawnedActor = Cast<AInteractableBaseActor>(
+			GetWorld()->SpawnActor(AResourceBaseActor::StaticClass()));
+	}
+
+	if(spawnedActor != nullptr)
+	{
+		spawnedActor->SetInteractableInfo(InteractableInfo);
+	}
+
+	return spawnedActor;
 }
 
 void ASpawner::CheckNavMeshAndAsyncLoadFinished()
@@ -107,15 +135,15 @@ void ASpawner::CheckNavMeshAndAsyncLoadFinished()
 					AddComponentByClass(UInstancedStaticMeshComponent::StaticClass(), false, transform, false));
 
 				GameInstance->GetStreamableManager().RequestAsyncLoad(interactableInfo->MeshList[0].ToSoftObjectPath(),
-				                                                      FStreamableDelegate::CreateLambda(
-					                                                      [interactableInfo, instancedSMC]()
-					                                                      {
-						                                                      instancedSMC->SetStaticMesh(
-							                                                      interactableInfo->MeshList[0].Get());
-					                                                      }));
+					FStreamableDelegate::CreateLambda(
+						[interactableInfo, instancedSMC]()
+						{
+							instancedSMC->SetStaticMesh(
+								interactableInfo->MeshList[0].Get());
+						}));
 
 				SpawnInstance(instancedSMC, spawnerInfo->BiomeScale, spawnerInfo->BiomeCount,
-				              spawnerInfo->SpawnPerBiome);
+					spawnerInfo->SpawnPerBiome);
 			}
 		}
 	}
@@ -161,19 +189,18 @@ void ASpawner::SpawnAssets(const FSpawnerInfo* SpawnData, const FInteractableInf
 			for(int j = 0; j < targetIndex; ++j)
 			{
 				if(NavSys->GetRandomPointInNavigableRadius(randomLocation, SpawnData->BiomeScale, RandomPoint,
-				                                           NavData, nullptr))
+					NavData, nullptr))
 				{
 					FVector spawnPos = RandomPoint.Location;
 					float rotYaw = FMath::FRandRange(0, SpawnData->RandomRotationRange);
 					float scale = FMath::FRandRange(1, 1 + SpawnData->ScaleRange);
 
 					FTransform spawnTransform = FTransform(FRotator(0, rotYaw, 0),
-					                                       spawnPos,
-					                                       FVector(scale, scale, scale));
+						spawnPos,
+						FVector(scale, scale, scale));
 
-					AResourceBaseActor* spawnedActor = Cast<AResourceBaseActor>(
-						GetWorld()->SpawnActor(AResourceBaseActor::StaticClass(), &spawnTransform));
-					spawnedActor->SetInteractableInfo(InteractableInfo);
+					AResourceBaseActor* spawnedActor = Cast<AResourceBaseActor>(SpawnInteractable(InteractableInfo));
+					spawnedActor->SetActorTransform(spawnTransform);
 					spawnedActor->DoScaleUp(Counter / TotalCount);
 					Counter++;
 				}
@@ -183,7 +210,7 @@ void ASpawner::SpawnAssets(const FSpawnerInfo* SpawnData, const FInteractableInf
 }
 
 void ASpawner::SpawnInstance(UInstancedStaticMeshComponent* iSMC, const float radius, const int biomeCount,
-                             const int maxSpawnCount)
+	const int maxSpawnCount)
 {
 	UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
 	if(NavSys == nullptr)
@@ -209,7 +236,7 @@ void ASpawner::SpawnInstance(UInstancedStaticMeshComponent* iSMC, const float ra
 			for(int j = 0; j < targetIndex; ++j)
 			{
 				if(NavSys->GetRandomPointInNavigableRadius(randomLocation, radius, RandomPoint,
-				                                           NavData, nullptr))
+					NavData, nullptr))
 				{
 					FVector spawnPos = RandomPoint.Location;
 
@@ -217,8 +244,8 @@ void ASpawner::SpawnInstance(UInstancedStaticMeshComponent* iSMC, const float ra
 					float scale = FMath::Lerp(0.8, 1.5, distance / radius);
 					spawnPos.Z = 0.f;
 					FTransform spawnTransform = FTransform(FRotator(0, 0, 0),
-					                                       spawnPos,
-					                                       FVector(scale, scale, scale));
+						spawnPos,
+						FVector(scale, scale, scale));
 
 					iSMC->AddInstance(spawnTransform, true);
 					Counter++;

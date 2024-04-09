@@ -20,7 +20,7 @@ void ACropoutPlayerController::BeginPlay()
 
 	SetInputMode(FInputModeGameAndUI());
 
-	auto gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	auto gameInstance = UCropoutGameInstance::GetInstance();
 	if(gameInstance)
 	{
 		GlobalEventDispatcher = gameInstance->GetGlobalEventDispatcher();
@@ -31,11 +31,11 @@ void ACropoutPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("KeyDetect", IE_Pressed, this,
-	                           &ACropoutPlayerController::OnKeyDetect);
+		&ACropoutPlayerController::OnKeyDetect);
 	InputComponent->BindAction("TouchDetect", IE_Pressed, this,
-	                           &ACropoutPlayerController::OnTouchDetect);
+		&ACropoutPlayerController::OnTouchDetect);
 	InputComponent->BindAxis("MouseMove", this,
-	                         &ACropoutPlayerController::OnMouseMove);
+		&ACropoutPlayerController::OnMouseMove);
 }
 
 void ACropoutPlayerController::OnKeyDetect(const FKey Key)

@@ -14,7 +14,7 @@ void ACropoutLevelScriptBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	gameInstance->SetCurrentLevelScript(this);
 
 	InitializeLevelManagers();
@@ -37,7 +37,7 @@ void ACropoutLevelScriptBase::Destroyed()
 
 void ACropoutLevelScriptBase::InitializeLevelManagers()
 {
-	UCropoutGameInstance* gi = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 
 	for(TObjectIterator<UClass> It; It; ++It)
 	{

@@ -102,7 +102,7 @@ void AVillager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	GameInstance = UCropoutGameInstance::GetInstance();
 	GameMode = Cast<ACropoutGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	AddActorWorldOffset(FVector(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight()));
@@ -234,8 +234,8 @@ void AVillager::ChangeJob(EVillagerJobType jobType)
 	classRefs.Add(currentJob.Tool.ToSoftObjectPath());
 
 	GameInstance->GetStreamableManager().RequestAsyncLoad(classRefs, FStreamableDelegate::CreateUObject(
-		                                                      this, &AVillager::AsyncJobResourceLoaded,
-		                                                      CurrentJobName));
+		this, &AVillager::AsyncJobResourceLoaded,
+		CurrentJobName));
 }
 
 void AVillager::AsyncJobResourceLoaded(FName jobName)

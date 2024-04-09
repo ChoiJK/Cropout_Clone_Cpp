@@ -41,7 +41,7 @@ void ACropoutGameMode::StartPlay()
 	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
 	{
 		islandGenCompleteHandle = shared->AddListenerUObject(EGlobalEventType::IslandGenComplete, this,
-		                                                     &ACropoutGameMode::OnIslandGenComplete);
+			&ACropoutGameMode::OnIslandGenComplete);
 		if(islandGenCompleteHandle.IsValid() == false)
 		{
 			UE_LOG(LogTemp, Error, TEXT( "Failed to add listener for IslandGenComplete" ));
@@ -84,7 +84,7 @@ UCropoutGameInstance* ACropoutGameMode::GetGameInstance()
 {
 	if(GameInstance == nullptr)
 	{
-		GameInstance = Cast<UCropoutGameInstance>(GetWorld()->GetGameInstance());
+		GameInstance = UCropoutGameInstance::GetInstance();
 	}
 
 	return GameInstance;
@@ -137,7 +137,7 @@ void ACropoutGameMode::PlayMusic()
 	USoundBase* mainMusic = Cast<USoundBase>(
 		StaticLoadObject(USoundBase::StaticClass(), nullptr, *mainMusicPath.ToString()));
 	MusicComponent = UGameplayStatics::CreateSound2D(GetWorld(), mainMusic, 1.f, 1.f, 0.f,
-	                                                 nullptr, true);
+		nullptr, true);
 
 	MusicComponent->Play();
 }
@@ -247,19 +247,19 @@ void ACropoutGameMode::ResourceDebugMessage()
 	if(ResourceBank.Contains(EResourceType::Food))
 	{
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Food), 5.f, FColor::Green,
-		                                 FString::Printf(TEXT("Food %d"), ResourceBank[EResourceType::Food]));
+			FString::Printf(TEXT("Food %d"), ResourceBank[EResourceType::Food]));
 	}
 
 	if(ResourceBank.Contains(EResourceType::Wood))
 	{
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Wood), 5.f, FColor::Red,
-		                                 FString::Printf(TEXT("Wood %d"), ResourceBank[EResourceType::Wood]));
+			FString::Printf(TEXT("Wood %d"), ResourceBank[EResourceType::Wood]));
 	}
 
 	if(ResourceBank.Contains(EResourceType::Stone))
 	{
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Stone), 5.f, FColor::Black,
-		                                 FString::Printf(TEXT("Stone %d"), ResourceBank[EResourceType::Stone]));
+			FString::Printf(TEXT("Stone %d"), ResourceBank[EResourceType::Stone]));
 	}
 }
 
@@ -311,7 +311,7 @@ AVillager* ACropoutGameMode::SpawnVillager()
 	NavSys->GetRandomReachablePointInRadius(location, 500.0f, NavLocation);
 
 	auto NewPawn = GetWorld()->SpawnActor<AVillager>(*Villager_Ref, NavLocation, FRotator::ZeroRotator,
-	                                                 ActorSpawnParams);
+		ActorSpawnParams);
 
 	if(NewPawn != nullptr)
 	{

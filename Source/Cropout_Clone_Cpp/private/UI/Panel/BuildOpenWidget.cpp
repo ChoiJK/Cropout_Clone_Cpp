@@ -29,7 +29,7 @@ void UBuildOpenWidget::NativeOnDeactivated()
 
 void UBuildOpenWidget::OnOpenButtonClicked()
 {
-	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
 	UUiManager* uiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
 

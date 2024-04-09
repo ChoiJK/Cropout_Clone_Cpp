@@ -21,7 +21,7 @@ void AIslandGen::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	auto gameInstance = UCropoutGameInstance::GetInstance();
 	if(gameInstance)
 	{
 		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
@@ -133,10 +133,10 @@ void AIslandGen::FirstStep(bool spawnMarkers)
 
 	FGeometryScriptPNTessellateOptions tessOptions;
 	UGeometryScriptLibrary_MeshSubdivideFunctions::ApplyPNTessellation(dynMesh, tessOptions,
-	                                                                   platformPerformance ==
-	                                                                   EPlatformPerformance::LowEnd
-		                                                                   ? 0
-		                                                                   : 2);
+		platformPerformance ==
+		EPlatformPerformance::LowEnd
+			? 0
+			: 2);
 
 	// Delete the section of the mesh not needed any more (Underside)
 	FGeometryScriptMeshPlaneCutOptions cutOptions;

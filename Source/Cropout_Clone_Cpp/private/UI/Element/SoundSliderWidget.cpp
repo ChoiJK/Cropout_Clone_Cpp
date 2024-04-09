@@ -31,7 +31,7 @@ void USoundSliderWidget::NativeDestruct()
 
 void USoundSliderWidget::UpdateSlider()
 {
-	UCropoutGameInstance* gi = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 	if(IsValid(gi))
 	{
 		USaveData* saveData = gi->GetSaveData();
@@ -45,7 +45,7 @@ void USoundSliderWidget::UpdateSlider()
 
 void USoundSliderWidget::OnValueChanged(float Value)
 {
-	UCropoutGameInstance* gi = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 	if(IsValid(gi))
 	{
 		USaveData* saveData = gi->GetSaveData();

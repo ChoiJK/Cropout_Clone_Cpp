@@ -6,9 +6,12 @@
 #include "Global/GlobalSharedVariable.h"
 #include "Data/SaveData.h"
 
+UCropoutGameInstance* UCropoutGameInstance::Instance = nullptr;
+
 void UCropoutGameInstance::Init()
 {
 	Super::Init();
+	Instance = this;
 
 	GlobalEventDispatcher = MakeShared<FGlobalEventDispatcher>();
 	GlobalSharedVariable = MakeShared<FGlobalSharedVariable>(this);
@@ -18,8 +21,9 @@ void UCropoutGameInstance::Init()
 	InitializeSystemManagers();
 }
 
-void UCropoutGameInstance::FinishDestroy()
+void UCropoutGameInstance::BeginDestroy()
 {
+	Super::BeginDestroy();
 	for(auto& Pair : SystemManagerMap)
 	{
 		Pair.Value->Release();
@@ -29,7 +33,6 @@ void UCropoutGameInstance::FinishDestroy()
 	{
 		Pair.Value->Destroy();
 	}
-	Super::FinishDestroy();
 }
 
 void UCropoutGameInstance::InitializeSystemManagers()

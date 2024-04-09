@@ -20,7 +20,7 @@ void UInGameLayerWidget::NativeConstruct()
 
 	check(ResourceContainer);
 
-	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	TableManager = gameInstance->GetSystemManager<UTableManager>();
 	UiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
 

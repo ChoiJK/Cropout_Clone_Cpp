@@ -14,7 +14,7 @@ void UBuildPanelWidget::NativeConstruct()
 
 	BackButton->OnClicked().AddUObject(this, &UBuildPanelWidget::OnBackButtonClicked);
 
-	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	TableManager = gameInstance->GetSystemManager<UTableManager>();
 }
 

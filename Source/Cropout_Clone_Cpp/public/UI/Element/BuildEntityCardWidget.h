@@ -23,6 +23,7 @@ class CROPOUT_CLONE_CPP_API UBuildEntityCardWidget : public UCommonButtonBase
 	EBuildEntityType BuildEntityType;
 
 protected:
+	void OnButtonClicked();
 	virtual void NativeConstruct() override;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UImage* BuildEntityImage;

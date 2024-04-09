@@ -6,11 +6,14 @@
 #include "Components/Image.h"
 #include "Core/CropoutGameInstance.h"
 #include "Data/BuildableInfo.h"
+#include "Player/CropoutPlayer.h"
 #include "UI/Element/BuildEntityInfoWidget.h"
 
 void UBuildEntityCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	this->OnClicked().AddUObject(this, &UBuildEntityCardWidget::OnButtonClicked);
 }
 
 void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo)
@@ -18,11 +21,24 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 	BuildableInfo = buildableInfo;
 	BuildEntityInfoWidget->SetBuildableInfo(buildableInfo);
 
-	UCropoutGameInstance* GameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
+	UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
 	GameInstance->GetStreamableManager().RequestAsyncLoad(buildableInfo->UIIcon.ToSoftObjectPath(),
-	                                                      FStreamableDelegate::CreateLambda([this, buildableInfo]()
-	                                                      {
-		                                                      this->BuildEntityImage->SetBrushFromTexture(
-			                                                      buildableInfo->UIIcon.Get());
-	                                                      }));
+		FStreamableDelegate::CreateLambda([this, buildableInfo]()
+		{
+			this->BuildEntityImage->SetBrushFromTexture(
+				buildableInfo->UIIcon.Get());
+		}));
+}
+
+void UBuildEntityCardWidget::OnButtonClicked()
+{
+	if(BuildableInfo != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UBuildEntityCardWidget::OnButtonClicked, %s"), *BuildableInfo->ToString());
+		ACropoutPlayer* Player = Cast<ACropoutPlayer>(GetOwningPlayer());
+		if(Player)
+		{
+			Player->BeginBuild(BuildableInfo);
+		}
+	}
 }
