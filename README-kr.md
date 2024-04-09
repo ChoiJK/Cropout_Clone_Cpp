@@ -74,7 +74,8 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 - Unreal
     - [GamePlay Framework](Pages/GamePlay%20Framework.md)
     - Actor, ActorComponent
-    - Resource Load
+    - [UObject, UClass](Pages/UObject,%20UClass.md)
+    - [Resource Load](Pages/Resource%20Load.md)
     - 갖가지 Pointer
     - [Unreal Reflection](Pages/Unreal%20Reflection.md)
     - Tick, Time & FlowControl
