@@ -152,11 +152,7 @@ void ACropoutGameMode::SpawnTownHall()
 		return;
 	}
 
-	UClass* bp_class = nullptr;
-	if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
-	{
-		bp_class = gsv->GetSpawnMarkerClass();
-	}
+	UClass* bp_class = globalSharedVariable->GetSpawnMarkerClass();
 
 	if(bp_class == nullptr)
 	{

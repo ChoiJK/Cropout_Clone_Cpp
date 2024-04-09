@@ -17,6 +17,9 @@
 
 #include "limits"
 #include "DrawDebugHelpers.h"
+#include "Core/CropoutGameMode.h"
+#include "Player/Components/PlacementHandler.h"
+#include "Spawn/Spawner.h"
 
 ACropoutPlayer::ACropoutPlayer()
 {
@@ -75,12 +78,14 @@ ACropoutPlayer::ACropoutPlayer()
 	MovementInputHandler->Initialize(Movement);
 	VillagerHandler = CreateDefaultSubobject<UVillagerHandler>(TEXT("VillagerHandler"));
 	VillagerHandler->Initialize();
+	PlacementHandler = CreateDefaultSubobject<UPlacementHandler>(TEXT("PlacementComponent"));
+	PlacementHandler->Initialize();
 }
 
 
 void ACropoutPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                    const FHitResult& SweepResult)
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	const FHitResult& SweepResult)
 {
 	if(HoverActor && HoverActor->IsValidLowLevel())
 	{
@@ -95,11 +100,11 @@ void ACropoutPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	SetHoverActor(OtherActor);
 
 	GetWorldTimerManager().SetTimer(ClosestHoverCheckTimerHandle, this, &ACropoutPlayer::ClosestHoverCheck, 0.01f,
-	                                true);
+		true);
 }
 
 void ACropoutPlayer::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	TArray<AActor*> overlappingActors;
 	Collision->GetOverlappingActors(overlappingActors, AActor::StaticClass());
@@ -147,14 +152,14 @@ void ACropoutPlayer::BeginPlay()
 	Super::BeginPlay();
 	RootComponent->SetWorldLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, 0));
 
-	auto gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
-	if(gameInstance)
+	GameInstance = UCropoutGameInstance::GetInstance();
+	if(GameInstance)
 	{
-		GlobalEventDispatcher = gameInstance->GetGlobalEventDispatcher();
+		GlobalEventDispatcher = GameInstance->GetGlobalEventDispatcher();
 		if(TSharedPtr<FGlobalEventDispatcher> EventDispatcher = GlobalEventDispatcher.Pin())
 		{
 			EventDispatcher->AddListenerUObject(EGlobalEventType::ChangedInputType, this,
-			                                    &ACropoutPlayer::OnChangedInputType);
+				&ACropoutPlayer::OnChangedInputType);
 		}
 	}
 
@@ -162,8 +167,8 @@ void ACropoutPlayer::BeginPlay()
 
 	FTimerHandle MoveTrackingHandle;
 	GetWorld()->GetTimerManager().SetTimer(MoveTrackingHandle, MovementInputHandler,
-	                                       &UMovementInputHandler::MoveTracking, 0.016666f,
-	                                       true, 0.0f);
+		&UMovementInputHandler::MoveTracking, 0.016666f,
+		true, 0.0f);
 }
 
 void ACropoutPlayer::Tick(float DeltaTime)
@@ -171,7 +176,7 @@ void ACropoutPlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	DrawDebugSphere(GetWorld(), Collision->GetComponentLocation(), Collision->GetUnscaledSphereRadius(), 20,
-	                FColor::Red);
+		FColor::Red);
 }
 
 // Called to bind functionality to input
@@ -192,6 +197,17 @@ ACropoutPlayerController* ACropoutPlayer::GetPlayerController()
 	}
 
 	return PlayerController;
+}
+
+ASpawner* ACropoutPlayer::GetSpawner()
+{
+	if(Spawner == nullptr)
+	{
+		Spawner = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
+		check(Spawner != nullptr);
+	}
+
+	return Spawner;
 }
 
 void ACropoutPlayer::OnChangedInputType()
@@ -215,4 +231,39 @@ void ACropoutPlayer::OnChangedInputType()
 	}
 
 	CursorMesh->SetHiddenInGame(false, true);
+}
+
+void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
+{
+	MovementInputHandler->ReleaseDragMoveIMC();
+	PlacementHandler->InitPlacementIMC();
+
+	UTableManager* tableManager = GameInstance->GetSystemManager<UTableManager>();
+	const FInteractableInfo* interactableInfo = tableManager->GetInteractableInfo(buildableInfo->Name);
+
+	if(interactableInfo == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get interactable info"));
+		EndBuild();
+	}
+
+	if(PlacementHandler->CheckEntityAgainstPlacementTarget(interactableInfo) == false)
+	{
+		AInteractableBaseActor* interactableActor = GetSpawner()->SpawnInteractable(interactableInfo);
+		if(interactableActor == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to spawn interactable actor"));
+			EndBuild();
+		}
+
+		PlacementHandler->SetPlacementTargetEntity(interactableActor);
+	}
+}
+
+void ACropoutPlayer::EndBuild()
+{
+	MovementInputHandler->ReleaseDragMoveIMC();
+	PlacementHandler->ReleasePlacementIMC();
+
+	PlacementHandler->ReleasePlacementTargetEntity();
 }

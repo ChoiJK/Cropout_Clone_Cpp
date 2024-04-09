@@ -87,15 +87,12 @@ void AIslandGen::FirstStep(bool spawnMarkers)
 			32,
 			1);
 
-		if(spawnMarkers)
+		if(spawnMarkers && globalSharedVariable)
 		{
-			if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
+			UClass* spawnMarker = globalSharedVariable->GetSpawnMarkerClass();
+			if(spawnMarker != nullptr)
 			{
-				UClass* spawnMarker = gsv->GetSpawnMarkerClass();
-				if(spawnMarker != nullptr)
-				{
-					GetWorld()->SpawnActor(spawnMarker, &spawnPoint);
-				}
+				GetWorld()->SpawnActor(spawnMarker, &spawnPoint);
 			}
 		}
 	}
@@ -177,11 +174,12 @@ void AIslandGen::SecondStep()
 
 void AIslandGen::ThirdStep()
 {
-	UMaterialParameterCollection* landScapeMPC = nullptr;
-	if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
+	if(globalSharedVariable == nullptr)
 	{
-		landScapeMPC = gsv->GetLandScapeMPC();
+		return;
 	}
+
+	UMaterialParameterCollection* landScapeMPC = globalSharedVariable->GetLandScapeMPC();
 
 	if(landScapeMPC == nullptr)
 	{
@@ -207,11 +205,12 @@ void AIslandGen::SetIslandSeed(int seed)
 
 UDynamicMesh* AIslandGen::GetDynamicMesh()
 {
-	UMaterial* landScapeMaterial = nullptr;
-	if(TSharedPtr<FGlobalSharedVariable> gsv = globalSharedVariable.Pin())
+	if(globalSharedVariable == nullptr)
 	{
-		landScapeMaterial = gsv->GetLandScapeMaterial();
+		return nullptr;
 	}
+
+	UMaterial* landScapeMaterial = globalSharedVariable->GetLandScapeMaterial();
 	if(DynMesh == nullptr && landScapeMaterial != nullptr)
 	{
 		const auto dynMeshComp = GetComponentByClass<UDynamicMeshComponent>();

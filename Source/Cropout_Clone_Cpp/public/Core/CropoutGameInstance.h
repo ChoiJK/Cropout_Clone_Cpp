@@ -13,6 +13,7 @@
 
 #include "CropoutGameInstance.generated.h"
 
+class ACropoutPlayerController;
 class ACropoutGameMode;
 class ACropoutLevelScriptBase;
 class USystemManager;
@@ -26,13 +27,14 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	USaveData* SaveData;
 
 	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
-	TSharedPtr<FGlobalSharedVariable> GlobalSharedVariable;
+	UGlobalSharedVariable* GlobalSharedVariable;
 	FStreamableManager streamableManager;
 
 	TMap<UClass*, USystemManager*> SystemManagerMap;
 
 	ACropoutGameMode* CurrentGameMode;
 	ACropoutLevelScriptBase* CurrentLevelScript;
+	ACropoutPlayerController* CurrentPlayerController;
 
 
 	virtual void Init() override;
@@ -72,7 +74,7 @@ public:
 		return GlobalEventDispatcher;
 	}
 
-	TWeakPtr<FGlobalSharedVariable> GetGlobalSharedVariable() const
+	UGlobalSharedVariable* GetGlobalSharedVariable() const
 	{
 		return GlobalSharedVariable;
 	}
@@ -100,5 +102,15 @@ public:
 	ACropoutLevelScriptBase* GetCurrentLevelScript() const
 	{
 		return CurrentLevelScript;
+	}
+
+	void SetCurrentPlayerController(ACropoutPlayerController* playerController)
+	{
+		CurrentPlayerController = playerController;
+	}
+
+	ACropoutPlayerController* GetCurrentPlayerController() const
+	{
+		return CurrentPlayerController;
 	}
 };

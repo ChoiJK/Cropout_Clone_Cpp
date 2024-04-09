@@ -12,5 +12,6 @@ private:
 
 public:
 	static FVector2D GetViewportCenter();
+	static void ProjectViewportCenterToGroundPlane(FVector& IntersectionPos);
 	static bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos);
 };

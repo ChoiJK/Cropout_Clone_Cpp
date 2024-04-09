@@ -33,6 +33,24 @@ FVector2D CoordinateUtils::GetViewportCenter()
 	return screenPos;
 }
 
+void CoordinateUtils::ProjectViewportCenterToGroundPlane(FVector& IntersectionPos)
+{
+	auto playerController = GetPlayerController();
+
+	FVector2D screenPos = GetViewportCenter();
+
+	FVector worldLocation, worldDirection;
+	UWorld* world = UCropoutGameInstance::GetInstance()->GetWorld();
+	UGameplayStatics::GetPlayerController(world, 0)->DeprojectScreenPositionToWorld(
+		screenPos.X, screenPos.Y, worldLocation, worldDirection);
+	FVector end = worldLocation + (worldDirection * 100000.0f);
+
+	FVector intersectionLoc =
+		FMath::LinePlaneIntersection(worldLocation, end, FVector(0, 0, 0), FVector(0, 0, 1));
+
+	IntersectionPos = intersectionLoc;
+}
+
 
 bool CoordinateUtils::ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos)
 {

@@ -10,17 +10,10 @@ void ACropoutPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//bShowMouseCursor = true;
-	//bEnableMouseOverEvents = true;
-	//bEnableMotionControls = true;
-	//bEnableClickEvents = false;
-	//bEnableTouchOverEvents = false;
-
-	//AutoReceiveInput = EAutoReceiveInput::Player0;
-
 	SetInputMode(FInputModeGameAndUI());
 
 	auto gameInstance = UCropoutGameInstance::GetInstance();
+	gameInstance->SetCurrentPlayerController(this);
 	if(gameInstance)
 	{
 		GlobalEventDispatcher = gameInstance->GetGlobalEventDispatcher();

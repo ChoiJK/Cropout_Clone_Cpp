@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 #include "CropoutPlayer.generated.h"
 
+class UCropoutGameInstance;
+class ASpawner;
 class USpringArmComponent;
 class UCameraComponent;
 class UStaticMeshComponent;
@@ -17,8 +19,10 @@ class AInteractableBaseActor;
 
 class UMovementInputHandler;
 class UVillagerHandler;
+class UPlacementHandler;
 
 struct FTimerHandle;
+struct FBuildableInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayer : public APawn
@@ -29,17 +33,20 @@ public:
 	ACropoutPlayer();
 
 private:
+	UCropoutGameInstance* GameInstance = nullptr;
 	TWeakPtr<FGlobalEventDispatcher> GlobalEventDispatcher = nullptr;
 	ACropoutPlayerController* PlayerController = nullptr;
-
+	ASpawner* Spawner = nullptr;
 	AActor* HoverActor = nullptr;
+
+	ASpawner* GetSpawner();
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                    int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                  int32 OtherBodyIndex);
+		int32 OtherBodyIndex);
 
 	FTimerHandle ClosestHoverCheckTimerHandle;
 	void ClosestHoverCheck();
@@ -48,15 +55,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	ACropoutPlayerController* GetPlayerController();
-	void OnChangedInputType();
-
-	void SetHoverActor(AActor* actor) { HoverActor = actor; }
-	AActor* GetHoverActor() { return HoverActor; }
-
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArm = nullptr;
 
@@ -74,4 +72,18 @@ public:
 
 	UMovementInputHandler* MovementInputHandler = nullptr;
 	UVillagerHandler* VillagerHandler = nullptr;
+	UPlacementHandler* PlacementHandler = nullptr;
+
+	ACropoutPlayerController* GetPlayerController();
+
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void OnChangedInputType();
+
+	void SetHoverActor(AActor* actor) { HoverActor = actor; }
+	AActor* GetHoverActor() { return HoverActor; }
+
+	void BeginBuild(const FBuildableInfo* buildableInfo);
+	void EndBuild();
 };

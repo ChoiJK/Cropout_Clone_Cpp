@@ -40,10 +40,11 @@ private:
 	void CheckNavMeshAndAsyncLoadFinished();
 	void SpawnAssets(const FSpawnerInfo* SpawnData, const FInteractableInfo* InteractableInfo);
 	void SpawnInstance(UInstancedStaticMeshComponent* iSMC, const float radius, const int biomeCount,
-	                   const int maxSpawnCount);
+		const int maxSpawnCount);
 
 public:
 	void SpawnRandom();
+	AInteractableBaseActor* SpawnInteractable(const FInteractableInfo* InteractableInfo);
 
 	//UPROPERTY(EditAnywhere)
 	//TArray<FSpawnData> SpawnTypes;

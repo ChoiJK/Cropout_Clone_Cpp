@@ -40,7 +40,7 @@ AInteractableBaseActor::AInteractableBaseActor()
 	BoxComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> TextureRenderTargetAsset(
-		TEXT("TextureRenderTarget2D'/Game/Blueprint/Extras/RT_GrassMove.RT_GrassMove'"));
+		TEXT("TextureRenderTarget2D'/Game/Resources/RenderTarget/RT_GrassMove.RT_GrassMove'"));
 	if(TextureRenderTargetAsset.Succeeded())
 	{
 		RT_Draw = TextureRenderTargetAsset.Object;
@@ -55,6 +55,7 @@ AInteractableBaseActor::AInteractableBaseActor()
 
 void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 {
+	Name = InInfo->Name;
 	EnableGroundBlend = InInfo->EnableGroundBlend;
 	OutlineDraw = InInfo->OutlineDraw;
 	RequireBuild = InInfo->RequirBuildable;
@@ -68,12 +69,13 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 	{
 		MeshPathList.Add(mesh.ToSoftObjectPath());
 	}
+
 	cropoutGameInstance->GetStreamableManager().RequestAsyncLoad(MeshPathList,
-		FStreamableDelegate::CreateLambda([InInfo, this]()
+		FStreamableDelegate::CreateLambda([MeshPathList, this]()
 		{
-			for(const TSoftObjectPtr<UStaticMesh>& mesh : InInfo->MeshList)
+			for(FSoftObjectPath meshPath : MeshPathList)
 			{
-				this->MeshList.Add(mesh.Get());
+				this->MeshList.Add(Cast<UStaticMesh>(meshPath.TryLoad()));
 			}
 
 			InitializeStaticMesh();
@@ -94,6 +96,7 @@ void AInteractableBaseActor::InitializeWithInteractableInfo()
 
 	if(UWorld* world = GetWorld())
 	{
+		// Placement Mode일경우 EnableGroundBlend를 false로 강제설정하기때문에 한프레임 뒤에 실행되어야함
 		world->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
 		{
 			DoGrundBlend();
@@ -213,6 +216,11 @@ void AInteractableBaseActor::PlayWobble(FVector InVec)
 void AInteractableBaseActor::EndWooble()
 {
 	Wooble_Timeline.Reverse();
+}
+
+void AInteractableBaseActor::SetEnableGroundBlend(bool InEnableGroundBlend)
+{
+	EnableGroundBlend = InEnableGroundBlend;
 }
 
 

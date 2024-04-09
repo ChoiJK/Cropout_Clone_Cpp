@@ -5,6 +5,7 @@
 
 #include "Components/Image.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/CropoutPlayerController.h"
 #include "Data/BuildableInfo.h"
 #include "Player/CropoutPlayer.h"
 #include "UI/Element/BuildEntityInfoWidget.h"
@@ -35,7 +36,9 @@ void UBuildEntityCardWidget::OnButtonClicked()
 	if(BuildableInfo != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UBuildEntityCardWidget::OnButtonClicked, %s"), *BuildableInfo->ToString());
-		ACropoutPlayer* Player = Cast<ACropoutPlayer>(GetOwningPlayer());
+		UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
+
+		ACropoutPlayer* Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentPlayerController()->GetPawn());
 		if(Player)
 		{
 			Player->BeginBuild(BuildableInfo);

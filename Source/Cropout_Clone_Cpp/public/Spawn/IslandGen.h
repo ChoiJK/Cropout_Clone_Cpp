@@ -19,7 +19,7 @@ enum class EPlatformPerformance : uint8
 };
 
 class FGlobalEventDispatcher;
-class FGlobalSharedVariable;
+class UGlobalSharedVariable;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AIslandGen : public ADynamicMeshActor
@@ -39,7 +39,7 @@ private:
 	EPlatformPerformance GetPlatformPerformance();
 
 	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
-	TWeakPtr<FGlobalSharedVariable> globalSharedVariable;
+	UGlobalSharedVariable* globalSharedVariable;
 
 protected:
 	virtual void BeginPlay() override;

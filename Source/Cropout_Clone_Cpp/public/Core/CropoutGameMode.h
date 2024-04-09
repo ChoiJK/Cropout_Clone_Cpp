@@ -9,7 +9,7 @@
 
 class UCropoutGameInstance;
 class FGlobalEventDispatcher;
-class FGlobalSharedVariable;
+class UGlobalSharedVariable;
 class ABuildingBaseActor;
 class ASpawner;
 class AVillager;
@@ -31,7 +31,7 @@ public:
 	ACropoutGameMode();
 
 	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
-	TWeakPtr<FGlobalSharedVariable> globalSharedVariable;
+	UGlobalSharedVariable* globalSharedVariable;
 
 	FDelegateHandle islandGenCompleteHandle;
 

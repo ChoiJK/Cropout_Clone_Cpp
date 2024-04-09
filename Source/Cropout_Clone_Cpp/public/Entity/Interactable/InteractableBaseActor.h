@@ -28,50 +28,7 @@ private:
 	void DoGrundBlend();
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* StaticMeshComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	UBoxComponent* BoxComponent;
-
-	void ReCalcBoxExtent() const;
-
-	virtual void InitializeStaticMesh()
-	{
-	}
-
-	UMaterial* ShapeDrawMaterial = nullptr;
-	UMaterial* GetShapeDrawMaterial();
-
-	void TransformToTexture(FVector2d InVec, FVector2d& OutVec, FVector2d& OutVec2) const;
-
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	bool IsInitWoobleCurveSuccess();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UCurveFloat* Wooble_Curve; // timeline
-
-	FTimeline Wooble_Timeline;
-
-	UFUNCTION()
-	void Wooble_TimelineUpdate(float scaleValue) const;
-	UFUNCTION()
-	void Wooble_TimelineFinished();
-
-public:
-	virtual void OnConstruction(const FTransform& Transform) override;
-
-	// returnVal : work time
-	virtual float Interact()
-	{
-		return 0.0f;
-	};
-
-	virtual void SetInteractableInfo(const FInteractableInfo* InInfo);
-
-	void PlayWobble(FVector InVec);
-	void EndWooble();
+	FName Name;
 
 	UPROPERTY(EditAnywhere, Category = "Ground Blend")
 	TObjectPtr<UTextureRenderTarget2D> RT_Draw;
@@ -93,4 +50,61 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Spawn Info")
 	float BoundGap = 0.0f;
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* BoxComponent;
+	UMaterial* ShapeDrawMaterial = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* Wooble_Curve; // timeline
+
+	FTimeline Wooble_Timeline;
+
+	virtual void BeginPlay() override;
+
+	virtual void InitializeStaticMesh()
+	{
+	}
+
+	void ReCalcBoxExtent() const;
+
+	UMaterial* GetShapeDrawMaterial();
+
+	void TransformToTexture(FVector2d InVec, FVector2d& OutVec, FVector2d& OutVec2) const;
+
+
+	bool IsInitWoobleCurveSuccess();
+
+	UFUNCTION()
+	void Wooble_TimelineUpdate(float scaleValue) const;
+	UFUNCTION()
+	void Wooble_TimelineFinished();
+
+public:
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	// returnVal : work time
+	virtual float Interact()
+	{
+		return 0.0f;
+	};
+
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo);
+
+	FName GetName() const
+	{
+		return Name;
+	}
+
+	UStaticMeshComponent* GetStaticMeshComponent() const
+	{
+		return StaticMeshComponent;
+	}
+
+	void PlayWobble(FVector InVec);
+	void EndWooble();
+
+	void SetEnableGroundBlend(bool InEnableGroundBlend);
 };

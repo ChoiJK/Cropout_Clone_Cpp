@@ -14,7 +14,9 @@ void UCropoutGameInstance::Init()
 	Instance = this;
 
 	GlobalEventDispatcher = MakeShared<FGlobalEventDispatcher>();
-	GlobalSharedVariable = MakeShared<FGlobalSharedVariable>(this);
+
+	GlobalSharedVariable = NewObject<UGlobalSharedVariable>();
+	GlobalSharedVariable->SetCropoutGameInstance(this);
 
 	SaveData = NewObject<USaveData>();
 

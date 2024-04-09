@@ -39,4 +39,19 @@ struct FBuildableInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FConstructionCost> ConstructionCosts;
+
+	FString ToString() const
+	{
+		FString Out = "";
+
+		Out += Name.ToString() + ", ";
+		Out += EnumToString(InteractableType) + ", ";
+		for(const FConstructionCost& ConstructionCost : ConstructionCosts)
+		{
+			Out += EnumToString(ConstructionCost.ResourceType) + ": " + FString::FromInt(
+				ConstructionCost.Coat) + ", ";
+		}
+
+		return Out;
+	}
 };

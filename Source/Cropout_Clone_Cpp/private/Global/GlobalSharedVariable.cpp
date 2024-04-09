@@ -2,17 +2,19 @@
 #include "Core/CropoutGameInstance.h"
 #include "Materials/MaterialParameterCollection.h"
 
-FGlobalSharedVariable::FGlobalSharedVariable(UCropoutGameInstance* gameInstance)
+UGlobalSharedVariable::UGlobalSharedVariable()
 {
-	this->GameInstance = gameInstance;
-	this->EventDispatcher = GameInstance->GetGlobalEventDispatcher();
-
 	Initialize();
 }
 
-void FGlobalSharedVariable::Initialize()
+void UGlobalSharedVariable::Initialize()
 {
-	SpawnMarkerClass = LoadClass("/Game/Blueprint/Misc/BP_SpawnMarker.BP_SpawnMarker_C");
+	for(int i = 0; i < static_cast<int>(EPrimitiveShapeType::Count); i++)
+	{
+		PrimitiveShapeMeshs[i] = LoadObject<UStaticMesh>(PrimitiveShapeTypeToPath(static_cast<EPrimitiveShapeType>(i)));
+	}
+
+	SpawnMarkerClass = LoadClass<AActor>("/Game/Blueprint/Misc/BP_SpawnMarker.BP_SpawnMarker_C");
 	LandScapeMPC = LoadObject<UMaterialParameterCollection>("/Game/Resources/Materials/MPC_Landscape.MPC_Landscape");
 	LandScapeMaterial = LoadObject<UMaterial>("Material'/Game/Resources/Materials/M_Landscape.M_Landscape'");
 	CropoutMPC = LoadObject<UMaterialParameterCollection>(
@@ -20,27 +22,38 @@ void FGlobalSharedVariable::Initialize()
 	PlaceableMaterial = LoadObject<UMaterial>("Material'/Game/Resources/Materials/M_Placeable.M_Placeable'");
 }
 
-UClass* FGlobalSharedVariable::GetSpawnMarkerClass()
+void UGlobalSharedVariable::SetCropoutGameInstance(UCropoutGameInstance* instance)
+{
+	GameInstance = instance;
+	this->EventDispatcher = GameInstance->GetGlobalEventDispatcher();
+}
+
+UStaticMesh* UGlobalSharedVariable::GetPrimitiveShapeMesh(EPrimitiveShapeType type)
+{
+	return PrimitiveShapeMeshs[static_cast<int>(type)];
+}
+
+UClass* UGlobalSharedVariable::GetSpawnMarkerClass()
 {
 	return SpawnMarkerClass;
 }
 
-UMaterialParameterCollection* FGlobalSharedVariable::GetLandScapeMPC()
+UMaterialParameterCollection* UGlobalSharedVariable::GetLandScapeMPC()
 {
 	return LandScapeMPC;
 }
 
-UMaterial* FGlobalSharedVariable::GetLandScapeMaterial()
+UMaterial* UGlobalSharedVariable::GetLandScapeMaterial()
 {
 	return LandScapeMaterial;
 }
 
-UMaterialParameterCollection* FGlobalSharedVariable::GetCropoutMPC()
+UMaterialParameterCollection* UGlobalSharedVariable::GetCropoutMPC()
 {
 	return CropoutMPC;
 }
 
-UMaterial* FGlobalSharedVariable::GetPlaceableMaterial()
+UMaterial* UGlobalSharedVariable::GetPlaceableMaterial()
 {
 	return PlaceableMaterial;
 }
