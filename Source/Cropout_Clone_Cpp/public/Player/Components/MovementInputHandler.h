@@ -59,13 +59,11 @@ private:
 	FVector StoredMove;
 	FVector TargetHandle;
 	void TrackMove();
-	bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos);
 
 	// Cursor
 	float EdgeMoveDistance = 50.0f;
 	void UpdateCursorPosition();
 	void GetEdgeMove(FVector& Direction, float& Strength);
-	FVector2D GetViewportCenter() const;
 	void CursorDistFromViewportCenter(FVector2D mousePosFromViewportCenter, FVector& Direction, float& Strength) const;
 
 public:

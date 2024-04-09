@@ -14,7 +14,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Core/CropoutPlayerController.h"
-#include "Kismet/GameplayStatics.h"
+#include "Util/CoordinateUtils.h"
 #include "Kismet/KismetMathLibrary.h"
 
 UMovementInputHandler::UMovementInputHandler()
@@ -104,13 +104,13 @@ void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInp
 			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 			{
 				EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this,
-				                                   &UMovementInputHandler::OnMovePressed);
+					&UMovementInputHandler::OnMovePressed);
 				EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this,
-				                                   &UMovementInputHandler::OnZoomPressed);
+					&UMovementInputHandler::OnZoomPressed);
 				EnhancedInputComponent->BindAction(SpinAction, ETriggerEvent::Triggered, this,
-				                                   &UMovementInputHandler::OnSpinPressed);
+					&UMovementInputHandler::OnSpinPressed);
 				EnhancedInputComponent->BindAction(DragMoveAction, ETriggerEvent::Triggered, this,
-				                                   &UMovementInputHandler::OnDragMovePressed);
+					&UMovementInputHandler::OnDragMovePressed);
 			}
 		}
 	}
@@ -160,7 +160,7 @@ void UMovementInputHandler::MoveTracking()
 
 	FVector2D ScreenPos;
 	FVector intersection;
-	ProjectTouchToGroundPlane(ScreenPos, intersection);
+	CoordinateUtils::ProjectTouchToGroundPlane(ScreenPos, intersection);
 	intersection.Z += 10.f;
 	Owner->Collision->SetWorldLocation(intersection);
 }
@@ -222,7 +222,7 @@ void UMovementInputHandler::PositionCheck()
 {
 	FVector2D ScreenPos;
 	FVector IntersectionPos;
-	ProjectTouchToGroundPlane(ScreenPos, IntersectionPos);
+	CoordinateUtils::ProjectTouchToGroundPlane(ScreenPos, IntersectionPos);
 	TargetHandle = IntersectionPos;
 
 	const auto inputType = Owner->GetPlayerController()->GetCurrentInputType();
@@ -245,7 +245,7 @@ void UMovementInputHandler::TrackMove()
 {
 	FVector2D ScreenPos;
 	FVector IntersectionPos;
-	if(ProjectTouchToGroundPlane(ScreenPos, IntersectionPos))
+	if(CoordinateUtils::ProjectTouchToGroundPlane(ScreenPos, IntersectionPos))
 	{
 		FVector offset;
 		FVector forwardVec = Owner->SpringArm->GetForwardVector();
@@ -264,57 +264,6 @@ void UMovementInputHandler::TrackMove()
 	}
 }
 
-bool UMovementInputHandler::ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos)
-{
-	auto playerController = Owner->GetPlayerController();
-
-	FVector2D screenPos = GetViewportCenter();
-
-	bool hasTouch = false;
-	float worldLocZ = 0.f;
-	switch(playerController->GetCurrentInputType())
-	{
-	case EInputType::KeyMouse:
-		double mouseX, mouseY;
-		if(playerController->GetMousePosition(mouseX, mouseY))
-		{
-			hasTouch = true;
-			screenPos.X = mouseX;
-			screenPos.Y = mouseY;
-		}
-		break;
-	case EInputType::GamePad:
-		hasTouch = true;
-	case EInputType::Touch:
-		double touchX, touchY;
-		bool isCurrentlyTouching;
-		playerController->GetInputTouchState(ETouchIndex::Touch1, touchX, touchY, isCurrentlyTouching);
-		if(isCurrentlyTouching)
-		{
-			hasTouch = true;
-			screenPos.X = touchX;
-			screenPos.Y = touchY;
-		}
-		else
-		{
-			worldLocZ = -500.f;
-		}
-		break;
-	}
-
-	FVector worldLocation, worldDirection;
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->DeprojectScreenPositionToWorld(
-		screenPos.X, screenPos.Y, worldLocation, worldDirection);
-	FVector end = worldLocation + (worldDirection * 100000.0f);
-
-	FVector intersectionLoc =
-		FMath::LinePlaneIntersection(worldLocation, end, FVector(0, 0, 0), FVector(0, 0, 1));
-
-	ScreenPos = screenPos;
-	intersectionLoc.Z += worldLocZ;
-	IntersectionPos = intersectionLoc;
-	return hasTouch;
-}
 
 void UMovementInputHandler::UpdateCursorPosition()
 {
@@ -339,21 +288,21 @@ void UMovementInputHandler::UpdateCursorPosition()
 		float selectedScale = boundExtentMax + timeOffset + 1.f;
 
 		targetTransform = FTransform(FRotator::ZeroRotator,
-		                             boundOrigin,
-		                             FVector(selectedScale, selectedScale, 1.f));
+			boundOrigin,
+			FVector(selectedScale, selectedScale, 1.f));
 	}
 	else
 	{
 		// 지면
 		targetTransform = FTransform(Owner->Collision->GetComponentRotation(),
-		                             Owner->Collision->GetComponentLocation(),
-		                             FVector(2.f, 2.f, 1.f));
+			Owner->Collision->GetComponentLocation(),
+			FVector(2.f, 2.f, 1.f));
 	}
 
 	// 시간의 흐름에 따라 부드럽게 이동 및 Scale 적용
 	// @Todo : 빠릿빠릿하다고 느껴지지 않으면 Scale만 분리해서 적용해도 괜찮을듯
 	auto interpTransform = UKismetMathLibrary::TInterpTo(Owner->CursorMesh->GetComponentTransform(), targetTransform,
-	                                                     GetWorld()->GetDeltaSeconds(), 12.f);
+		GetWorld()->GetDeltaSeconds(), 12.f);
 	Owner->CursorMesh->SetWorldTransform(interpTransform);
 }
 
@@ -361,32 +310,19 @@ void UMovementInputHandler::GetEdgeMove(FVector& Direction, float& Strength)
 {
 	FVector2D ScreenPos;
 	FVector IntersectionPos;
-	ProjectTouchToGroundPlane(ScreenPos, IntersectionPos);
-	FVector2D viewportCenter = GetViewportCenter();
+	CoordinateUtils::ProjectTouchToGroundPlane(ScreenPos, IntersectionPos);
+	FVector2D viewportCenter = CoordinateUtils::GetViewportCenter();
 
 	FVector temDirection;
 	CursorDistFromViewportCenter(ScreenPos - viewportCenter, temDirection, Strength);
 	Direction = Owner->GetActorTransform().TransformVectorNoScale(temDirection);
 }
 
-FVector2D UMovementInputHandler::GetViewportCenter() const
-{
-	auto playerController = Owner->GetPlayerController();
-
-	int32 viewportSizeX, viewportSizeY;
-	playerController->GetViewportSize(viewportSizeX, viewportSizeY);
-
-	FVector2D screenPos;
-	screenPos.X = viewportSizeX / 2.f;
-	screenPos.Y = viewportSizeY / 2.f;
-
-	return screenPos;
-}
 
 void UMovementInputHandler::CursorDistFromViewportCenter(FVector2D mousePosFromViewportCenter, FVector& Direction,
-                                                         float& Strength) const
+	float& Strength) const
 {
-	FVector2D edgeDetectDistance = GetViewportCenter();
+	FVector2D edgeDetectDistance = CoordinateUtils::GetViewportCenter();
 
 	switch(Owner->GetPlayerController()->GetCurrentInputType())
 	{
@@ -410,7 +346,7 @@ void UMovementInputHandler::CursorDistFromViewportCenter(FVector2D mousePosFromV
 	absPos /= EdgeMoveDistance;
 
 	FVector2D signVec = FVector2D(FMath::Sign(mousePosFromViewportCenter.X) * absPos.X,
-	                              FMath::Sign(mousePosFromViewportCenter.Y) * absPos.Y * -1.f);
+		FMath::Sign(mousePosFromViewportCenter.Y) * absPos.Y * -1.f);
 	Direction = FVector(signVec.Y, signVec.X, 0.f);
 	Strength = 1.f;
 }
