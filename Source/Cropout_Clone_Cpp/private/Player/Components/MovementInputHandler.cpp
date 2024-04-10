@@ -186,6 +186,8 @@ void UMovementInputHandler::OnZoomPressed(const FInputActionValue& Value)
 
 void UMovementInputHandler::OnDragMovePressed(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("MovementInputHandler - OnDragMovePressed"));
+
 	if(SingleTouchCheck())
 	{
 		TrackMove();

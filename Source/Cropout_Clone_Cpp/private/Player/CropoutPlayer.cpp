@@ -186,6 +186,7 @@ void ACropoutPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 	MovementInputHandler->SetupPlayerInputComponent(PlayerInputComponent);
 	VillagerHandler->SetupPlayerInputComponent(PlayerInputComponent);
+	PlacementHandler->SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 ACropoutPlayerController* ACropoutPlayer::GetPlayerController()
@@ -235,8 +236,8 @@ void ACropoutPlayer::OnChangedInputType()
 
 void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 {
-	MovementInputHandler->ReleaseDragMoveIMC();
-	PlacementHandler->InitPlacementIMC();
+	//MovementInputHandler->ReleaseDragMoveIMC();
+	//PlacementHandler->InitPlacementIMC();
 
 	UTableManager* tableManager = GameInstance->GetSystemManager<UTableManager>();
 	const FInteractableInfo* interactableInfo = tableManager->GetInteractableInfo(buildableInfo->Name);
@@ -262,8 +263,8 @@ void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 
 void ACropoutPlayer::EndBuild()
 {
-	MovementInputHandler->ReleaseDragMoveIMC();
-	PlacementHandler->ReleasePlacementIMC();
+	//MovementInputHandler->ReleaseDragMoveIMC();
+	//PlacementHandler->ReleasePlacementIMC();
 
 	PlacementHandler->ReleasePlacementTargetEntity();
 }

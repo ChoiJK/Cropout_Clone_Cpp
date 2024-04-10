@@ -3,7 +3,12 @@
 
 #include "Player/Components/PlacementHandler.h"
 
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/CropoutPlayerController.h"
 #include "Util/CoordinateUtils.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
@@ -12,6 +17,21 @@
 
 UPlacementHandler::UPlacementHandler()
 {
+	static ConstructorHelpers::FObjectFinder<UInputMappingContext> imc_BuildMode
+		(TEXT("EnhancedInput.InputMappingContext'/Game/Blueprint/Player/Input/IMC_BuildMode.IMC_BuildMode'"));
+	if(imc_BuildMode.Succeeded())
+	{
+		IMC_BuildMode = imc_BuildMode.Object;
+	}
+	check(IMC_BuildMode);
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> ia_BuildMove
+		(TEXT("EnhancedInput.InputAction'/Game/Blueprint/Player/Input/IA_BuildMove.IA_BuildMove'"));
+	if(ia_BuildMove.Succeeded())
+	{
+		IA_BuildMove = ia_BuildMove.Object;
+	}
+	check(IA_BuildMove);
 }
 
 void UPlacementHandler::BeginPlay()
@@ -33,6 +53,24 @@ void UPlacementHandler::Initialize()
 	PlacementSMC->SetGenerateOverlapEvents(false);
 	PlacementSMC->SetCollisionProfileName(TEXT("NoCollision"));
 	PlacementSMC->SetVisibility(false);
+}
+
+void UPlacementHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	if(const ULocalPlayer* LocalPlayer = Owner->GetPlayerController()->GetLocalPlayer())
+	{
+		InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+		if(InputSubsystem)
+		{
+			InputSubsystem->AddMappingContext(IMC_BuildMode, 0);
+
+			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+			{
+				EnhancedInputComponent->BindAction(IA_BuildMove, ETriggerEvent::Triggered, this,
+					&UPlacementHandler::OnBuildMovePressed);
+			}
+		}
+	}
 }
 
 bool UPlacementHandler::CheckEntityAgainstPlacementTarget(const FInteractableInfo* info)
@@ -84,8 +122,26 @@ void UPlacementHandler::ReleasePlacementTargetEntity()
 
 void UPlacementHandler::InitPlacementIMC()
 {
+	if(InputSubsystem)
+	{
+		InputSubsystem->AddMappingContext(IMC_BuildMode, 1);
+	}
 }
 
 void UPlacementHandler::ReleasePlacementIMC()
 {
+	if(InputSubsystem)
+	{
+		FModifyContextOptions options;
+		options.bIgnoreAllPressedKeysUntilRelease = true;
+		options.bForceImmediately = true;
+		options.bNotifyUserSettings = false;
+
+		InputSubsystem->RemoveMappingContext(IMC_BuildMode, options);
+	}
+}
+
+void UPlacementHandler::OnBuildMovePressed(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("UPlacementHandler - OnBuildMovePressed"));
 }
