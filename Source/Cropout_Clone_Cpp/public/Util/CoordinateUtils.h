@@ -11,6 +11,11 @@ private:
 	static ACropoutPlayerController* GetPlayerController();
 
 public:
+	static void SetPlayerController(ACropoutPlayerController* controller)
+	{
+		PlayerController = controller;
+	}
+
 	static FVector2D GetViewportCenter();
 	static void ProjectViewportCenterToGroundPlane(FVector& IntersectionPos);
 	static bool ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& IntersectionPos);

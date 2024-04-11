@@ -13,6 +13,7 @@
 void UUiManager::Init()
 {
 	Super::Init();
+	SetManagerName("UiManager");
 
 	TableManager = GameInstance->GetSystemManager<UTableManager>();
 

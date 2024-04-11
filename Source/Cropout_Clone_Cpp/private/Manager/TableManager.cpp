@@ -25,6 +25,7 @@ UTableManager::UTableManager()
 void UTableManager::Init()
 {
 	USystemManager::Init();
+	SetManagerName("TablaManager");
 }
 
 void UTableManager::InitializeWidgetTable()

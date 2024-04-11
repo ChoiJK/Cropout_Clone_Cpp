@@ -27,12 +27,15 @@ class CROPOUT_CLONE_CPP_API ACropoutPlayerController : public APlayerController
 
 	void OnKeyDetect(const FKey Key);
 	void OnTouchDetect(const FKey Key);
+
+private:
 	void OnMouseMove(const float Value);
 	void SwitchInputType(EInputType inputType);
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void Destroyed() override;
 
 public:
 	EInputType GetCurrentInputType() { return CurrentInputType; }

@@ -7,15 +7,10 @@
 
 ACropoutPlayerController* CoordinateUtils::PlayerController = nullptr;
 
-ACropoutPlayerController* CoordinateUtils::GetPlayerController()
-{
-	if(PlayerController == nullptr || IsValid(PlayerController) == false)
-	{
-		PlayerController = Cast<ACropoutPlayerController>(
-			UGameplayStatics::GetPlayerController(UCropoutGameInstance::GetInstance()->GetCurrentGameMode(), 0));
-		check(PlayerController != nullptr);
-	}
 
+
+ACropoutPlayerController* CoordinateUtils::GetPlayerController()
+{	
 	return PlayerController;
 }
 

@@ -16,8 +16,23 @@ class CROPOUT_CLONE_CPP_API UManagerBase : public UObject
 protected:
 	UCropoutGameInstance* GameInstance;
 
+	FName ManagerName;
+
+	void SetManagerName(FName name)
+	{
+		ManagerName = name;
+	}
+
+	bool IsRelease = false;
+	bool IsDestroy = false;
+
 public:
 	void SetGameInstance(UCropoutGameInstance* instance);
+
+	FString GetManagerName() const
+	{
+		return ManagerName.ToString();
+	}
 
 	virtual void Init()
 	{
@@ -29,9 +44,14 @@ public:
 
 	virtual void Release()
 	{
+		IsRelease = true;
 	}
 
 	virtual void Destroy()
 	{
+		IsDestroy = true;
 	}
+
+	virtual void BeginDestroy() override;
+	virtual void FinishDestroy() override;
 };

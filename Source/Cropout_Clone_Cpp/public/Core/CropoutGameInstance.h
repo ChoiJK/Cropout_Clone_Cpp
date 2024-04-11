@@ -38,7 +38,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 
 	virtual void Init() override;
-	virtual void BeginDestroy() override;
+	virtual void Shutdown() override;
 
 private:
 	void InitializeSystemManagers();

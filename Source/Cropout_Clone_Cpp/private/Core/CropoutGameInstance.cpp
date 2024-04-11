@@ -23,18 +23,32 @@ void UCropoutGameInstance::Init()
 	InitializeSystemManagers();
 }
 
-void UCropoutGameInstance::BeginDestroy()
+void UCropoutGameInstance::Shutdown()
 {
-	Super::BeginDestroy();
-	for(auto& Pair : SystemManagerMap)
+	UE_LOG(LogTemp, Warning, TEXT("UCropoutGameInstance::Shutdown"));
+
+	if((GIsEditor && IsEngineExitRequested()) == false)
 	{
-		Pair.Value->Release();
+		for(auto& Pair : SystemManagerMap)
+		{
+			if(Pair.Value != nullptr)
+			{
+				Pair.Value->Release();
+			}
+		}
+
+		for(auto& Pair : SystemManagerMap)
+		{
+			if(IsValid(Pair.Value))
+			{
+				Pair.Value->Destroy();
+			}
+		}
+		SystemManagerMap.Empty();
 	}
 
-	for(auto& Pair : SystemManagerMap)
-	{
-		Pair.Value->Destroy();
-	}
+
+	Super::Shutdown();
 }
 
 void UCropoutGameInstance::InitializeSystemManagers()

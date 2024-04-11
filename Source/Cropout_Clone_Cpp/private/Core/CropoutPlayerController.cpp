@@ -5,10 +5,13 @@
 
 #include "Core/CropoutGameInstance.h"
 #include "Global/GlobalEventDispatcher.h"
+#include "Util/CoordinateUtils.h"
 
 void ACropoutPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CoordinateUtils::SetPlayerController(this);
 
 	SetInputMode(FInputModeGameAndUI());
 
@@ -46,6 +49,13 @@ void ACropoutPlayerController::OnKeyDetect(const FKey Key)
 void ACropoutPlayerController::OnTouchDetect(const FKey Key)
 {
 	SwitchInputType(EInputType::Touch);
+}
+
+void ACropoutPlayerController::Destroyed()
+{
+	Super::Destroyed();
+
+	CoordinateUtils::SetPlayerController(nullptr);
 }
 
 void ACropoutPlayerController::OnMouseMove(const float Value)
