@@ -113,4 +113,6 @@ public:
 	{
 		return CurrentPlayerController;
 	}
+
+	void ManagerBeginDestroy(UManagerBase* Manager);
 };

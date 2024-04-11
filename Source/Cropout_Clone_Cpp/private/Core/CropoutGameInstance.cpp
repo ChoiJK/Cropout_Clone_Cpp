@@ -61,6 +61,7 @@ void UCropoutGameInstance::InitializeSystemManagers()
 			//UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
 			USystemManager* SystemManager = NewObject<USystemManager>(this, Class);
 			SystemManager->SetGameInstance(this);
+			SystemManager->AddOnBeginDestroyHandle(this, &UCropoutGameInstance::ManagerBeginDestroy);
 			SystemManagerMap.Add(Class, SystemManager);
 		}
 	}
@@ -74,4 +75,9 @@ void UCropoutGameInstance::InitializeSystemManagers()
 	{
 		Pair.Value->Prepare();
 	}
+}
+
+void UCropoutGameInstance::ManagerBeginDestroy(UManagerBase* Manager)
+{
+	SystemManagerMap.Remove(Manager->GetClass());
 }
