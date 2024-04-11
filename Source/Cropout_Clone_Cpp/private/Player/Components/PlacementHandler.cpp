@@ -123,6 +123,7 @@ void UPlacementHandler::InitPlacementIMC()
 	if(InputSubsystem)
 	{
 		InputSubsystem->AddMappingContext(IMC_BuildMode, 0);
+		HasMappingContext = true;
 	}
 }
 
@@ -136,6 +137,7 @@ void UPlacementHandler::ReleasePlacementIMC()
 		options.bNotifyUserSettings = false;
 
 		InputSubsystem->RemoveMappingContext(IMC_BuildMode, options);
+		HasMappingContext = false;
 	}
 }
 
@@ -151,6 +153,20 @@ void UPlacementHandler::OnBuildMovePressed(const FInputActionValue& Value)
 	}
 }
 
+void UPlacementHandler::UpdateTrackMovePlacement()
+{
+	if(HasMappingContext)
+	{
+		TrackMovePlacement();
+	}
+}
+
 void UPlacementHandler::TrackMovePlacement()
 {
+	FVector2D ScreenPos;
+	FVector IntersectionPos;
+	if(CoordinateUtils::ProjectTouchToGroundPlane(ScreenPos, IntersectionPos))
+	{
+		PlacementTargetEntity->SetActorLocation(CoordinateUtils::SteppedPosition(IntersectionPos));
+	}
 }

@@ -11,6 +11,7 @@
 #include "Data/SpawnerInfo.h"
 #include "Engine/StreamableManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
+#include "Util/CoordinateUtils.h"
 
 
 // Sets default values
@@ -191,7 +192,7 @@ void ASpawner::SpawnAssets(const FSpawnerInfo* SpawnData, const FInteractableInf
 				if(NavSys->GetRandomPointInNavigableRadius(randomLocation, SpawnData->BiomeScale, RandomPoint,
 					NavData, nullptr))
 				{
-					FVector spawnPos = RandomPoint.Location;
+					FVector spawnPos = CoordinateUtils::SteppedPosition(RandomPoint.Location);
 					float rotYaw = FMath::FRandRange(0, SpawnData->RandomRotationRange);
 					float scale = FMath::FRandRange(1, 1 + SpawnData->ScaleRange);
 

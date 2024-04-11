@@ -34,6 +34,12 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = nullptr;
 	UInputMappingContext* IMC_BuildMode = nullptr;
 	UInputAction* IA_BuildMove = nullptr;
+	bool HasMappingContext = false;
+
+	// DragMove
+	FVector StoredMove;
+	FVector TargetHandle;
+	void TrackMovePlacement();
 
 public:
 	UPlacementHandler();
@@ -51,6 +57,5 @@ public:
 	void ReleasePlacementTargetEntity();
 	void InitPlacementIMC();
 	void ReleasePlacementIMC();
-
-	void TrackMovePlacement();
+	void UpdateTrackMovePlacement();
 };

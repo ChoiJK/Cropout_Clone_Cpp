@@ -16,6 +16,7 @@
 #include "Core/CropoutPlayerController.h"
 #include "Util/CoordinateUtils.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/Components/PlacementHandler.h"
 
 UMovementInputHandler::UMovementInputHandler()
 {
@@ -177,6 +178,7 @@ void UMovementInputHandler::OnMovePressed(const FInputActionValue& Value)
 {
 	Owner->AddMovementInput(Owner->GetActorForwardVector(), Value[1]);
 	Owner->AddMovementInput(Owner->GetActorRightVector(), Value[0]);
+	Owner->PlacementHandler->UpdateTrackMovePlacement();
 }
 
 void UMovementInputHandler::OnSpinPressed(const FInputActionValue& Value)
