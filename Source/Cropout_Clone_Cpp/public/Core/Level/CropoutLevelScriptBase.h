@@ -14,6 +14,8 @@ class CROPOUT_CLONE_CPP_API ACropoutLevelScriptBase : public ALevelScriptActor
 {
 	GENERATED_BODY()
 
+	bool IsManagerInitialized = false;
+
 public:
 	// Sets default values for this actor's properties
 	ACropoutLevelScriptBase();
@@ -24,6 +26,11 @@ public:
 	Type* GetLevelManager()
 	{
 		static_assert(std::is_base_of_v<ULevelManager, Type>, "Type must be derived from ULevelManager");
+		if(IsManagerInitialized == false)
+		{
+			InitializeLevelManagers();
+		}
+
 		if(LevelManagerMap.Contains(Type::StaticClass()) == false)
 		{
 			UE_LOG(LogTemp, Error, TEXT("LevelManager not found: %s"), *Type::StaticClass()->GetName());

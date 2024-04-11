@@ -62,7 +62,7 @@ void UPlacementHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 		if(InputSubsystem)
 		{
-			InputSubsystem->AddMappingContext(IMC_BuildMode, 0);
+			InputSubsystem->AddMappingContext(IMC_BuildMode, 1);
 
 			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 			{

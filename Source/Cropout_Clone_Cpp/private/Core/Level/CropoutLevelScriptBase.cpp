@@ -17,7 +17,10 @@ void ACropoutLevelScriptBase::BeginPlay()
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	gameInstance->SetCurrentLevelScript(this);
 
-	InitializeLevelManagers();
+	if(IsManagerInitialized == false)
+	{
+		InitializeLevelManagers();
+	}
 }
 
 void ACropoutLevelScriptBase::Destroyed()
@@ -60,4 +63,6 @@ void ACropoutLevelScriptBase::InitializeLevelManagers()
 	{
 		Pair.Value->Prepare();
 	}
+
+	IsManagerInitialized = true;
 }
