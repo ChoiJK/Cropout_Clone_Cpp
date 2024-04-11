@@ -66,8 +66,11 @@ void ACropoutGameMode::BeginPlay()
 		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 	}
 
-	// Save Resrouce with creation complete up to the UI
-	StoreResource(EResourceType::Food, 100);
+	// 다음 프레임에 적용 (GameMode와 LevelScriptActor의 생성 순서 때문)
+	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+	{
+		StoreResource(EResourceType::Food, 100);
+	}));
 }
 
 void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

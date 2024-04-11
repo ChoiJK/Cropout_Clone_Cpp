@@ -13,30 +13,33 @@
 void UUiManager::Init()
 {
 	Super::Init();
-	SetManagerName("UiManager");
 
-	TableManager = GameInstance->GetSystemManager<UTableManager>();
-
-	TSubclassOf<UUserWidget>* uiBase = TableManager->GetWidgetClass(EWidgetType::UiBase);
-	UIBase = (CreateWidget<UUiBase>(GetWorld(), uiBase->Get()));
-	if(IsValid(UIBase))
+	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([this]()
 	{
-		UIBase->AddToViewport();
-		UIBase->SetVisibility(ESlateVisibility::Visible);
-	}
+		SetManagerName("UiManager");
 
-	TSubclassOf<UUserWidget>* userWidget = TableManager->GetWidgetClass(EWidgetType::InGameMain);
-	if(userWidget)
-	{
-		UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
-	}
+		TableManager = GameInstance->GetSystemManager<UTableManager>();
 
+		TSubclassOf<UUserWidget>* uiBase = TableManager->GetWidgetClass(EWidgetType::UiBase);
+		UIBase = (CreateWidget<UUiBase>(GetWorld(), uiBase->Get()));
+		if(IsValid(UIBase))
+		{
+			UIBase->AddToViewport();
+			UIBase->SetVisibility(ESlateVisibility::Visible);
+		}
 
-	TSubclassOf<UUserWidget>* buildOpenButton = TableManager->GetWidgetClass(EWidgetType::BuildOpenButton);
-	if(buildOpenButton)
-	{
-		UIBase->PushBottomClass(buildOpenButton->Get());
-	}
+		TSubclassOf<UUserWidget>* userWidget = TableManager->GetWidgetClass(EWidgetType::InGameMain);
+		if(userWidget)
+		{
+			UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
+		}
+
+		TSubclassOf<UUserWidget>* buildOpenButton = TableManager->GetWidgetClass(EWidgetType::BuildOpenButton);
+		if(buildOpenButton)
+		{
+			UIBase->PushBottomClass(buildOpenButton->Get());
+		}
+	}));
 }
 
 void UUiManager::Prepare()

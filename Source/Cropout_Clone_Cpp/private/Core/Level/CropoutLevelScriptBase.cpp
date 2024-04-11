@@ -40,6 +40,8 @@ void ACropoutLevelScriptBase::Destroyed()
 
 void ACropoutLevelScriptBase::InitializeLevelManagers()
 {
+	IsProgressManagerInitialized = true;
+
 	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 
 	for(TObjectIterator<UClass> It; It; ++It)
@@ -59,10 +61,11 @@ void ACropoutLevelScriptBase::InitializeLevelManagers()
 		Pair.Value->Init();
 	}
 
+	IsManagerInitialized = true;
+	IsProgressManagerInitialized = false;
+
 	for(auto& Pair : LevelManagerMap)
 	{
 		Pair.Value->Prepare();
 	}
-
-	IsManagerInitialized = true;
 }

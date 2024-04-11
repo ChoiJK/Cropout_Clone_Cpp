@@ -15,6 +15,7 @@ class CROPOUT_CLONE_CPP_API ACropoutLevelScriptBase : public ALevelScriptActor
 	GENERATED_BODY()
 
 	bool IsManagerInitialized = false;
+	bool IsProgressManagerInitialized = false;
 
 public:
 	// Sets default values for this actor's properties
@@ -26,6 +27,13 @@ public:
 	Type* GetLevelManager()
 	{
 		static_assert(std::is_base_of_v<ULevelManager, Type>, "Type must be derived from ULevelManager");
+
+		if(IsProgressManagerInitialized == true)
+		{
+			UE_LOG(LogTemp, Error, TEXT("LevelManager is initializing. Please wait."));
+			return nullptr;
+		}
+
 		if(IsManagerInitialized == false)
 		{
 			InitializeLevelManagers();
