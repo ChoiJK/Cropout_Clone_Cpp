@@ -21,6 +21,9 @@
 #include "NiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayFunctionLibrary.h"
 #include "Components/SphereComponent.h"
+#include "Entity/Interactable/InteractableBaseActor.h"
+#include "Player/Components/PlacementHandler.h"
+#include "Util/CoordinateUtils.h"
 
 UVillagerHandler::UVillagerHandler()
 {
@@ -73,23 +76,23 @@ void UVillagerHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 			{
 				EnhancedInputComponent->BindAction(IA_VillagerAction,
-				                                   ETriggerEvent::Triggered,
-				                                   this,
-				                                   &UVillagerHandler::OnVillagerActionTriggered);
+					ETriggerEvent::Triggered,
+					this,
+					&UVillagerHandler::OnVillagerActionTriggered);
 
 				EnhancedInputComponent->BindAction(IA_VillagerAction,
-				                                   ETriggerEvent::Started,
-				                                   this,
-				                                   &UVillagerHandler::OnVillagerAction);
+					ETriggerEvent::Started,
+					this,
+					&UVillagerHandler::OnVillagerAction);
 
 				EnhancedInputComponent->BindAction(IA_VillagerAction,
-				                                   ETriggerEvent::Canceled,
-				                                   this,
-				                                   &UVillagerHandler::OnVillagerActionEnd);
+					ETriggerEvent::Canceled,
+					this,
+					&UVillagerHandler::OnVillagerActionEnd);
 				EnhancedInputComponent->BindAction(IA_VillagerAction,
-				                                   ETriggerEvent::Completed,
-				                                   this,
-				                                   &UVillagerHandler::OnVillagerActionEnd);
+					ETriggerEvent::Completed,
+					this,
+					&UVillagerHandler::OnVillagerActionEnd);
 			}
 		}
 	}
@@ -102,7 +105,7 @@ void UVillagerHandler::OnVillagerActionTriggered(const FInputActionValue& Value)
 
 void UVillagerHandler::OnVillagerAction(const FInputActionValue& Value)
 {
-	if(Owner->MovementInputHandler->SingleTouchCheck())
+	if(CoordinateUtils::SingleTouchCheck())
 	{
 		Owner->MovementInputHandler->PositionCheck();
 	}
@@ -110,7 +113,14 @@ void UVillagerHandler::OnVillagerAction(const FInputActionValue& Value)
 	AActor* selectedVillager = VillagerOverlapCheck();
 	if(selectedVillager == nullptr)
 	{
-		Owner->MovementInputHandler->InitDragMoveIMC();
+		if(PlacementOverlapCheck() == nullptr)
+		{
+			Owner->MovementInputHandler->InitDragMoveIMC();
+		}
+		else
+		{
+			Owner->PlacementHandler->InitPlacementIMC();
+		}
 	}
 	else
 	{
@@ -121,6 +131,7 @@ void UVillagerHandler::OnVillagerAction(const FInputActionValue& Value)
 void UVillagerHandler::OnVillagerActionEnd(const FInputActionValue& Value)
 {
 	Owner->MovementInputHandler->ReleaseDragMoveIMC();
+	Owner->PlacementHandler->ReleasePlacementIMC();
 
 	if(SelectedVillager && SelectedVillager->IsValidLowLevel())
 	{
@@ -166,9 +177,32 @@ AActor* UVillagerHandler::VillagerOverlapCheck()
 	AActor* villagerActor = nullptr;
 	if(OverlappingActors.Num() > 0)
 	{
-		if(OverlappingActors[0] && OverlappingActors[0]->IsValidLowLevel())
+		for(AActor* actor : OverlappingActors)
 		{
-			villagerActor = OverlappingActors[0];
+			villagerActor = actor;
+			break;
+		}
+	}
+
+	return villagerActor;
+}
+
+AActor* UVillagerHandler::PlacementOverlapCheck()
+{
+	TArray<AActor*> OverlappingActors;
+	FVector worldPos = Owner->Collision->GetComponentLocation();
+	Owner->Collision->GetOverlappingActors(OverlappingActors, AInteractableBaseActor::StaticClass());
+
+	AActor* villagerActor = nullptr;
+	if(OverlappingActors.Num() > 0)
+	{
+		for(AActor* actor : OverlappingActors)
+		{
+			if(actor->ActorHasTag("PlacementMode"))
+			{
+				villagerActor = actor;
+				break;
+			}
 		}
 	}
 

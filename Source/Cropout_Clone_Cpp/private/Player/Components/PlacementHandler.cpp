@@ -62,8 +62,6 @@ void UPlacementHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 		if(InputSubsystem)
 		{
-			InputSubsystem->AddMappingContext(IMC_BuildMode, 1);
-
 			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 			{
 				EnhancedInputComponent->BindAction(IA_BuildMove, ETriggerEvent::Triggered, this,
@@ -124,7 +122,7 @@ void UPlacementHandler::InitPlacementIMC()
 {
 	if(InputSubsystem)
 	{
-		InputSubsystem->AddMappingContext(IMC_BuildMode, 1);
+		InputSubsystem->AddMappingContext(IMC_BuildMode, 0);
 	}
 }
 
@@ -143,5 +141,16 @@ void UPlacementHandler::ReleasePlacementIMC()
 
 void UPlacementHandler::OnBuildMovePressed(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UPlacementHandler - OnBuildMovePressed"));
+	if(CoordinateUtils::SingleTouchCheck())
+	{
+		TrackMovePlacement();
+	}
+	else
+	{
+		ReleasePlacementIMC();
+	}
+}
+
+void UPlacementHandler::TrackMovePlacement()
+{
 }

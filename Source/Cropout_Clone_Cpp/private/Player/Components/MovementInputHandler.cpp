@@ -90,6 +90,13 @@ void UMovementInputHandler::Initialize(UFloatingPawnMovement* movement)
 void UMovementInputHandler::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UpdateZoom();
+
+	FTimerHandle MoveTrackingHandle;
+	GetWorld()->GetTimerManager().SetTimer(MoveTrackingHandle, this,
+		&UMovementInputHandler::MoveTracking, 0.016666f,
+		true, 0.0f);
 }
 
 void UMovementInputHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -186,9 +193,7 @@ void UMovementInputHandler::OnZoomPressed(const FInputActionValue& Value)
 
 void UMovementInputHandler::OnDragMovePressed(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MovementInputHandler - OnDragMovePressed"));
-
-	if(SingleTouchCheck())
+	if(CoordinateUtils::SingleTouchCheck())
 	{
 		TrackMove();
 	}
@@ -232,15 +237,6 @@ void UMovementInputHandler::PositionCheck()
 	{
 		Owner->Collision->SetWorldLocation(TargetHandle);
 	}
-}
-
-bool UMovementInputHandler::SingleTouchCheck() const
-{
-	float locX, locY;
-	bool isCurrentlyTouching = false;
-	Owner->GetPlayerController()->GetInputTouchState(ETouchIndex::Touch2, locX, locY, isCurrentlyTouching);
-
-	return !isCurrentlyTouching;
 }
 
 void UMovementInputHandler::TrackMove()

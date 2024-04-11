@@ -71,7 +71,6 @@ public:
 	void InitDragMoveIMC() const;
 	void ReleaseDragMoveIMC() const;
 
-	bool SingleTouchCheck() const;
 	void MoveTracking();
 	void UpdateZoom();
 	void UpdateDof() const;

@@ -32,6 +32,7 @@ class CROPOUT_CLONE_CPP_API UVillagerHandler : public UActorComponent
 	void VillagerRelease();
 
 	AActor* VillagerOverlapCheck();
+	AActor* PlacementOverlapCheck();
 
 	// Input
 	UInputMappingContext* IMC_Villager = nullptr;

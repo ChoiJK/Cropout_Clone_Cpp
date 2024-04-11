@@ -162,13 +162,6 @@ void ACropoutPlayer::BeginPlay()
 				&ACropoutPlayer::OnChangedInputType);
 		}
 	}
-
-	MovementInputHandler->UpdateZoom();
-
-	FTimerHandle MoveTrackingHandle;
-	GetWorld()->GetTimerManager().SetTimer(MoveTrackingHandle, MovementInputHandler,
-		&UMovementInputHandler::MoveTracking, 0.016666f,
-		true, 0.0f);
 }
 
 void ACropoutPlayer::Tick(float DeltaTime)

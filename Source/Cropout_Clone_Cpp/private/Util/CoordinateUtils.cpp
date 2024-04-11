@@ -8,9 +8,8 @@
 ACropoutPlayerController* CoordinateUtils::PlayerController = nullptr;
 
 
-
 ACropoutPlayerController* CoordinateUtils::GetPlayerController()
-{	
+{
 	return PlayerController;
 }
 
@@ -98,4 +97,13 @@ bool CoordinateUtils::ProjectTouchToGroundPlane(FVector2D& ScreenPos, FVector& I
 	intersectionLoc.Z += worldLocZ;
 	IntersectionPos = intersectionLoc;
 	return hasTouch;
+}
+
+bool CoordinateUtils::SingleTouchCheck()
+{
+	float locX, locY;
+	bool isCurrentlyTouching = false;
+	GetPlayerController()->GetInputTouchState(ETouchIndex::Touch2, locX, locY, isCurrentlyTouching);
+
+	return !isCurrentlyTouching;
 }
