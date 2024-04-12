@@ -82,9 +82,8 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
     - [Lambda, Delegate](Pages/Lambda&Delegate.md)
     - Curve, Timeline
     - Input
-        - [Engine Side](Pages/Input_Engine.md)
         - Legacy Input
-        - Enhanced Input
+        - [Enhanced Input](Pages/Input_Enhanced.md)
         - UMG Input - link
         - [CommonUI Input](Pages/CommonUI.md)
     - Behaviour Tree

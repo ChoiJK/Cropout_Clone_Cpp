@@ -1,4 +1,4 @@
-### C++에서의 Resource Load
+## C++에서의 Resource Load
 
 Unreal에서 C++로 개발할 때 Resource가 필요하다면 다양한 경로를 통해 취득할 수 있습니다.
 크게 3가지 범주로 볼수 있습니다.   
@@ -7,7 +7,7 @@ Unreal에서 C++로 개발할 때 Resource가 필요하다면 다양한 경로�
 2. 런타임에 로드 (Sync)
 3. 런타임에 로드 (Async)
 
-#### 빌드시간에 로드
+### 빌드시간에 로드
 - UObject를 상속받은 Class의 생성자에서 활용할 수 있습니다.
 - 컴파일타임에 리소스의 존재와 유효성을 검사하여, 리소스 경로 오류를 빠르게 식별할 수 있습니다.
 
@@ -26,7 +26,7 @@ if(resource.Succeeded())
 }
 ```
 
-#### 런타임에 로드 (Sync)
+### 런타임에 로드 (Sync)
 - 런타임 언제든지 활용할 수 있습니다.
 - 다양한 유형의 리소스와 객체를 동적으로 로드하는 데 유용합니다.
 - 실행 중에 리소스를 로드하므로, 호출될 때마다 성능에 영향을 줄 수 있습니다.
@@ -52,7 +52,7 @@ FStreamableManager streamableManager;
 streamableManager.LoadSynchronous(FSoftObjectPath)
 ```
 
-#### 런타임에 로드 (Async)
+### 런타임에 로드 (Async)
 - 게임플레이에 방해를 주지 않고 Background에서 Resource를 Load할 수 있습니다.
 - AsyncLoad는 FSoftObjectPtr, FSoftObjectPath를 통해 활용할 수 있습니다.
 - AsyncLoad는 조금은 주의하여 사용해야합니다.

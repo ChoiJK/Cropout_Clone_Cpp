@@ -1,6 +1,6 @@
 ## C++에서 UMG Widget 활용 방법
 
-#### 위젯의 주요한 메서드
+### 위젯의 주요한 메서드
 - Constructor
     - 위젯이 생성될 때 가장 먼저 호출됩니다.
     - 초기화 코드를 여기에 작성합니다.
@@ -16,7 +16,7 @@
     - 위젯이 화면에서 제거될 때 호출됩니다.
     - 리소스 해제, 이벤트 언바인딩, 기타 청소 작업을 수행합니다.
 
-#### Create Widget
+### Create Widget
 - UWidget
     ``` c++
     USpacer* spacer = NewObject<USpacer>(this);
@@ -35,8 +35,43 @@
     }
     ```
 
-#### **주의사항**
-- widget의 NativeConstructor의 호출타이밍 및 UI 설정
+### World Position에 Widget 위치시키기
+> 본 예제에서는 Canvas아래에 위치한 CanvasPanelSlot을 이용한 위치이동으로 설명합니다. ScreenPosition 자체는 동일하게 활용하기에 Widget에도 활용 할 수 있습니다.
+
+아래의 과정을 따릅니다.
+1. PlayerController 취득
+2. WorldPosition 취득
+3. ProjectWorldLocationToScreen
+4. Viewport Scale 취득
+5. Viewport Scale 적용
+
+> 만약 WorldPosition과 ScreenPosition간에 이격이 발생한다면 DPI를 고려해야 할 수 있습니다.
+
+``` C++
+const APlayerController* playerController = Pawn->GetPlayerController();     // - 1
+FVector WorldPosition = Pawn->GetActorLocation();       // - 2
+FVector2D ScreenPosition;
+playerController->ProjectWorldLocationToScreen(WorldPosition, ScreenPosition, true);    // -3
+float viewportScale = UWidgetLayoutLibrary::GetViewportScale(GetWorld());   // -4
+
+// CanvasSlot 취득
+TObjectPtr<UPanelSlot> slot = widget->Slot;
+TObjectPtr<UCanvasPanelSlot> canvasSlot = Cast<UCanvasPanelSlot>(slot);
+
+canvasSlot->SetPosition(screenPosition / viewportScale);    // -5
+```
+
+### **주의사항**
+- **widget의 NativeConstructor의 호출타이밍 및 UI 설정**
+    <details>
+    <summary>열기</summary>
+
+    - 아래의 경우 `UUserCardWidget::NativeConstruct`, `UUserCardWidget::SetImage`의 호출 순위가 NativeConstruct -> SetImage가 아닐 수 있습니다.
+    - `CreateWidget`을통해 Widget을 생성하고, 생성된 Widget에 `SetImage`를 통해 이미지를 입력했는데, 이후 `NativeConstruct`에서 초기화되며 이미지가 소실됩니다.
+        - NativeConstruct는 화면에 렌더링된 후에 호출됩니다.
+        - 멤버변수의 초기화는 Constructor에서 설정합니다.
+        - UI 요소에 대한 설정은 NativeConstruct에서 설정합니다.
+
     ```c++
     // UserCardWidget.h    
     UCLASS()
@@ -79,7 +114,5 @@
         card->SetImage(texture);
     }
     ```
-    - 위의 경우 UUserCardWidget::NativeConstruct, UUserCardWidget::SetImage의 호출 순위가 NativeConstruct -> SetImage가 아닐 수 있습니다.
-    - NativeConstruct는 화면에 렌더링된 후에 호출됩니다.
-    - 멤버변수의 초기화는 Constructor에서 설정합니다.
-    - UI 요소에 대한 설정은 NativeConstruct에서 설정합니다.
+        
+    </details>

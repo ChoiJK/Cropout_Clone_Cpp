@@ -2,7 +2,7 @@
 
 > 본 페이지는 [Introduction to Common UI](https://www.youtube.com/live/TTB5y-03SnE?si=jD3cqkcm8hYgOYEw), [Common UI Quickstart Guid](https://dev.epicgames.com/documentation/en-us/unreal-engine/common-ui-quickstart-guide-for-unreal-engine?application_version=5.0)를 정리한 내용입니다.
 
-## CommonUI의 특징
+### CommonUI의 특징
 - Styling System
 - Input System
     - 게임 내 입력 시스템과 별도로 입력 동작 인식
@@ -14,12 +14,13 @@
 - 활성화 가능한 위젯 시스템
 - 여러가지 유용한 위젯
 
-## 생각 생각
+---
+
+### 생각 생각
 - Input처리에 대한 작업이 생각보다 많다
 - Viewport Input은 InGame Input과 분리되어있다
 
-
-## 작업 순서
+### 작업 순서
 1. CommonUI Plugin 활성화
 2. 뷰포트 입력 라우팅 구성
     - ProjectSetting - Game Viewport Client Class -> CommonGameViewportClient 설정
@@ -60,8 +61,12 @@
         - Default Image Resource Object
             - 로드되지 않은 UI에셋의 자리표시자
 7. 이제 UI들을 배치하고 로직을 작성해보자.
+---
 
-## 팁
+### UCommonActivatableWidgetStack
+- TODO 
+
+### 팁
 - 텍스쳐를 UI용으로 설정 일괄 변경
     - 일괄적으로 설정을 변경할 텍스쳐들을 선택
     - 마우스 우클릭 -> 에셋 액션 -> 프로퍼티 매트릭스에서 선택 편집
@@ -77,7 +82,7 @@
         - Localized String
         - Tools - Localization Dashboard
 
-## 기타
+### 기타
 #### CommonUI가 활성화될 때마다 기본적인 이동입력이 비활성화 되는 것 같음. 해결 방법은?
 - @ TODO
 #### CommonUI와 Enhanced Input이 동시에 처리되지 않음. 해결 방법은?
