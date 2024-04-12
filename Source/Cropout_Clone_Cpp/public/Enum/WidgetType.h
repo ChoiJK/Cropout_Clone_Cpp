@@ -15,5 +15,6 @@ enum class EWidgetType : uint8
 	BuildPanel UMETA(DisplayName = "BuildPanelWidget"),
 	BuildEntityCard UMETA(DisplayName = "BuildEntityCardWidget"),
 	BuildEntityInfo UMETA(DisplayName = "BuildEntityInfoWidget"),
-	ConstructionResource UMETA(DisplayName = "ConstructionResourceWidget")
+	ConstructionResource UMETA(DisplayName = "ConstructionResourceWidget"),
+	BuildPlacement UMETA(DisplayName = "BuildPlacementWidget")
 };

@@ -7,6 +7,7 @@
 #include "PlacementHandler.generated.h"
 
 
+class UWidgetComponent;
 class UGlobalSharedVariable;
 class AInteractableBaseActor;
 class ACropoutPlayer;
@@ -30,6 +31,7 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PlacementSMC = nullptr;
+	UWidgetComponent* PlacementWidget = nullptr;
 
 	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = nullptr;
 	UInputMappingContext* IMC_BuildMode = nullptr;
@@ -53,9 +55,15 @@ public:
 	void Initialize();
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	bool CheckEntityAgainstPlacementTarget(const FInteractableInfo* info);
+
 	void SetPlacementTargetEntity(AInteractableBaseActor* entity);
 	void ReleasePlacementTargetEntity();
+	void PlacingEntity();
+
 	void InitPlacementIMC();
 	void ReleasePlacementIMC();
+
+	FVector2D GetPlacementTargetBottomScreenPosition() const;
 	void UpdateTrackMovePlacement();
+	void RotatePlacementEntity();
 };

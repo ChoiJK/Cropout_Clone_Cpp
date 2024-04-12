@@ -8,6 +8,7 @@
 #include "Core/CropoutPlayerController.h"
 #include "Data/BuildableInfo.h"
 #include "Player/CropoutPlayer.h"
+#include "UI/UiManager.h"
 #include "UI/Element/BuildEntityInfoWidget.h"
 
 void UBuildEntityCardWidget::NativeConstruct()
@@ -43,5 +44,12 @@ void UBuildEntityCardWidget::OnButtonClicked()
 		{
 			Player->BeginBuild(BuildableInfo);
 		}
+
+		UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+		UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
+		UUiManager* uiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
+
+		TSubclassOf<UUserWidget>* buildPanel = tableManager->GetWidgetClass(EWidgetType::BuildPlacement);
+		uiManager->GetUIBase()->PushBottomClass(buildPanel->Get());
 	}
 }

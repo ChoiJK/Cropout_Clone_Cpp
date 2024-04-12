@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Components/WidgetComponent.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutPlayerController.h"
 #include "Util/CoordinateUtils.h"
@@ -53,6 +54,10 @@ void UPlacementHandler::Initialize()
 	PlacementSMC->SetGenerateOverlapEvents(false);
 	PlacementSMC->SetCollisionProfileName(TEXT("NoCollision"));
 	PlacementSMC->SetVisibility(false);
+
+	//PlacementWidget = Owner->CreateDefaultSubobject<UWidgetComponent>(TEXT("PlacementWidget"));
+	//PlacementWidget->SetWidget();
+	//PlacementWidget->SetVisibility(false);
 }
 
 void UPlacementHandler::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -100,9 +105,13 @@ void UPlacementHandler::SetPlacementTargetEntity(AInteractableBaseActor* entity)
 	PlacementTargetEntity->SetActorTransform(viewportCenterTransform);
 	PlacementTargetEntity->Tags = TArray<FName>{"PlacementMode"};
 
+	FVector boundOrigin;
+	FVector boundExtent;
+	PlacementTargetEntity->GetActorBounds(false, boundOrigin, boundExtent);
 
 	PlacementSMC->AttachToComponent(PlacementTargetEntity->GetStaticMeshComponent(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	PlacementSMC->SetWorldScale3D(boundExtent / 25.0f);
 	PlacementSMC->SetVisibility(true);
 }
 
@@ -116,6 +125,11 @@ void UPlacementHandler::ReleasePlacementTargetEntity()
 		PlacementTargetEntity->Destroy();
 		PlacementTargetEntity = nullptr;
 	}
+}
+
+void UPlacementHandler::PlacingEntity()
+{
+	// Todo : Implement
 }
 
 void UPlacementHandler::InitPlacementIMC()
@@ -141,6 +155,21 @@ void UPlacementHandler::ReleasePlacementIMC()
 	}
 }
 
+FVector2D UPlacementHandler::GetPlacementTargetBottomScreenPosition() const
+{
+	if(PlacementTargetEntity == nullptr)
+	{
+		return CoordinateUtils::GetViewportCenter();
+	}
+
+	const ACropoutPlayerController* playerController = Owner->GetPlayerController();
+	FVector2D PlacementTargetBottomScreenPosition;
+	playerController->ProjectWorldLocationToScreen(PlacementTargetEntity->GetActorLocation(),
+		PlacementTargetBottomScreenPosition, true);
+
+	return PlacementTargetBottomScreenPosition;
+}
+
 void UPlacementHandler::OnBuildMovePressed(const FInputActionValue& Value)
 {
 	if(CoordinateUtils::SingleTouchCheck())
@@ -159,6 +188,11 @@ void UPlacementHandler::UpdateTrackMovePlacement()
 	{
 		TrackMovePlacement();
 	}
+}
+
+void UPlacementHandler::RotatePlacementEntity()
+{
+	PlacementTargetEntity->AddActorWorldRotation(FRotator(0, 90, 0));
 }
 
 void UPlacementHandler::TrackMovePlacement()
