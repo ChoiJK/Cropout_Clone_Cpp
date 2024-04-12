@@ -31,7 +31,6 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PlacementSMC = nullptr;
-	UWidgetComponent* PlacementWidget = nullptr;
 
 	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = nullptr;
 	UInputMappingContext* IMC_BuildMode = nullptr;
@@ -42,6 +41,9 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 	FVector StoredMove;
 	FVector TargetHandle;
 	void TrackMovePlacement();
+	void UpdateBuildAsset();
+
+	bool ConersInNav();
 
 public:
 	UPlacementHandler();
