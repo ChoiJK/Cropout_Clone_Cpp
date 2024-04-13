@@ -39,7 +39,6 @@ private:
 	ASpawner* Spawner = nullptr;
 	AActor* HoverActor = nullptr;
 
-	ASpawner* GetSpawner();
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -78,6 +77,7 @@ public:
 	UPlacementHandler* PlacementHandler = nullptr;
 
 	ACropoutPlayerController* GetPlayerController();
+	ASpawner* GetSpawner();
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

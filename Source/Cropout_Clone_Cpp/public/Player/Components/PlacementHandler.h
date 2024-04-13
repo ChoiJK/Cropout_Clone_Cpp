@@ -25,6 +25,7 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 	GENERATED_BODY()
 
 	ACropoutPlayer* Owner = nullptr;
+	const FInteractableInfo* PlacementTargetInfo = nullptr;
 	AInteractableBaseActor* PlacementTargetEntity = nullptr;
 
 	UGlobalSharedVariable* GlobalSharedVariable = nullptr;
@@ -58,7 +59,7 @@ public:
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	bool CheckEntityAgainstPlacementTarget(const FInteractableInfo* info);
 
-	void SetPlacementTargetEntity(AInteractableBaseActor* entity);
+	void SetPlacementTargetEntity(const FInteractableInfo* interactableInfo);
 	void ReleasePlacementTargetEntity();
 	void PlacingEntity();
 

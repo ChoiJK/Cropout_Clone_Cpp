@@ -18,6 +18,7 @@
 #include "Player/CropoutPlayer.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
+#include "Spawn/Spawner.h"
 
 
 UPlacementHandler::UPlacementHandler()
@@ -94,9 +95,19 @@ bool UPlacementHandler::CheckEntityAgainstPlacementTarget(const FInteractableInf
 	return false;
 }
 
-void UPlacementHandler::SetPlacementTargetEntity(AInteractableBaseActor* entity)
+void UPlacementHandler::SetPlacementTargetEntity(const FInteractableInfo* interactableInfo)
 {
-	PlacementTargetEntity = entity;
+	PlacementTargetInfo = interactableInfo;
+
+	AInteractableBaseActor* interactableActor = Owner->GetSpawner()->SpawnInteractable(PlacementTargetInfo);
+	if(interactableActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn interactable actor"));
+		Owner->EndBuild();
+		return;
+	}
+
+	PlacementTargetEntity = interactableActor;
 	PlacementTargetEntity->SetEnableGroundBlend(false);
 	FVector IntersectionPos;
 	CoordinateUtils::ProjectViewportCenterToGroundPlane(IntersectionPos);
@@ -127,11 +138,33 @@ void UPlacementHandler::ReleasePlacementTargetEntity()
 		PlacementTargetEntity->Destroy();
 		PlacementTargetEntity = nullptr;
 	}
+	PlacementTargetInfo = nullptr;
 }
 
 void UPlacementHandler::PlacingEntity()
 {
-	// Todo : Implement
+	if(IsValid(PlacementTargetEntity) == false)
+	{
+		return;
+	}
+
+	AInteractableBaseActor* interactableActor = Owner->GetSpawner()->SpawnInteractable(PlacementTargetInfo);
+	if(interactableActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn interactable actor"));
+		Owner->EndBuild();
+		return;
+	}
+
+	interactableActor->SetActorTransform(PlacementTargetEntity->GetActorTransform());
+
+	if(PlacementTargetInfo->InteractableType == EInteractableType::Resource)
+	{
+		AResourceBaseActor* resourceActor = Cast<AResourceBaseActor>(interactableActor);
+		resourceActor->DoScaleUp(0.1f);
+	}
+
+	UpdateBuildAsset();
 }
 
 void UPlacementHandler::InitPlacementIMC()

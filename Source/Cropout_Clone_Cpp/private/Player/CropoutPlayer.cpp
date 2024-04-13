@@ -243,14 +243,7 @@ void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 
 	if(PlacementHandler->CheckEntityAgainstPlacementTarget(interactableInfo) == false)
 	{
-		AInteractableBaseActor* interactableActor = GetSpawner()->SpawnInteractable(interactableInfo);
-		if(interactableActor == nullptr)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to spawn interactable actor"));
-			EndBuild();
-		}
-
-		PlacementHandler->SetPlacementTargetEntity(interactableActor);
+		PlacementHandler->SetPlacementTargetEntity(interactableInfo);
 	}
 }
 

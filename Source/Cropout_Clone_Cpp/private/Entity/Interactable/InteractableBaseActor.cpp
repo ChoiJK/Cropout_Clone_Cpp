@@ -147,7 +147,7 @@ void AInteractableBaseActor::CheckOverlappingActor()
 	bool isDestroy = false;
 	for(const AActor* actor : OverlappingActors)
 	{
-		if(actor->ActorHasTag(targetTag))
+		if(actor->ActorHasTag(targetTag) == false)
 		{
 			const bool isOverlapped = FVector::Distance(GetActorLocation(), actor->GetActorLocation()) < 5;
 			if(isOverlapped)
