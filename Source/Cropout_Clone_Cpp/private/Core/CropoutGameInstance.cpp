@@ -51,6 +51,23 @@ void UCropoutGameInstance::Shutdown()
 	Super::Shutdown();
 }
 
+void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase)
+{
+	CurrentLevelScript = cropoutLevelScriptBase;
+
+	if(CurrentLevelScript != nullptr)
+	{
+		if(IsLevelManagerInitialized == false)
+		{
+			InitializeLevelManagers();
+		}
+	}
+	else
+	{
+		ReleaseLevelManagers();
+	}
+}
+
 void UCropoutGameInstance::InitializeSystemManagers()
 {
 	for(TObjectIterator<UClass> It; It; ++It)
@@ -61,7 +78,7 @@ void UCropoutGameInstance::InitializeSystemManagers()
 			//UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
 			USystemManager* SystemManager = NewObject<USystemManager>(this, Class);
 			SystemManager->SetGameInstance(this);
-			SystemManager->AddOnBeginDestroyHandle(this, &UCropoutGameInstance::ManagerBeginDestroy);
+			SystemManager->AddOnBeginDestroyHandle(this, &UCropoutGameInstance::SystemManagerBeginDestroy);
 			SystemManagerMap.Add(Class, SystemManager);
 		}
 	}
@@ -77,7 +94,58 @@ void UCropoutGameInstance::InitializeSystemManagers()
 	}
 }
 
-void UCropoutGameInstance::ManagerBeginDestroy(UManagerBase* Manager)
+void UCropoutGameInstance::InitializeLevelManagers()
+{
+	IsProgressLevelManagerInitialized = true;
+	for(TObjectIterator<UClass> It; It; ++It)
+	{
+		UClass* Class = *It;
+		if(Class->IsChildOf(ULevelManager::StaticClass()))
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Found class: %s"), *Class->GetName());
+			ULevelManager* LevelManager = NewObject<ULevelManager>(this, Class);
+			LevelManager->SetGameInstance(this);
+			LevelManager->AddOnBeginDestroyHandle(this, &UCropoutGameInstance::LevelManagerBeginDestroy);
+			LevelManagerMap.Add(Class, LevelManager);
+		}
+	}
+
+	for(auto& Pair : LevelManagerMap)
+	{
+		Pair.Value->Init();
+	}
+
+	IsLevelManagerInitialized = true;
+	IsProgressLevelManagerInitialized = false;
+
+	for(auto& Pair : LevelManagerMap)
+	{
+		Pair.Value->Prepare();
+	}
+}
+
+void UCropoutGameInstance::ReleaseLevelManagers()
+{
+	for(auto& Pair : LevelManagerMap)
+	{
+		Pair.Value->Release();
+	}
+
+	for(auto& Pair : LevelManagerMap)
+	{
+		Pair.Value->Destroy();
+	}
+
+	IsLevelManagerInitialized = true;
+	IsProgressLevelManagerInitialized = false;
+}
+
+void UCropoutGameInstance::SystemManagerBeginDestroy(UManagerBase* Manager)
 {
 	SystemManagerMap.Remove(Manager->GetClass());
+}
+
+void UCropoutGameInstance::LevelManagerBeginDestroy(UManagerBase* Manager)
+{
+	LevelManagerMap.Remove(Manager->GetClass());
 }

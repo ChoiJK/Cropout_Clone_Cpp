@@ -22,7 +22,7 @@ void UInGameLayerWidget::NativeConstruct()
 
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	TableManager = gameInstance->GetSystemManager<UTableManager>();
-	UiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
+	UiManager = gameInstance->GetLevelManager<UUiManager>();
 
 	TSubclassOf<UUserWidget>* resourceWidget = TableManager->GetWidgetClass(EWidgetType::ResourceElement);
 

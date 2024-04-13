@@ -24,6 +24,7 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 	TMap<EResourceType, int> ResourceBank;
 	void ResourceDebugMessage();
 
+	UPROPERTY()
 	UUiManager* UiManager = nullptr;
 	UUiManager* GetUiManager();
 
@@ -55,6 +56,7 @@ public:
 protected:
 	void OnIslandGenComplete();
 
+	UPROPERTY()
 	UAudioComponent* MusicComponent = nullptr;
 	void PlayMusic();
 
@@ -65,6 +67,9 @@ protected:
 	UCropoutGameInstance* GetGameInstance();
 
 public:
+	UPROPERTY()
 	UCropoutGameInstance* GameInstance;
+
+	UPROPERTY()
 	ASpawner* SpawnerRef;
 };

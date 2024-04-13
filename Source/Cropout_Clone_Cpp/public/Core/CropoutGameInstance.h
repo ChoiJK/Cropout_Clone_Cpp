@@ -17,6 +17,7 @@ class ACropoutPlayerController;
 class ACropoutGameMode;
 class ACropoutLevelScriptBase;
 class USystemManager;
+class ULevelManager;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
@@ -31,6 +32,9 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	FStreamableManager streamableManager;
 
 	TMap<UClass*, USystemManager*> SystemManagerMap;
+	TMap<UClass*, ULevelManager*> LevelManagerMap;
+	bool IsLevelManagerInitialized = false;
+	bool IsProgressLevelManagerInitialized = false;
 
 	ACropoutGameMode* CurrentGameMode;
 	ACropoutLevelScriptBase* CurrentLevelScript;
@@ -42,6 +46,8 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 private:
 	void InitializeSystemManagers();
+	void InitializeLevelManagers();
+	void ReleaseLevelManagers();
 
 public:
 	static UCropoutGameInstance* Instance;
@@ -62,6 +68,31 @@ public:
 		}
 
 		return Cast<Type>(SystemManagerMap[Type::StaticClass()]);
+	}
+
+	template <typename Type>
+	Type* GetLevelManager()
+	{
+		static_assert(std::is_base_of_v<ULevelManager, Type>, "Type must be derived from ULevelManager");
+
+		if(IsProgressLevelManagerInitialized == true)
+		{
+			UE_LOG(LogTemp, Error, TEXT("LevelManager is initializing. Please wait."));
+			return nullptr;
+		}
+
+		if(IsLevelManagerInitialized == false)
+		{
+			InitializeLevelManagers();
+		}
+
+		if(LevelManagerMap.Contains(Type::StaticClass()) == false)
+		{
+			UE_LOG(LogTemp, Error, TEXT("LevelManager not found: %s"), *Type::StaticClass()->GetName());
+			return nullptr;
+		}
+
+		return Cast<Type>(LevelManagerMap[Type::StaticClass()]);
 	}
 
 	FStreamableManager& GetStreamableManager()
@@ -94,11 +125,6 @@ public:
 		return CurrentGameMode;
 	}
 
-	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase)
-	{
-		CurrentLevelScript = cropoutLevelScriptBase;
-	}
-
 	ACropoutLevelScriptBase* GetCurrentLevelScript() const
 	{
 		return CurrentLevelScript;
@@ -114,5 +140,7 @@ public:
 		return CurrentPlayerController;
 	}
 
-	void ManagerBeginDestroy(UManagerBase* Manager);
+	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase);
+	void SystemManagerBeginDestroy(UManagerBase* Manager);
+	void LevelManagerBeginDestroy(UManagerBase* Manager);
 };

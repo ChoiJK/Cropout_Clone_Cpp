@@ -342,19 +342,8 @@ UUiManager* ACropoutGameMode::GetUiManager()
 		return UiManager;
 	}
 
-	UWorld* world = GetWorld();
-	if(world == nullptr)
-	{
-		return nullptr;
-	}
-
-	ACropoutLevelScriptBase* clsb = Cast<ACropoutLevelScriptBase>(world->GetLevelScriptActor());
-	if(clsb == nullptr)
-	{
-		return nullptr;
-	}
-
-	UiManager = clsb->GetLevelManager<UUiManager>();
+	UCropoutGameInstance* gameInstance = GetGameInstance();
+	UiManager = gameInstance->GetLevelManager<UUiManager>();
 
 	return UiManager;
 }

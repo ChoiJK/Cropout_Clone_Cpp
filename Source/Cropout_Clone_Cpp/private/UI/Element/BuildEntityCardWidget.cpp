@@ -47,7 +47,7 @@ void UBuildEntityCardWidget::OnButtonClicked()
 
 		UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 		UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
-		UUiManager* uiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
+		UUiManager* uiManager = gameInstance->GetLevelManager<UUiManager>();
 
 		TSubclassOf<UUserWidget>* buildPanel = tableManager->GetWidgetClass(EWidgetType::BuildPlacement);
 		uiManager->GetUIBase()->PushBottomClass(buildPanel->Get());

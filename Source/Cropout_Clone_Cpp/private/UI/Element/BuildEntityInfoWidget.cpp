@@ -28,7 +28,7 @@ void UBuildEntityInfoWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 
 	UCropoutGameInstance* gameInstance = Cast<UCropoutGameInstance>(GetGameInstance());
 	UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
-	UUiManager* uiManager = gameInstance->GetCurrentLevelScript()->GetLevelManager<UUiManager>();
+	UUiManager* uiManager = gameInstance->GetLevelManager<UUiManager>();
 
 	TSubclassOf<UUserWidget>* constructionResourcePanel = tableManager->GetWidgetClass(
 		EWidgetType::ConstructionResource);

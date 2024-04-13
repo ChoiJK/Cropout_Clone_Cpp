@@ -18,9 +18,13 @@ UCLASS()
 class CROPOUT_CLONE_CPP_API UUiManager : public ULevelManager
 {
 	GENERATED_BODY()
-
+	UPROPERTY()
 	UUiBase* UIBase;
+
+	UPROPERTY()
 	UInGameLayerWidget* UI_HUD;
+
+	UPROPERTY()
 	UTableManager* TableManager;
 
 protected:
