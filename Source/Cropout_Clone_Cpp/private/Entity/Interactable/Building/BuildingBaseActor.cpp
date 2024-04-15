@@ -24,10 +24,6 @@ ABuildingBaseActor::ABuildingBaseActor()
 
 void ABuildingBaseActor::OnConstruction(const FTransform& Transform)
 {
-	if(MeshList.Num() != 0)
-	{
-		ChangeMesh(MeshList.Num() - 1);
-	}
 }
 
 
@@ -35,6 +31,16 @@ void ABuildingBaseActor::OnConstruction(const FTransform& Transform)
 void ABuildingBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ABuildingBaseActor::InitializeStaticMesh()
+{
+	Super::InitializeStaticMesh();
+
+	if(MeshList.Num() != 0)
+	{
+		ChangeMesh(0);
+	}
 }
 
 void ABuildingBaseActor::ChangeMesh(int index)

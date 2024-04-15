@@ -26,6 +26,9 @@ struct FInteractableInfo : public FTableRowBase
 	bool RequirBuildable = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Progression")
+	int BuildTimeSec = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Progression")
 	TArray<TSoftObjectPtr<UStaticMesh>> MeshList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Progression")

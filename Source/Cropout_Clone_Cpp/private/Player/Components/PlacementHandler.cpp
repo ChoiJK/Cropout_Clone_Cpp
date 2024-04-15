@@ -115,14 +115,19 @@ void UPlacementHandler::SetPlacementTargetEntity(const FInteractableInfo* intera
 		IntersectionPos);
 	PlacementTargetEntity->SetActorTransform(viewportCenterTransform);
 	PlacementTargetEntity->Tags = TArray<FName>{"PlacementMode"};
+	PlacementTargetRecalcBoxExtentDelegateHandle = PlacementTargetEntity->AddReCalcBoxExtentDelegateHandle(this,
+		&UPlacementHandler::PostPlacementTargetRecalcBoxExtent);
+}
 
+void UPlacementHandler::PostPlacementTargetRecalcBoxExtent()
+{
 	FVector boundOrigin;
 	FVector boundExtent;
 	PlacementTargetEntity->GetActorBounds(false, boundOrigin, boundExtent);
 
 	PlacementSMC->AttachToComponent(PlacementTargetEntity->GetStaticMeshComponent(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	PlacementSMC->SetWorldScale3D(boundExtent / 25.0f);
+	PlacementSMC->SetWorldScale3D(boundExtent / 40.0f);
 	PlacementSMC->SetVisibility(true);
 
 	UpdateBuildAsset();
@@ -135,6 +140,8 @@ void UPlacementHandler::ReleasePlacementTargetEntity()
 
 	if(IsValid(PlacementTargetEntity))
 	{
+		PlacementTargetEntity->RemoveReCalcBoxExtentDelegateHandle(PlacementTargetRecalcBoxExtentDelegateHandle);
+
 		PlacementTargetEntity->Destroy();
 		PlacementTargetEntity = nullptr;
 	}

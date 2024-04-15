@@ -38,6 +38,8 @@ class CROPOUT_CLONE_CPP_API UPlacementHandler : public UActorComponent
 	UInputAction* IA_BuildMove = nullptr;
 	bool HasMappingContext = false;
 
+	FDelegateHandle PlacementTargetRecalcBoxExtentDelegateHandle;
+
 	// DragMove
 	FVector StoredMove;
 	FVector TargetHandle;
@@ -60,6 +62,7 @@ public:
 	bool CheckEntityAgainstPlacementTarget(const FInteractableInfo* info);
 
 	void SetPlacementTargetEntity(const FInteractableInfo* interactableInfo);
+	void PostPlacementTargetRecalcBoxExtent();
 	void ReleasePlacementTargetEntity();
 	void PlacingEntity();
 

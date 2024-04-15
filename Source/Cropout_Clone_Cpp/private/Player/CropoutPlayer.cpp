@@ -237,7 +237,7 @@ void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 
 	if(interactableInfo == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to get interactable info"));
+		UE_LOG(LogTemp, Error, TEXT("Failed to get interactable info %s "), *buildableInfo->Name.ToString());
 		EndBuild();
 	}
 

@@ -85,6 +85,11 @@ void ASpawner::SpawnRandom()
 
 AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* InteractableInfo)
 {
+	if(InteractableInfo == nullptr)
+	{
+		return nullptr;
+	}
+
 	AInteractableBaseActor* spawnedActor = nullptr;
 	if(InteractableInfo->InteractableType == EInteractableType::Resource)
 	{

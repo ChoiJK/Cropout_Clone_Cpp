@@ -5,14 +5,19 @@
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Actor.h"
+#include "Player/Components/PlacementHandler.h"
 #include "InteractableBaseActor.generated.h"
 
 class UBoxComponent;
 class UTextureRenderTarget2D;
+class UPlacementHandler;
 class UStaticMesh;
 class UCurveFloat;
+class FDelegateHandle;
 struct FTimeline;
 struct FInteractableInfo;
+
+DECLARE_MULTICAST_DELEGATE(FReCalcBoxExtentDelegate);
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API AInteractableBaseActor : public AActor
@@ -23,6 +28,8 @@ public:
 	AInteractableBaseActor();
 
 private:
+	TSharedPtr<FReCalcBoxExtentDelegate> ReCalcBoxExtentDelegate = nullptr;
+
 	void InitializeWithInteractableInfo();
 	void CheckOverlappingActor();
 	void DoGrundBlend();
@@ -41,6 +48,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Progression")
 	bool RequireBuild = false;
+
+	UPROPERTY(EditAnywhere, Category = "Progression")
+	int BuildTimeSec = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Progression")
 	float ProgressionState = 0.0f;
@@ -83,13 +93,35 @@ protected:
 	void Wooble_TimelineFinished();
 
 public:
+	FDelegateHandle AddReCalcBoxExtentDelegateHandle(UPlacementHandler* ClassInstance,
+		void (UPlacementHandler::*InFunc)())
+	{
+		if(!ReCalcBoxExtentDelegate)
+		{
+			ReCalcBoxExtentDelegate = MakeShareable(new FReCalcBoxExtentDelegate());
+		}
+
+		return ReCalcBoxExtentDelegate->AddUObject(ClassInstance, InFunc);
+	}
+
+	void RemoveReCalcBoxExtentDelegateHandle(FDelegateHandle delegateHandle)
+	{
+		if(!ReCalcBoxExtentDelegate)
+		{
+			return;
+		}
+
+		ReCalcBoxExtentDelegate->Remove(delegateHandle);
+	}
+
+
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	// returnVal : work time
 	virtual float Interact()
 	{
 		return 0.0f;
-	};
+	}
 
 	virtual void SetInteractableInfo(const FInteractableInfo* InInfo);
 

@@ -59,6 +59,7 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 	EnableGroundBlend = InInfo->EnableGroundBlend;
 	OutlineDraw = InInfo->OutlineDraw;
 	RequireBuild = InInfo->RequirBuildable;
+	BuildTimeSec = InInfo->BuildTimeSec;
 	ProgressionState = 0.f;
 
 	BoundGap = InInfo->BoundGap;
@@ -251,6 +252,11 @@ void AInteractableBaseActor::ReCalcBoxExtent() const
 
 	BoxComponent->SetBoxExtent(boundsMax);
 	BoxComponent->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(FVector(1, 0, 0)));
+
+	if(ReCalcBoxExtentDelegate != nullptr)
+	{
+		ReCalcBoxExtentDelegate->Broadcast();
+	}
 }
 
 void AInteractableBaseActor::TransformToTexture(FVector2d InVec, FVector2d& OutVec, FVector2d& OutVec2) const
