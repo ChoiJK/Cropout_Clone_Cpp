@@ -44,10 +44,12 @@ public:
 	void AddBuilding(ABuildingBaseActor* Building, bool bRequireBuild = true);
 	void RemoveBuilding(ABuildingBaseActor* Building);
 	void ChangeBuildState(ABuildingBaseActor* Building, bool bRequireBuild);
+	int GetRequireBuildBuildingCount();
 	ABuildingBaseActor* FindNearestRequireBuildBuilding(FVector Location, int selectionIndex);
 
 	void AddResource(AResourceBaseActor* Resource);
 	void RemoveResource(AResourceBaseActor* Resource);
+	int GetResourceOfTypeCount(EResourceType ResourceType);
 	AResourceBaseActor* FindNearestResourceOfType(EResourceType ResourceType, FVector Location, int selectionIndex);
 
 	void AddVillager(AVillager* Villager);

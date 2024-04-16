@@ -45,9 +45,10 @@ public:
 	int GetVillagerCount() { return Villagers.Num(); }
 
 	ABuildingBaseActor* TownHall;
-	TSubclassOf<ABuildingBaseActor> TownHall_Ref;
-	TSubclassOf<ABuildingBaseActor> GetTownHallRef();
 	void SpawnTownHall();
+
+	ASpawner* Spawner = nullptr;
+	ASpawner* GetSpawner();
 
 	int GetResourceAmount(EResourceType type);
 	void StoreResource(EResourceType type, int amount);

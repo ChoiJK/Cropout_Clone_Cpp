@@ -6,6 +6,8 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTTask_FindNearestOfClass.generated.h"
 
+class AInteractableBaseActor;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBTTask_FindNearestOfClass : public UBTTaskNode
 {

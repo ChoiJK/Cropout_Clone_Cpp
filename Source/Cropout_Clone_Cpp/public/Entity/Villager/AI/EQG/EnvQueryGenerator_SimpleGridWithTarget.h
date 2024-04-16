@@ -8,13 +8,13 @@
 #include "DataProviders/AIDataProvider.h"
 #include "EnvironmentQuery/EnvQueryContext.h"
 #include "EnvironmentQuery/Generators/EnvQueryGenerator_ProjectedPoints.h"
-#include "EnvQueryGenerator_SimpleGridWithResourceTarget.generated.h"
+#include "EnvQueryGenerator_SimpleGridWithTarget.generated.h"
 
 /**
  * 
  */
-UCLASS(meta = (DisplayName = "Points: Grid_ResourceTarget"))
-class CROPOUT_CLONE_CPP_API UEnvQueryGenerator_SimpleGridWithResourceTarget : public UEnvQueryGenerator_ProjectedPoints
+UCLASS(meta = (DisplayName = "Points: Grid_Target"))
+class CROPOUT_CLONE_CPP_API UEnvQueryGenerator_SimpleGridWithTarget : public UEnvQueryGenerator_ProjectedPoints
 {
 	GENERATED_UCLASS_BODY()
 	/** half of square's extent, like a radius */

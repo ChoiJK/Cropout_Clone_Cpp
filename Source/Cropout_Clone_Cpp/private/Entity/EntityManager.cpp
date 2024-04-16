@@ -91,6 +91,11 @@ void UEntityManager::ChangeBuildState(ABuildingBaseActor* Building, bool bRequir
 	}
 }
 
+int UEntityManager::GetRequireBuildBuildingCount()
+{
+	return BuildingsRequireBuild.Num();
+}
+
 ABuildingBaseActor* UEntityManager::FindNearestRequireBuildBuilding(FVector Location, int selectionIndex)
 {
 	if(BuildingsRequireBuild.Num() == 0)
@@ -134,7 +139,7 @@ void UEntityManager::AddResource(AResourceBaseActor* Resource)
 	{
 		Resources.Add(Resource);
 	}
-	auto resourcesByType = ResourcesByType.FindOrAdd(Resource->ResourceType);
+	TArray<AResourceBaseActor*>& resourcesByType = ResourcesByType.FindOrAdd(Resource->ResourceType);
 	if(resourcesByType.Contains(Resource) == false)
 	{
 		resourcesByType.Add(Resource);
@@ -149,11 +154,16 @@ void UEntityManager::RemoveResource(AResourceBaseActor* Resource)
 		Resources.Remove(Resource);
 	}
 
-	auto resourcesByType = ResourcesByType.FindOrAdd(Resource->ResourceType);
+	TArray<AResourceBaseActor*>& resourcesByType = ResourcesByType.FindOrAdd(Resource->ResourceType);
 	if(resourcesByType.Contains(Resource))
 	{
 		resourcesByType.Remove(Resource);
 	}
+}
+
+int UEntityManager::GetResourceOfTypeCount(EResourceType ResourceType)
+{
+	return ResourcesByType.FindOrAdd(ResourceType).Num();
 }
 
 AResourceBaseActor* UEntityManager::FindNearestResourceOfType(EResourceType ResourceType, FVector Location,

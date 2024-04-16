@@ -6,6 +6,7 @@
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
 
+#include "Enum/ResourceType.h"
 #include "VillagerJob.generated.h"
 
 USTRUCT(BlueprintType)
@@ -86,5 +87,47 @@ inline FString GetVillagerJobTypeString(EVillagerJobType jobType)
 		return "Build";
 	default:
 		return "None";
+	}
+}
+
+inline bool IsJobTypeResource(EVillagerJobType jobType)
+{
+	switch(jobType)
+	{
+	case EVillagerJobType::Food:
+	case EVillagerJobType::Wood:
+	case EVillagerJobType::Stone:
+	case EVillagerJobType::Farming:
+		return true;
+	default:
+		return false;
+	}
+}
+
+inline bool IsJobTypeBuilding(EVillagerJobType jobType)
+{
+	switch(jobType)
+	{
+	case EVillagerJobType::Build:
+		return true;
+	default:
+		return false;
+	}
+}
+
+inline EResourceType GetResourceTypeFromJobType(EVillagerJobType jobType)
+{
+	switch(jobType)
+	{
+	case EVillagerJobType::Food:
+		return EResourceType::Food;
+	case EVillagerJobType::Wood:
+		return EResourceType::Wood;
+	case EVillagerJobType::Stone:
+		return EResourceType::Stone;
+	case EVillagerJobType::Farming:
+		return EResourceType::Food;
+	default:
+		return EResourceType::None;
 	}
 }

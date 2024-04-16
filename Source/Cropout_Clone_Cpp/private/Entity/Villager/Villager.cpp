@@ -267,6 +267,14 @@ void AVillager::AsyncJobResourceLoaded(FName jobName)
 		if(TargetRef && TargetRef->IsValidLowLevel())
 		{
 			aiController->GetBlackboardComponent()->SetValueAsObject(FName("Target"), TargetRef);
+			if(IsJobTypeResource(CurrentJobType))
+			{
+				aiController->GetBlackboardComponent()->SetValueAsEnum(FName("ResourceType"),
+					static_cast<uint8>(GetResourceTypeFromJobType(CurrentJobType)));
+			}
+			else if(IsJobTypeBuilding(CurrentJobType))
+			{
+			}
 		}
 	}
 

@@ -20,16 +20,10 @@ class CROPOUT_CLONE_CPP_API UBTTask_DoWork : public UBTTaskNode
 {
 	GENERATED_UCLASS_BODY()
 	UPROPERTY(EditAnywhere)
-	FBlackboardKeySelector Key_Delay;
-
-	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector Key_Give_To;
 
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector Key_TakeFrom;
-
-	UPROPERTY(EditAnywhere)
-	float DelayMultiplier;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

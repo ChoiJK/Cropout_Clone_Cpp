@@ -15,7 +15,7 @@ class AVillager;
 UBTTask_FindNearestOfClass::UBTTask_FindNearestOfClass(const FObjectInitializer& ObjectInitializer) : Super(
 	ObjectInitializer)
 {
-	NodeName = "Find Closest Resource";
+	NodeName = "FindNearestOfClass";
 }
 
 EBTNodeResult::Type UBTTask_FindNearestOfClass::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -73,9 +73,6 @@ EBTNodeResult::Type UBTTask_FindNearestOfClass::ExecuteTask(UBehaviorTreeCompone
 		return EBTNodeResult::Failed;
 	}
 
-	// 최적화할 건덕지가 많을듯
-	// foundActors 거리순 정렬
-	// Map으로 해보자
 	TSortedMap<float, int> sortedMap;
 	for(int i = 0; i < foundActors.Num(); i++)
 	{
@@ -83,11 +80,6 @@ EBTNodeResult::Type UBTTask_FindNearestOfClass::ExecuteTask(UBehaviorTreeCompone
 		float dist = FVector::DistSquaredXY(foundActor->GetActorLocation(), nearestTo->GetActorLocation());
 		sortedMap.Add(dist, i);
 	}
-	//foundActors.Sort([nearestTo](const AActor& A, const AActor& B)
-	//{
-	//	return FVector::DistSquared(A.GetActorLocation(), nearestTo->GetActorLocation()) <
-	//		FVector::DistSquared(B.GetActorLocation(), nearestTo->GetActorLocation());
-	//});
 
 	AActor* validFoundActor = nullptr; // 찾은 Actor 중에서 가장 가깝고, nearestTo와 경로가 만들어지는 Actor
 	// @TODO : 채취 후 TownHall로 진입가능한지에 대한 검사를 추가해야할 것 같음(게임 플레이상 문제 없다면 패스)

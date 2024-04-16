@@ -1,24 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Entity/Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithResourceTarget.h"
+#include "Entity/Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithTarget.h"
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Kismet/GameplayStatics.h"
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME(EnvQueryGenerator_SimpleGridWithResourceTarget)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(EnvQueryGenerator_SimpleGridWithTarget)
 
 #define LOCTEXT_NAMESPACE "EnvQueryGenerator"
 
-UEnvQueryGenerator_SimpleGridWithResourceTarget::UEnvQueryGenerator_SimpleGridWithResourceTarget(
+UEnvQueryGenerator_SimpleGridWithTarget::UEnvQueryGenerator_SimpleGridWithTarget(
 	const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	GridSize.DefaultValue = 500.0f;
 	SpaceBetween.DefaultValue = 100.0f;
 }
 
-void UEnvQueryGenerator_SimpleGridWithResourceTarget::GenerateItems(FEnvQueryInstance& QueryInstance) const
+void UEnvQueryGenerator_SimpleGridWithTarget::GenerateItems(FEnvQueryInstance& QueryInstance) const
 {
 	UObject* BindOwner = QueryInstance.Owner.Get();
 	GridSize.BindData(BindOwner, QueryInstance.QueryID);
@@ -60,7 +59,7 @@ void UEnvQueryGenerator_SimpleGridWithResourceTarget::GenerateItems(FEnvQueryIns
 			{
 				const FNavLocation TestPoint = FNavLocation(
 					ContextLocations[ContextIndex] - FVector(DensityValue * (IndexX - ItemCountHalf),
-					                                         DensityValue * (IndexY - ItemCountHalf), 0));
+						DensityValue * (IndexY - ItemCountHalf), 0));
 				GridPoints.Add(TestPoint);
 			}
 		}
@@ -70,15 +69,15 @@ void UEnvQueryGenerator_SimpleGridWithResourceTarget::GenerateItems(FEnvQueryIns
 	StoreNavPoints(GridPoints, QueryInstance);
 }
 
-FText UEnvQueryGenerator_SimpleGridWithResourceTarget::GetDescriptionTitle() const
+FText UEnvQueryGenerator_SimpleGridWithTarget::GetDescriptionTitle() const
 {
 	return FText::Format(LOCTEXT("SimpleGridDescriptionGenerateAroundContext", "{0}"), Super::GetDescriptionTitle());
 };
 
-FText UEnvQueryGenerator_SimpleGridWithResourceTarget::GetDescriptionDetails() const
+FText UEnvQueryGenerator_SimpleGridWithTarget::GetDescriptionDetails() const
 {
 	FText Desc = FText::Format(LOCTEXT("SimpleGridDescription", "radius: {0}, space between: {1}"),
-	                           FText::FromString(GridSize.ToString()), FText::FromString(SpaceBetween.ToString()));
+		FText::FromString(GridSize.ToString()), FText::FromString(SpaceBetween.ToString()));
 
 	FText ProjDesc = ProjectionData.ToText(FEnvTraceData::Brief);
 	if(!ProjDesc.IsEmpty())
