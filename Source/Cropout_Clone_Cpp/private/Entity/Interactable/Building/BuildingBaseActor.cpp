@@ -4,6 +4,9 @@
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 
 #include "Components/BoxComponent.h"
+#include "Core/CropoutGameInstance.h"
+#include "Data/InteractableInfo.h"
+#include "Entity/EntityManager.h"
 
 ABuildingBaseActor::ABuildingBaseActor()
 {
@@ -24,6 +27,31 @@ ABuildingBaseActor::ABuildingBaseActor()
 
 void ABuildingBaseActor::OnConstruction(const FTransform& Transform)
 {
+	Super::OnConstruction(Transform);
+}
+
+void ABuildingBaseActor::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	if(EntityManager != nullptr)
+	{
+		EntityManager->RemoveBuilding(this);
+	}
+}
+
+void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
+{
+	Super::SetInteractableInfo(InInfo);
+
+	if(RequireBuild)
+	{
+		Tags.Add("Build");
+	}
+	else
+	{
+		Tags.Add("Building");
+	}
 }
 
 
@@ -40,6 +68,14 @@ void ABuildingBaseActor::InitializeStaticMesh()
 	if(MeshList.Num() != 0)
 	{
 		ChangeMesh(0);
+	}
+}
+
+void ABuildingBaseActor::RegisterWithEntityManager()
+{
+	if(EntityManager != nullptr)
+	{
+		EntityManager->AddBuilding(this, RequireBuild);
 	}
 }
 

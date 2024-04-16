@@ -2,7 +2,9 @@
 
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Components/TimelineComponent.h"
+#include "Core/CropoutGameInstance.h"
 #include "Data/InteractableInfo.h"
+#include "Entity/EntityManager.h"
 #include "Enum/ResourceType.h"
 
 AResourceBaseActor::AResourceBaseActor()
@@ -28,6 +30,16 @@ void AResourceBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 
 	FName resurceType = FName(EnumToString(ResourceType));
 	Tags.Add(resurceType);
+}
+
+void AResourceBaseActor::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	if(EntityManager != nullptr)
+	{
+		EntityManager->RemoveResource(this);
+	}
 }
 
 void AResourceBaseActor::InitializeStaticMesh()
@@ -100,6 +112,14 @@ void AResourceBaseActor::TimelineUpdate(float scaleValue) const
 void AResourceBaseActor::TimelineFinished()
 {
 	StaticMeshComponent->SetRelativeScale3D(FVector(1, 1, 1));
+}
+
+void AResourceBaseActor::RegisterWithEntityManager()
+{
+	if(EntityManager != nullptr)
+	{
+		EntityManager->AddResource(this);
+	}
 }
 
 void AResourceBaseActor::DoScaleUp(float delay)

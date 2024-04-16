@@ -10,6 +10,7 @@
 #include "Engine/StreamableManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlayMontageCallbackProxy.h"
+#include "Entity/EntityManager.h"
 #include "Enum/ResourceType.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;
@@ -112,11 +113,17 @@ void AVillager::BeginPlay()
 	ChangeJob(EVillagerJobType::Idle);
 	HairMesh->SetSkeletalMesh(HairMeshes[FMath::RandRange(0, HairMeshes.Num() - 1)]);
 	HairMesh->SetCustomPrimitiveDataFloat(0, FMath::RandRange(0.f, 1.f));
+
+	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+	entityManager->AddVillager(this);
 }
 
 void AVillager::Destroyed()
 {
 	Super::Destroyed();
+
+	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+	entityManager->RemoveVillager(this);
 
 	BodyMesh->SetAnimInstanceClass(nullptr);
 	HairMesh->SetAnimInstanceClass(nullptr);

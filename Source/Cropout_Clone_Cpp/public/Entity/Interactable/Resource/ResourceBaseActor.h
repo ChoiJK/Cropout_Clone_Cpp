@@ -42,11 +42,13 @@ protected:
 	void TimelineUpdate(float scaleValue) const;
 	UFUNCTION()
 	void TimelineFinished();
+	virtual void RegisterWithEntityManager() override;
 
 public:
 	void DoScaleUp(float delay);
 	void DoDeath();
 	virtual void SetInteractableInfo(const FInteractableInfo* InInfo) override;
+	virtual void BeginDestroy() override;
 	virtual void InitializeStaticMesh() override;
 	virtual float Interact() override;
 	TTuple<EResourceType, int> CollectResource();

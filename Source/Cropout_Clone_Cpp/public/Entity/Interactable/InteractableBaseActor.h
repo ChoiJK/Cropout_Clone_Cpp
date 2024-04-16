@@ -14,6 +14,7 @@ class UPlacementHandler;
 class UStaticMesh;
 class UCurveFloat;
 class FDelegateHandle;
+class UEntityManager;
 struct FTimeline;
 struct FInteractableInfo;
 
@@ -92,6 +93,13 @@ protected:
 	UFUNCTION()
 	void Wooble_TimelineFinished();
 
+	UPROPERTY()
+	UEntityManager* EntityManager = nullptr;
+
+	virtual void RegisterWithEntityManager()
+	{
+	}
+
 public:
 	FDelegateHandle AddReCalcBoxExtentDelegateHandle(UPlacementHandler* ClassInstance,
 		void (UPlacementHandler::*InFunc)())
@@ -139,4 +147,13 @@ public:
 	void EndWooble();
 
 	void SetEnableGroundBlend(bool InEnableGroundBlend);
+
+	/// Sort Temp
+	float DistSquared = 0.0f;
+	void CalcTemporaryDistanceFromLocation(FVector InLocation);
+
+	float GetDistSquared() const
+	{
+		return DistSquared;
+	}
 };

@@ -65,6 +65,7 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 	BoundGap = InInfo->BoundGap;
 
 	UCropoutGameInstance* cropoutGameInstance = GetGameInstance<UCropoutGameInstance>();
+	EntityManager = cropoutGameInstance->GetLevelManager<UEntityManager>();
 	TArray<FSoftObjectPath> MeshPathList;
 	for(const TSoftObjectPtr<UStaticMesh>& mesh : InInfo->MeshList)
 	{
@@ -102,6 +103,13 @@ void AInteractableBaseActor::InitializeWithInteractableInfo()
 		{
 			DoGrundBlend();
 			CheckOverlappingActor();
+
+			// Placement Mode일경우 EntityManager에 등록하지 않음
+			const FName targetTag = TEXT("PlacementMode");
+			if(ActorHasTag(targetTag) == false)
+			{
+				RegisterWithEntityManager();
+			}
 		}));
 	}
 }
@@ -224,9 +232,6 @@ void AInteractableBaseActor::SetEnableGroundBlend(bool InEnableGroundBlend)
 	EnableGroundBlend = InEnableGroundBlend;
 }
 
-
-// @todo : Placement Mode
-
 void AInteractableBaseActor::ReCalcBoxExtent() const
 {
 	if(StaticMeshComponent == nullptr || BoxComponent == nullptr)
@@ -289,4 +294,9 @@ UMaterial* AInteractableBaseActor::GetShapeDrawMaterial()
 	}
 
 	return ShapeDrawMaterial;
+}
+
+void AInteractableBaseActor::CalcTemporaryDistanceFromLocation(FVector InLocation)
+{
+	DistSquared = FVector::DistSquared(GetActorLocation(), InLocation);
 }

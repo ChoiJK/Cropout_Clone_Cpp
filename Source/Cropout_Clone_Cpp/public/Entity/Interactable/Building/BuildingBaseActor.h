@@ -20,8 +20,11 @@ class CROPOUT_CLONE_CPP_API ABuildingBaseActor : public AInteractableBaseActor
 public:
 	ABuildingBaseActor();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginDestroy() override;
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo) override;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitializeStaticMesh() override;
+	virtual void RegisterWithEntityManager() override;
 };
