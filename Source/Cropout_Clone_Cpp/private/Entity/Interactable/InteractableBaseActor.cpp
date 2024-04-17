@@ -205,7 +205,17 @@ void AInteractableBaseActor::Wooble_TimelineUpdate(float scaleValue) const
 
 void AInteractableBaseActor::Wooble_TimelineFinished()
 {
-	StaticMeshComponent->SetScalarParameterValueOnMaterials("Wobble", 1.f);
+	StaticMeshComponent->SetScalarParameterValueOnMaterials("Wobble", 0.f);
+}
+
+void AInteractableBaseActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if(Wooble_Timeline.IsPlaying())
+	{
+		Wooble_Timeline.TickTimeline(DeltaSeconds);
+	}
 }
 
 void AInteractableBaseActor::OnConstruction(const FTransform& Transform)
@@ -224,7 +234,8 @@ void AInteractableBaseActor::PlayWobble(FVector InVec)
 
 void AInteractableBaseActor::EndWooble()
 {
-	Wooble_Timeline.Reverse();
+	StaticMeshComponent->SetVectorParameterValueOnMaterials("Wobble Vector", FVector(0, 0, 0));
+	Wooble_Timeline.Stop();
 }
 
 void AInteractableBaseActor::SetEnableGroundBlend(bool InEnableGroundBlend)

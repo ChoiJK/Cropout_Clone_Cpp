@@ -101,6 +101,8 @@ protected:
 	}
 
 public:
+	virtual void Tick(float DeltaSeconds) override;
+
 	FDelegateHandle AddReCalcBoxExtentDelegateHandle(UPlacementHandler* ClassInstance,
 		void (UPlacementHandler::*InFunc)())
 	{
