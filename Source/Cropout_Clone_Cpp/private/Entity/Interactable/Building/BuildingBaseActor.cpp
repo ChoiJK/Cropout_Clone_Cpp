@@ -80,11 +80,13 @@ void ABuildingBaseActor::BuildTick()
 			EntityManager->RemoveBuilding(this);
 		}
 	}
+
+	ChangeMesh(BuildProgress * (MeshList.Num() - 1));
 }
 
 float ABuildingBaseActor::Interact()
 {
-	return BuildTimeSec;
+	return RemainingBuildTimeSec;
 }
 
 bool ABuildingBaseActor::IsRequireBuild() const

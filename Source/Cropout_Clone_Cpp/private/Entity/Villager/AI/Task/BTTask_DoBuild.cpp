@@ -45,6 +45,11 @@ EBTNodeResult::Type UBTTask_DoBuild::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 		return EBTNodeResult::Failed;
 	}
 
+	if(buildable->IsRequireBuild() == false)
+	{
+		return EBTNodeResult::Succeeded;
+	}
+
 	FBTTask_DoBuild_Memory* doBuildMemory = reinterpret_cast<FBTTask_DoBuild_Memory*>(NodeMemory);
 	doBuildMemory->Buildable = buildable;
 	doBuildMemory->Builder = builder;
@@ -67,6 +72,7 @@ void UBTTask_DoBuild::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
 	if(buildable == nullptr)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+		builder->EndWorkAnim();
 		return;
 	}
 
@@ -93,17 +99,18 @@ EBTNodeResult::Type UBTTask_DoBuild::AbortTask(UBehaviorTreeComponent& OwnerComp
 {
 	const AAIController* MyController = OwnerComp.GetAIOwner();
 
-	if(MyController == nullptr)
-	{
-		return EBTNodeResult::Failed;
-	}
-
 	FBTTask_DoBuild_Memory* doBuildMemory = reinterpret_cast<FBTTask_DoBuild_Memory*>(NodeMemory);
 	ABuildingBaseActor* buildable = doBuildMemory->Buildable;
 	AVillager* builder = doBuildMemory->Builder;
+
+	if(MyController == nullptr)
+	{
+		builder->EndWorkAnim();
+		return EBTNodeResult::Failed;
+	}
+
 	buildable->RemoveBuilder(builder);
 	builder->EndWorkAnim();
-
 	return EBTNodeResult::Aborted;
 }
 

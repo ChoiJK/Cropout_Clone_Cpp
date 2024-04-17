@@ -180,6 +180,8 @@ void AVillager::PlayWorkAnim(float delay)
 void AVillager::EndWorkAnim()
 {
 	GetWorldTimerManager().ClearTimer(WorkAnimTimerHandle);
+	BodyMesh->GetAnimInstance()->Montage_StopGroupByName(
+		0.f, TEXT("DefaultGroup"));
 }
 
 void AVillager::PlayMontageCallback(FName NotifyName)
