@@ -167,7 +167,6 @@ void AVillager::PlayWorkAnim(float delay)
 	playMontageCallbackProxy->OnCompleted.AddUniqueDynamic(this, &AVillager::PlayMontageCallback);
 	playMontageCallbackProxy->OnInterrupted.AddUniqueDynamic(this, &AVillager::PlayMontageCallback);
 
-	FTimerHandle WorkAnimTimerHandle;
 	GetWorldTimerManager().SetTimer(WorkAnimTimerHandle, FTimerDelegate::CreateWeakLambda(this, [this]
 	{
 		BodyMesh->GetAnimInstance()->Montage_StopGroupByName(
@@ -176,6 +175,11 @@ void AVillager::PlayWorkAnim(float delay)
 
 	ToolMesh->SetVisibility(true);
 	ToolMesh->SetStaticMesh(TargetTool);
+}
+
+void AVillager::EndWorkAnim()
+{
+	GetWorldTimerManager().ClearTimer(WorkAnimTimerHandle);
 }
 
 void AVillager::PlayMontageCallback(FName NotifyName)

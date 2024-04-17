@@ -148,13 +148,6 @@ void ACropoutGameMode::PlayMusic()
 
 void ACropoutGameMode::SpawnTownHall()
 {
-	auto townHallRef = GetTownHallRef();
-
-	if(townHallRef == nullptr)
-	{
-		return;
-	}
-
 	UClass* bp_class = globalSharedVariable->GetSpawnMarkerClass();
 
 	if(bp_class == nullptr)
@@ -176,26 +169,29 @@ void ACropoutGameMode::SpawnTownHall()
 			FoundActors[FMath::RandRange(0, FoundActors.Num() - 1)]->GetActorLocation());
 	}
 
-	TownHall = Cast<ABuildingBaseActor>(GetWorld()->SpawnActor(townHallRef, &spawnLocation));
+	UTableManager* tableManager = GameInstance->GetSystemManager<UTableManager>();
+	const FInteractableInfo* info = tableManager->GetInteractableInfo("TownHall");
+	TownHall = Cast<ABuildingBaseActor>(GetSpawner()->SpawnInteractable(info));
+	if(TownHall)
+	{
+		TownHall->SetActorLocation(spawnLocation);
+	}
+}
+
+ASpawner* ACropoutGameMode::GetSpawner()
+{
+	if(Spawner == nullptr)
+	{
+		Spawner = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
+		check(Spawner != nullptr);
+	}
+
+	return Spawner;
 }
 
 int ACropoutGameMode::GetResourceAmount(EResourceType type)
 {
 	return ResourceBank.Contains(type) ? ResourceBank[type] : 0;
-}
-
-TSubclassOf<ABuildingBaseActor> ACropoutGameMode::GetTownHallRef()
-{
-	if(TownHall_Ref == nullptr)
-	{
-		FName path = TEXT("Blueprint'/Game/Blueprint/Interactable/Building/BP_TownCenter.BP_TownCenter'");
-		auto townHall_BP = Cast<UBlueprint>(
-			StaticLoadObject(UBlueprint::StaticClass(), nullptr, *path.ToString()));
-
-		TownHall_Ref = townHall_BP->GeneratedClass;
-	}
-
-	return TownHall_Ref;
 }
 
 void ACropoutGameMode::StoreResource(EResourceType type, int amount)

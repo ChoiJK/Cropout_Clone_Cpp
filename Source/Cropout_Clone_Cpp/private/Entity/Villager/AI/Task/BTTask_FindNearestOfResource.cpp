@@ -10,8 +10,8 @@
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
 #include "Enum/ResourceType.h"
-#include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
+#include "Entity/Interactable/Building/BuildingBaseActor.h"
 
 
 class AVillager;

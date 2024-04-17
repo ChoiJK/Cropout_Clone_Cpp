@@ -11,7 +11,6 @@
 ABuildingBaseActor::ABuildingBaseActor()
 {
 	// @Todo : NavBloker 적용되지않음
-	PrimaryActorTick.bCanEverTick = true;
 	NavBlocker = CreateDefaultSubobject<UBoxComponent>(TEXT("NavBloker"));
 	NavBlocker->SetupAttachment(StaticMeshComponent);
 
@@ -44,6 +43,7 @@ void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 {
 	Super::SetInteractableInfo(InInfo);
 
+	RemainingBuildTimeSec = BuildTimeSec;
 	if(RequireBuild)
 	{
 		Tags.Add("Build");
@@ -51,6 +51,90 @@ void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 	else
 	{
 		Tags.Add("Building");
+	}
+}
+
+void ABuildingBaseActor::BuildTick()
+{
+	float deltaSec = 0.2f;
+	if(RequireBuild == false)
+	{
+		return;
+	}
+
+	if(RemainingBuildTimeSec > 0.0f)
+	{
+		float buildMultiplier = Builders.Num();
+
+		RemainingBuildTimeSec -= (deltaSec * buildMultiplier);
+		BuildProgress = 1.0f - (RemainingBuildTimeSec / BuildTimeSec);
+	}
+	else
+	{
+		RemainingBuildTimeSec = 0.0f;
+		BuildProgress = 1.0f;
+		RequireBuild = false;
+
+		if(EntityManager != nullptr)
+		{
+			EntityManager->RemoveBuilding(this);
+		}
+	}
+}
+
+float ABuildingBaseActor::Interact()
+{
+	return BuildTimeSec;
+}
+
+bool ABuildingBaseActor::IsRequireBuild() const
+{
+	return RequireBuild;
+}
+
+void ABuildingBaseActor::AddBuilder(AVillager* Builder)
+{
+	if(Builder == nullptr)
+	{
+		return;
+	}
+
+	if(Builders.Contains(Builder) == false)
+	{
+		Builders.Add(Builder);
+	}
+
+	if(Builders.Num() > 0)
+	{
+		if(BuildTimerHandle.IsValid() == false)
+		{
+			GetWorldTimerManager().SetTimer(BuildTimerHandle,
+				FTimerDelegate::CreateWeakLambda(this, [this]()
+				{
+					BuildTick();
+				}), 0.2f, true, 0.2f);
+		}
+	}
+}
+
+void ABuildingBaseActor::RemoveBuilder(AVillager* Builder)
+{
+	if(Builder == nullptr)
+	{
+		return;
+	}
+
+	if(Builders.Contains(Builder))
+	{
+		Builders.Remove(Builder);
+	}
+
+	if(Builders.Num() == 0)
+	{
+		if(BuildTimerHandle.IsValid())
+		{
+			GetWorldTimerManager().ClearTimer(BuildTimerHandle);
+		}
 	}
 }
 

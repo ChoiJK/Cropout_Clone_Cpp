@@ -50,6 +50,7 @@ public:
 	AVillager();
 
 protected:
+	FTimerHandle WorkAnimTimerHandle;
 	FTimerHandle EatTimerHandle;
 	void Eat();
 	virtual void BeginPlay() override;
@@ -89,6 +90,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void PlayWorkAnim(float delay);
+	void EndWorkAnim();
 	void Action(AActor* jobAction);
 	void SetDefaultJob();
 	AActor* GetTargetRef() const { return TargetRef; }

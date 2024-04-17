@@ -6,8 +6,6 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTTask_FindNearestOfResource.generated.h"
 
-class AInteractableBaseActor;
-
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBTTask_FindNearestOfResource : public UBTTaskNode
 {
