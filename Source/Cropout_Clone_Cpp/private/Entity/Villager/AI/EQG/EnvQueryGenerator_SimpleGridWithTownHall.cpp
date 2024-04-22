@@ -34,9 +34,10 @@ void UEnvQueryGenerator_SimpleGridWithTownHall::GenerateItems(FEnvQueryInstance&
 	TArray<FVector> ContextLocations;
 
 	const AActor* TownHallActor = Cast<ACropoutGameMode>(UGameplayStatics::GetGameMode(QueryInstance.World))->TownHall;
+	FVector targetLocation = TownHallActor->GetActorLocation();
 	if(TownHallActor != nullptr)
 	{
-		ContextLocations.Add(TownHallActor->GetActorLocation());
+		ContextLocations.Add(targetLocation);
 	}
 
 	TArray<FNavLocation> GridPoints;
@@ -50,7 +51,13 @@ void UEnvQueryGenerator_SimpleGridWithTownHall::GenerateItems(FEnvQueryInstance&
 			{
 				const FNavLocation TestPoint = FNavLocation(
 					ContextLocations[ContextIndex] - FVector(DensityValue * (IndexX - ItemCountHalf),
-					                                         DensityValue * (IndexY - ItemCountHalf), 0));
+						DensityValue * (IndexY - ItemCountHalf), 0));
+
+				if(FVector::PointsAreSame(TestPoint.Location, targetLocation))
+				{
+					continue;
+				}
+
 				GridPoints.Add(TestPoint);
 			}
 		}
@@ -68,7 +75,7 @@ FText UEnvQueryGenerator_SimpleGridWithTownHall::GetDescriptionTitle() const
 FText UEnvQueryGenerator_SimpleGridWithTownHall::GetDescriptionDetails() const
 {
 	FText Desc = FText::Format(LOCTEXT("SimpleGridDescription", "radius: {0}, space between: {1}"),
-	                           FText::FromString(GridSize.ToString()), FText::FromString(SpaceBetween.ToString()));
+		FText::FromString(GridSize.ToString()), FText::FromString(SpaceBetween.ToString()));
 
 	FText ProjDesc = ProjectionData.ToText(FEnvTraceData::Brief);
 	if(!ProjDesc.IsEmpty())
