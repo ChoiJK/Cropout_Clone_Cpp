@@ -127,7 +127,7 @@ void UPlacementHandler::PostPlacementTargetRecalcBoxExtent()
 
 	PlacementSMC->AttachToComponent(PlacementTargetEntity->GetStaticMeshComponent(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	PlacementSMC->SetWorldScale3D(boundExtent / 40.0f);
+	PlacementSMC->SetRelativeScale3D(boundExtent / 40.0f);
 	PlacementSMC->SetVisibility(true);
 
 	UpdateBuildAsset();

@@ -11,6 +11,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayMontageCallbackProxy.h"
 #include "Entity/EntityManager.h"
+#include "Entity/Interactable/Building/BuildingBaseActor.h"
+#include "Entity/Interactable/Crop/CropBaseActor.h"
 #include "Enum/ResourceType.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;
@@ -270,15 +272,19 @@ void AVillager::AsyncJobResourceLoaded(FName jobName)
 	{
 		ActiveBehaviorTree = behaviorTree;
 		aiController->RunBehaviorTree(behaviorTree);
-		if(TargetRef && TargetRef->IsValidLowLevel())
+		if(TargetRef && IsValid(TargetRef))
 		{
 			aiController->GetBlackboardComponent()->SetValueAsObject(FName("Target"), TargetRef);
+			aiController->GetBlackboardComponent()->SetValueAsObject(FName("TownHall"), GameMode->TownHall);
 			if(IsJobTypeResource(CurrentJobType))
 			{
 				aiController->GetBlackboardComponent()->SetValueAsEnum(FName("ResourceType"),
 					static_cast<uint8>(GetResourceTypeFromJobType(CurrentJobType)));
 			}
 			else if(IsJobTypeBuilding(CurrentJobType))
+			{
+			}
+			else if(IsJobTypeFarming(CurrentJobType))
 			{
 			}
 		}

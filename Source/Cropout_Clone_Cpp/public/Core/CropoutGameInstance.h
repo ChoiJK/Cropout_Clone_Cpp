@@ -29,16 +29,26 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	USaveData* SaveData;
 
 	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
+
+	UPROPERTY()
 	UGlobalSharedVariable* GlobalSharedVariable;
 	FStreamableManager streamableManager;
 
+	UPROPERTY()
 	TMap<UClass*, USystemManager*> SystemManagerMap;
+
+	UPROPERTY()
 	TMap<UClass*, ULevelManager*> LevelManagerMap;
 	bool IsLevelManagerInitialized = false;
 	bool IsProgressLevelManagerInitialized = false;
 
+	UPROPERTY()
 	ACropoutGameMode* CurrentGameMode;
+
+	UPROPERTY()
 	ACropoutLevelScriptBase* CurrentLevelScript;
+
+	UPROPERTY()
 	ACropoutPlayerController* CurrentPlayerController;
 
 

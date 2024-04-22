@@ -6,6 +6,7 @@
 #include "Entity/Interactable/InteractableBaseActor.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
+#include "Entity/Interactable/Crop/CropBaseActor.h"
 
 void UEntityManager::Init()
 {
@@ -205,6 +206,155 @@ AResourceBaseActor* UEntityManager::FindNearestResourceOfType(EResourceType Reso
 	}
 
 	return ResourcesOfType[selectionIndex];
+}
+
+void UEntityManager::AddCrop(ACropBaseActor* Crop)
+{
+	AddInteractable(Cast<AInteractableBaseActor>(Crop));
+
+	if(Crops.Contains(Crop) == false)
+	{
+		Crops.Add(Crop);
+	}
+
+	// 초기에는 무조건 Plant가 필요함
+	if(CropsRequirePlant.Contains(Crop) == false)
+	{
+		CropsRequirePlant.Add(Crop);
+	}
+}
+
+void UEntityManager::RemoveCrop(ACropBaseActor* Crop)
+{
+	if(Crops.Contains(Crop))
+	{
+		Crops.Add(Crop);
+	}
+
+	if(CropsRequirePlant.Contains(Crop))
+	{
+		CropsRequirePlant.Add(Crop);
+	}
+
+	if(CropsRequireHarvest.Contains(Crop))
+	{
+		CropsRequireHarvest.Add(Crop);
+	}
+}
+
+void UEntityManager::ChangeCropState(ACropBaseActor* Crop, bool bRequireHarvest, bool bRequirePlant)
+{
+	if(bRequireHarvest)
+	{
+		if(CropsRequireHarvest.Contains(Crop) == false)
+		{
+			CropsRequireHarvest.Add(Crop);
+		}
+	}
+	else
+	{
+		if(CropsRequireHarvest.Contains(Crop))
+		{
+			CropsRequireHarvest.Remove(Crop);
+		}
+	}
+
+	if(bRequirePlant)
+	{
+		if(CropsRequirePlant.Contains(Crop) == false)
+		{
+			CropsRequirePlant.Add(Crop);
+		}
+	}
+	else
+	{
+		if(CropsRequirePlant.Contains(Crop))
+		{
+			CropsRequirePlant.Remove(Crop);
+		}
+	}
+}
+
+int UEntityManager::GetRequireHarvestCropCount()
+{
+	return CropsRequireHarvest.Num();
+}
+
+int UEntityManager::GetRequirePlantCropCount()
+{
+	return CropsRequirePlant.Num();
+}
+
+ACropBaseActor* UEntityManager::FindNearestRequireHarvestCrop(FVector Location, int selectionIndex)
+{
+	if(CropsRequireHarvest.Num() == 0)
+	{
+		return nullptr;
+	}
+
+	if(CropsRequireHarvest.Num() <= selectionIndex)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CropsRequireHarvest.Num() <= selectionIndex"));
+		return nullptr;
+	}
+
+	const int currentFrameCount = GFrameCounter;
+
+	// 한프레임에 여러번 호출 될 수 있으나 한번만 정렬하도록
+	if(LastSortedRequireHarvestFrameCount != currentFrameCount ||
+		FVector::Distance(LastSortedRequireHarvestLocation, Location) > 0.1f)
+	{
+		for(ACropBaseActor* Crop : CropsRequireHarvest)
+		{
+			Crop->CalcTemporaryDistanceFromLocation(Location);
+		}
+
+		CropsRequireHarvest.Sort([Location](const ACropBaseActor& A, const ACropBaseActor& B)
+		{
+			return A.GetDistSquared() < B.GetDistSquared();
+		});
+
+		LastSortedRequireHarvestFrameCount = currentFrameCount;
+		LastSortedRequireHarvestLocation = Location;
+	}
+
+	return CropsRequireHarvest[selectionIndex];
+}
+
+ACropBaseActor* UEntityManager::FindNearestRequirePlantCrop(FVector Location, int selectionIndex)
+{
+	if(CropsRequirePlant.Num() == 0)
+	{
+		return nullptr;
+	}
+
+	if(CropsRequirePlant.Num() <= selectionIndex)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CropsRequirePlant.Num() <= selectionIndex"));
+		return nullptr;
+	}
+
+	const int currentFrameCount = GFrameCounter;
+
+	// 한프레임에 여러번 호출 될 수 있으나 한번만 정렬하도록
+	if(LastSortedRequirePlantFrameCount != currentFrameCount ||
+		FVector::Distance(LastSortedRequirePlantLocation, Location) > 0.1f)
+	{
+		for(ACropBaseActor* Crop : CropsRequirePlant)
+		{
+			Crop->CalcTemporaryDistanceFromLocation(Location);
+		}
+
+		CropsRequirePlant.Sort([Location](const ACropBaseActor& A, const ACropBaseActor& B)
+		{
+			return A.GetDistSquared() < B.GetDistSquared();
+		});
+
+		LastSortedRequirePlantFrameCount = currentFrameCount;
+		LastSortedRequirePlantLocation = Location;
+	}
+
+	return CropsRequirePlant[selectionIndex];
 }
 
 void UEntityManager::AddVillager(AVillager* Villager)

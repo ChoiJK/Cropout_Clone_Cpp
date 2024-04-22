@@ -229,9 +229,6 @@ void ACropoutPlayer::OnChangedInputType()
 
 void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 {
-	//MovementInputHandler->ReleaseDragMoveIMC();
-	//PlacementHandler->InitPlacementIMC();
-
 	UTableManager* tableManager = GameInstance->GetSystemManager<UTableManager>();
 	const FInteractableInfo* interactableInfo = tableManager->GetInteractableInfo(buildableInfo->Name);
 
@@ -249,8 +246,5 @@ void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 
 void ACropoutPlayer::EndBuild()
 {
-	//MovementInputHandler->ReleaseDragMoveIMC();
-	//PlacementHandler->ReleasePlacementIMC();
-
 	PlacementHandler->ReleasePlacementTargetEntity();
 }

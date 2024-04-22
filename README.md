@@ -5,7 +5,7 @@
 
 ## 1. Introduction
 
-This project is designed to learn the features of UE5 by replicating the [Cropout Sample](https://www.unrealengine.com/en-US/blog/cropout-casual-rts-game-sample-project?sessionInvalidated=true), a representative game sample of Unreal Engine 5, in CPP.
+This project is designed to learn the features of Unreal by replicating the [Cropout Sample](https://www.unrealengine.com/en-US/blog/cropout-casual-rts-game-sample-project?sessionInvalidated=true), a representative game sample of Unreal Engine 5, in CPP.
 - See: [Introduction to Cropout](https://forums.unrealengine.com/t/explore-cropout-a-top-down-casual-rts-sample-project-general-announcements/1239909/65)
 
 The goal of this project is to learn, so progress may be a bit slow.   

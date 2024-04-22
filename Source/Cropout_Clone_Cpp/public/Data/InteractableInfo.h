@@ -46,6 +46,11 @@ struct FInteractableInfo : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Resource Properties")
 	int CollectionValue = 10;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crop Properties")
+	float GrowthTime = 10.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crop Properties")
+	int HarvestAmount = 40;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Info")
 	float BoundGap = 0.0f;
 };

@@ -11,7 +11,7 @@ class CROPOUT_CLONE_CPP_API UBTTask_DeliverResource : public UBTTaskNode
 {
 	GENERATED_UCLASS_BODY()
 	UPROPERTY(EditAnywhere)
-	FBlackboardKeySelector TakeFrom;
+	FBlackboardKeySelector Key_TakeFrom;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual FString GetStaticDescription() const override;

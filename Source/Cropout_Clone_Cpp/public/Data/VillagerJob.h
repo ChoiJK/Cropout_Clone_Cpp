@@ -97,7 +97,6 @@ inline bool IsJobTypeResource(EVillagerJobType jobType)
 	case EVillagerJobType::Food:
 	case EVillagerJobType::Wood:
 	case EVillagerJobType::Stone:
-	case EVillagerJobType::Farming:
 		return true;
 	default:
 		return false;
@@ -109,6 +108,17 @@ inline bool IsJobTypeBuilding(EVillagerJobType jobType)
 	switch(jobType)
 	{
 	case EVillagerJobType::Build:
+		return true;
+	default:
+		return false;
+	}
+}
+
+inline bool IsJobTypeFarming(EVillagerJobType jobType)
+{
+	switch(jobType)
+	{
+	case EVillagerJobType::Farming:
 		return true;
 	default:
 		return false;

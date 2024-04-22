@@ -103,9 +103,11 @@ protected:
 public:
 	virtual void Tick(float DeltaSeconds) override;
 
-	FDelegateHandle AddReCalcBoxExtentDelegateHandle(UPlacementHandler* ClassInstance,
-		void (UPlacementHandler::*InFunc)())
+	template <typename T>
+	FDelegateHandle AddReCalcBoxExtentDelegateHandle(T* ClassInstance,
+		void (T::*InFunc)())
 	{
+		static_assert(std::is_base_of_v<UObject, T>, "T must be derived from UObject");
 		if(!ReCalcBoxExtentDelegate)
 		{
 			ReCalcBoxExtentDelegate = MakeShareable(new FReCalcBoxExtentDelegate());

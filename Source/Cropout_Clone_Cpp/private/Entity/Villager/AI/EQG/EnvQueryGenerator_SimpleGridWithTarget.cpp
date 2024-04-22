@@ -43,9 +43,10 @@ void UEnvQueryGenerator_SimpleGridWithTarget::GenerateItems(FEnvQueryInstance& Q
 	}
 
 	AActor* targetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(FName("Target")));
+	FVector targetLocation = targetActor->GetActorLocation();
 	if(targetActor != nullptr)
 	{
-		ContextLocations.Add(targetActor->GetActorLocation());
+		ContextLocations.Add(targetLocation);
 	}
 
 	TArray<FNavLocation> GridPoints;
@@ -60,6 +61,11 @@ void UEnvQueryGenerator_SimpleGridWithTarget::GenerateItems(FEnvQueryInstance& Q
 				const FNavLocation TestPoint = FNavLocation(
 					ContextLocations[ContextIndex] - FVector(DensityValue * (IndexX - ItemCountHalf),
 						DensityValue * (IndexY - ItemCountHalf), 0));
+				if(FVector::PointsAreSame(TestPoint.Location, targetLocation))
+				{
+					continue;
+				}
+
 				GridPoints.Add(TestPoint);
 			}
 		}

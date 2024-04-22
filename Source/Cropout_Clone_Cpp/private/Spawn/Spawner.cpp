@@ -11,6 +11,7 @@
 #include "Data/SpawnerInfo.h"
 #include "Engine/StreamableManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
+#include "Entity/Interactable/Crop/CropBaseActor.h"
 #include "Util/CoordinateUtils.h"
 
 
@@ -104,7 +105,7 @@ AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* Int
 	else if(InteractableInfo->InteractableType == EInteractableType::Field)
 	{
 		spawnedActor = Cast<AInteractableBaseActor>(
-			GetWorld()->SpawnActor(AResourceBaseActor::StaticClass()));
+			GetWorld()->SpawnActor(ACropBaseActor::StaticClass()));
 	}
 
 	if(spawnedActor != nullptr)

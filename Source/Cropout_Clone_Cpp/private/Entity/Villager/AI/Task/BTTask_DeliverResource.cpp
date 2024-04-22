@@ -25,7 +25,7 @@ EBTNodeResult::Type UBTTask_DeliverResource::ExecuteTask(UBehaviorTreeComponent&
 
 	const UBlackboardComponent* blackboardComp = MyController->GetBlackboardComponent();
 
-	AVillager* takeFrom = Cast<AVillager>(blackboardComp->GetValueAsObject(TakeFrom.SelectedKeyName));
+	AVillager* takeFrom = Cast<AVillager>(blackboardComp->GetValueAsObject(Key_TakeFrom.SelectedKeyName));
 	takeFrom->DeliverResource();
 
 	return EBTNodeResult::Succeeded;
