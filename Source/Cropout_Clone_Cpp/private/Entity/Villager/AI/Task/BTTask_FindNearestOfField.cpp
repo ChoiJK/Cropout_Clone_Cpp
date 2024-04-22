@@ -81,10 +81,6 @@ EBTNodeResult::Type UBTTask_FindNearestOfField::ExecuteTask(UBehaviorTreeCompone
 				}
 			}
 		}
-		else
-		{
-			break;
-		}
 	}
 
 	// 추수가 필요한 Crop이 없는 경우
@@ -96,8 +92,8 @@ EBTNodeResult::Type UBTTask_FindNearestOfField::ExecuteTask(UBehaviorTreeCompone
 			ACropBaseActor* foundActor =
 				entityManager->FindNearestRequirePlantCrop(nearestTo->GetActorLocation(), i);
 
-			// 이미 누군가가 성장시키고 있는 경우는 제외
-			if(foundActor && foundActor->HasFarmer() == false)
+			// 이미 누군가가 성장시키고 있거나 Action이후 성장중인 경우는 제외
+			if(foundActor && ((foundActor->HasFarmer() || foundActor->IsGrowth()) == false))
 			{
 				UNavigationPath* pathResult = UNavigationSystemV1::FindPathToActorSynchronously(
 					GetWorld(), nearestTo->GetActorLocation(), foundActor, 100.f);
@@ -110,10 +106,6 @@ EBTNodeResult::Type UBTTask_FindNearestOfField::ExecuteTask(UBehaviorTreeCompone
 						break;
 					}
 				}
-			}
-			else
-			{
-				break;
 			}
 		}
 	}
