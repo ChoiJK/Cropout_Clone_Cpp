@@ -150,7 +150,7 @@ void ACropoutPlayer::ClosestHoverCheck()
 void ACropoutPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	RootComponent->SetWorldLocationAndRotation(FVector(0, 0, 0), FRotator(0, 0, 0));
+	RootComponent->SetWorldLocationAndRotation(FVector(0, 0, 0), FRotator(0, -45.f, 0));
 
 	GameInstance = UCropoutGameInstance::GetInstance();
 	if(GameInstance)

@@ -111,7 +111,7 @@ void UPlacementHandler::SetPlacementTargetEntity(const FInteractableInfo* intera
 	PlacementTargetEntity->SetEnableGroundBlend(false);
 	FVector IntersectionPos;
 	CoordinateUtils::ProjectViewportCenterToGroundPlane(IntersectionPos);
-	FTransform viewportCenterTransform = FTransform(FRotator(0, 45.f, 0),
+	FTransform viewportCenterTransform = FTransform(FRotator(0, 0, 0),
 		IntersectionPos);
 	PlacementTargetEntity->SetActorTransform(viewportCenterTransform);
 	PlacementTargetEntity->Tags = TArray<FName>{"PlacementMode"};
