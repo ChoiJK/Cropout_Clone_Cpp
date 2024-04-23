@@ -127,7 +127,7 @@ void UPlacementHandler::PostPlacementTargetRecalcBoxExtent()
 
 	PlacementSMC->AttachToComponent(PlacementTargetEntity->GetStaticMeshComponent(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	PlacementSMC->SetRelativeScale3D(boundExtent / 40.0f);
+	PlacementSMC->SetRelativeScale3D(boundExtent / 50.0f);
 	PlacementSMC->SetVisibility(true);
 
 	UpdateBuildAsset();
@@ -222,7 +222,7 @@ FVector2D UPlacementHandler::GetPlacementTargetBottomScreenPosition() const
 	FVector downDirection = downLocation - centerLocation;
 	downDirection.Normalize();
 
-	worldPosition += downDirection * FMathf::Min(boundExtent.X, boundExtent.Y) * 1.2f;
+	worldPosition += downDirection * FMathf::Min(boundExtent.X, boundExtent.Y) * 1.05f;
 
 	playerController->ProjectWorldLocationToScreen(worldPosition,
 		PlacementTargetBottomScreenPosition, true);
@@ -355,8 +355,14 @@ void UPlacementHandler::TrackMovePlacement()
 	FVector IntersectionPos;
 	if(CoordinateUtils::ProjectTouchToGroundPlane(ScreenPos, IntersectionPos))
 	{
-		PlacementTargetEntity->SetActorLocation(CoordinateUtils::SteppedPosition(IntersectionPos));
-	}
+		FVector SteppedPosition = CoordinateUtils::SteppedPosition(IntersectionPos);
+		FVector OldActorLocation = PlacementTargetEntity->GetActorLocation();
+		if(FVector::PointsAreSame(SteppedPosition, OldActorLocation))
+		{
+			return;
+		}
 
-	UpdateBuildAsset();
+		PlacementTargetEntity->SetActorLocation(SteppedPosition);
+		UpdateBuildAsset();
+	}
 }
