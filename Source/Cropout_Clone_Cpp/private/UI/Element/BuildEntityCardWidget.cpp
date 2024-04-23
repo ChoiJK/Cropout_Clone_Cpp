@@ -3,9 +3,11 @@
 
 #include "UI/Element/BuildEntityCardWidget.h"
 
+#include "Animation/WidgetAnimation.h"
 #include "Components/Image.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutPlayerController.h"
+#include "Core/CropoutGameMode.h"
 #include "Data/BuildableInfo.h"
 #include "Player/CropoutPlayer.h"
 #include "UI/UiManager.h"
@@ -15,13 +17,20 @@ void UBuildEntityCardWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	FVector2d minDesiredSize = GetMinimumDesiredSize();
+	minDesiredSize.Y = 250.f;
+	SetMinimumDesiredSize(minDesiredSize);
+
 	this->OnClicked().AddUObject(this, &UBuildEntityCardWidget::OnButtonClicked);
+	this->OnHovered().AddUObject(this, &UBuildEntityCardWidget::OnButtonHovered);
+	this->OnUnhovered().AddUObject(this, &UBuildEntityCardWidget::OnButtonUnhovered);
 }
 
 void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo)
 {
 	BuildableInfo = buildableInfo;
 	BuildEntityInfoWidget->SetBuildableInfo(buildableInfo);
+	CheckHasConstructionCost();
 
 	UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
 	GameInstance->GetStreamableManager().RequestAsyncLoad(buildableInfo->UIIcon.ToSoftObjectPath(),
@@ -30,6 +39,22 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 			this->BuildEntityImage->SetBrushFromTexture(
 				buildableInfo->UIIcon.Get());
 		}));
+}
+
+void UBuildEntityCardWidget::CheckHasConstructionCost()
+{
+	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	bool hasResourceCost = true;
+	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
+	{
+		if(gameMode->HasResource(cost.ResourceType, cost.Coat) == false)
+		{
+			hasResourceCost = false;
+			break;
+		}
+	}
+
+	SetIsInteractionEnabled(hasResourceCost);
 }
 
 void UBuildEntityCardWidget::OnButtonClicked()
@@ -52,4 +77,24 @@ void UBuildEntityCardWidget::OnButtonClicked()
 		TSubclassOf<UUserWidget>* buildPanel = tableManager->GetWidgetClass(EWidgetType::BuildPlacement);
 		uiManager->GetUIBase()->PushBottomClass(buildPanel->Get());
 	}
+}
+
+void UBuildEntityCardWidget::OnButtonHovered()
+{
+	FVector2d minDesiredSize = GetMinimumDesiredSize();
+	minDesiredSize.Y = 300.f;
+	SetMinimumDesiredSize(minDesiredSize);
+
+	PlayAnimation(Loop_Hover, 0.f, 0);
+	PlayAnimation(Hightlight_In, 0.f, 1);
+}
+
+void UBuildEntityCardWidget::OnButtonUnhovered()
+{
+	FVector2d minDesiredSize = GetMinimumDesiredSize();
+	minDesiredSize.Y = 250.f;
+	SetMinimumDesiredSize(minDesiredSize);
+
+	StopAnimation(Loop_Hover);
+	PlayAnimation(Hightlight_Out, 0.f, 1);
 }

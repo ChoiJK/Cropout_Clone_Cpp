@@ -51,6 +51,7 @@ public:
 	ASpawner* GetSpawner();
 
 	int GetResourceAmount(EResourceType type);
+	bool HasResource(EResourceType type, int amount);
 	void StoreResource(EResourceType type, int amount);
 	bool ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount);
 

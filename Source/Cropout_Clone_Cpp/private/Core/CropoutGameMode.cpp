@@ -194,6 +194,16 @@ int ACropoutGameMode::GetResourceAmount(EResourceType type)
 	return ResourceBank.Contains(type) ? ResourceBank[type] : 0;
 }
 
+bool ACropoutGameMode::HasResource(EResourceType type, int amount)
+{
+	if(ResourceBank.Contains(type) && ResourceBank[type] >= amount)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 {
 	if(!ResourceBank.Contains(type))

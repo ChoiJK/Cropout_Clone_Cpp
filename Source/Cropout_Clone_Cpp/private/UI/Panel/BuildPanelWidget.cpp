@@ -4,6 +4,7 @@
 
 
 #include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Components/Spacer.h"
 #include "UI/Element/ButtonWidget.h"
 #include "UI/Element/BuildEntityCardWidget.h"
@@ -36,7 +37,9 @@ void UBuildPanelWidget::NativeOnActivated()
 		if(card)
 		{
 			card->SetBuildableInfo(buildableInfo);
-			BuildItemBox->AddChild(card);
+			UHorizontalBoxSlot* slot = BuildItemBox->AddChildToHorizontalBox(card);
+			slot->SetHorizontalAlignment(HAlign_Center);
+			slot->SetVerticalAlignment(VAlign_Bottom);
 
 			if(isLastEntity == false)
 			{
