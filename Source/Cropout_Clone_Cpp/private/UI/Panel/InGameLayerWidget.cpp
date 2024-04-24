@@ -40,21 +40,14 @@ void UInGameLayerWidget::NativeConstruct()
 			ResourceWidget[i]->SetResourceType(static_cast<EResourceType>(i + 1));
 			ResourceWidget[i]->SetValue(0);
 
-			auto resourceRP = gameInstance->GetCurrentGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1));
-			{
-				std::shared_ptr<SimpleRxReactiveProperty<int>> sharedResourceRP = resourceRP.lock();
-
-				if(sharedResourceRP)
-				{
-					sharedResourceRP->SubscribeWithLambdaAndNotify([this, i](int value)
-					{
-						if(ResourceWidget[i])
-						{
-							ResourceWidget[i]->SetValue(value);
-						}
-					})->AddTo(CompositeDisposable);
-				}
-			}
+			gameInstance->GetCurrentGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1))->
+			              SubscribeWithLambdaAndNotify([this, i](int value)
+			              {
+				              if(ResourceWidget[i])
+				              {
+					              ResourceWidget[i]->SetValue(value);
+				              }
+			              })->AddTo(CompositeDisposable);
 		}
 	}
 
@@ -67,7 +60,7 @@ void UInGameLayerWidget::NativeConstruct()
 	PauseButton->OnClicked().AddUObject(this, &UInGameLayerWidget::OnPauseButtonClicked);
 }
 
-void UInGameLayerWidget::NativeOnDeactivated()
+void UInGameLayerWidget::NativeDestruct()
 {
 	Super::NativeOnDeactivated();
 

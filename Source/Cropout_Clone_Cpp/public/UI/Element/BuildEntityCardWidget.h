@@ -11,6 +11,7 @@ class UBuildEntityInfoWidget;
 class UImage;
 class UTexture2D;
 struct FBuildableInfo;
+class SimpleRxCompositeDisposable;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBuildEntityCardWidget : public UCommonButtonBase
@@ -23,13 +24,16 @@ class CROPOUT_CLONE_CPP_API UBuildEntityCardWidget : public UCommonButtonBase
 	EBuildEntityType BuildEntityType;
 
 	void CheckHasConstructionCost();
+	std::shared_ptr<SimpleRxCompositeDisposable> CompositeDisposable;
 
 protected:
 	void OnButtonClicked();
 	void OnButtonHovered();
 	void OnButtonUnhovered();
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* Hightlight_In;
 

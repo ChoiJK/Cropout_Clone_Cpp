@@ -12,6 +12,7 @@
 #include "Player/CropoutPlayer.h"
 #include "UI/UiManager.h"
 #include "UI/Element/BuildEntityInfoWidget.h"
+#include "SimpleRx/SimpleRx.h"
 
 void UBuildEntityCardWidget::NativeConstruct()
 {
@@ -26,11 +27,21 @@ void UBuildEntityCardWidget::NativeConstruct()
 	this->OnUnhovered().AddUObject(this, &UBuildEntityCardWidget::OnButtonUnhovered);
 }
 
+void UBuildEntityCardWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if(CompositeDisposable)
+	{
+		CompositeDisposable->Dispose();
+		CompositeDisposable.reset();
+	}
+}
+
 void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo)
 {
 	BuildableInfo = buildableInfo;
 	BuildEntityInfoWidget->SetBuildableInfo(buildableInfo);
-	CheckHasConstructionCost();
 
 	UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
 	GameInstance->GetStreamableManager().RequestAsyncLoad(buildableInfo->UIIcon.ToSoftObjectPath(),
@@ -39,6 +50,16 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 			this->BuildEntityImage->SetBrushFromTexture(
 				buildableInfo->UIIcon.Get());
 		}));
+
+	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
+	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
+	{
+		gameMode->GetResourceRP(cost.ResourceType)->SubscribeWithLambdaAndNotify([this](int value)
+		{
+			CheckHasConstructionCost();
+		})->AddTo(CompositeDisposable);
+	}
 }
 
 void UBuildEntityCardWidget::CheckHasConstructionCost()

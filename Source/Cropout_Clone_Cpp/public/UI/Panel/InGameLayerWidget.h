@@ -40,7 +40,7 @@ protected:
 	UButtonWidget* PauseButton;
 
 	virtual void NativeConstruct() override;
-	virtual void NativeOnDeactivated() override;
+	virtual void NativeDestruct() override;
 
 	UFUNCTION()
 	void OnPauseButtonClicked();

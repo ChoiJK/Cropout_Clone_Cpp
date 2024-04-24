@@ -237,7 +237,7 @@ bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, 
 	return isWithdrawn;
 }
 
-std::weak_ptr<SimpleRxReactiveProperty<int>> ACropoutGameMode::GetResourceRP(EResourceType type)
+std::shared_ptr<SimpleRxReactiveProperty<int>> ACropoutGameMode::GetResourceRP(EResourceType type)
 {
 	if(ResourceBank.Contains(type) == false)
 	{

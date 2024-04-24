@@ -56,7 +56,7 @@ public:
 	void StoreResource(EResourceType type, int amount);
 	bool ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount);
 
-	std::weak_ptr<SimpleRxReactiveProperty<int>> GetResourceRP(EResourceType type);
+	std::shared_ptr<SimpleRxReactiveProperty<int>> GetResourceRP(EResourceType type);
 
 protected:
 	void OnIslandGenComplete();
