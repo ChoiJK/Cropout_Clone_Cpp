@@ -191,12 +191,12 @@ ASpawner* ACropoutGameMode::GetSpawner()
 
 int ACropoutGameMode::GetResourceAmount(EResourceType type)
 {
-	return ResourceBank.Contains(type) ? ResourceBank[type] : 0;
+	return ResourceBank.Contains(type) ? ResourceBank[type]->GetValue() : -1;
 }
 
 bool ACropoutGameMode::HasResource(EResourceType type, int amount)
 {
-	if(ResourceBank.Contains(type) && ResourceBank[type] >= amount)
+	if(ResourceBank.Contains(type) && ResourceBank[type]->GetValue() >= amount)
 	{
 		return true;
 	}
@@ -208,43 +208,43 @@ void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 {
 	if(!ResourceBank.Contains(type))
 	{
-		ResourceBank.Add(type, amount);
+		ResourceBank.Add(type, std::make_shared<SimpleRxReactiveProperty<int>>(amount));
 	}
 	else
 	{
-		ResourceBank[type] += amount;
-	}
-
-	if(UUiManager* uiManager = GetUiManager())
-	{
-		uiManager->UpdateResourcesWidget(type);
+		ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() + amount);
 	}
 }
 
 bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
 {
 	bool isWithdrawn = false;
-	if(ResourceBank.Contains(type) && ResourceBank[type] > 0)
+	if(ResourceBank.Contains(type) && ResourceBank[type] != nullptr)
 	{
 		isWithdrawn = true;
-		if(ResourceBank[type] <= requestedAmount)
+		if(ResourceBank[type]->GetValue() <= requestedAmount)
 		{
-			withdrawnAmount = ResourceBank[type];
-			ResourceBank[type] = 0;
+			withdrawnAmount = ResourceBank[type]->GetValue();
+			ResourceBank[type] = nullptr;
 		}
 		else
 		{
 			withdrawnAmount = requestedAmount;
-			ResourceBank[type] -= requestedAmount;
+			ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() - requestedAmount);
 		}
 	}
 
-	if(UUiManager* uiManager = GetUiManager())
+	return isWithdrawn;
+}
+
+std::weak_ptr<SimpleRxReactiveProperty<int>> ACropoutGameMode::GetResourceRP(EResourceType type)
+{
+	if(ResourceBank.Contains(type) == false)
 	{
-		uiManager->UpdateResourcesWidget(type);
+		ResourceBank.Add(type, std::make_shared<SimpleRxReactiveProperty<int>>(0));
 	}
 
-	return isWithdrawn;
+	return ResourceBank[type];
 }
 
 void ACropoutGameMode::ResourceDebugMessage()
@@ -252,19 +252,19 @@ void ACropoutGameMode::ResourceDebugMessage()
 	if(ResourceBank.Contains(EResourceType::Food))
 	{
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Food), 5.f, FColor::Green,
-			FString::Printf(TEXT("Food %d"), ResourceBank[EResourceType::Food]));
+			FString::Printf(TEXT("Food %d"), ResourceBank[EResourceType::Food]->GetValue()));
 	}
 
 	if(ResourceBank.Contains(EResourceType::Wood))
 	{
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Wood), 5.f, FColor::Red,
-			FString::Printf(TEXT("Wood %d"), ResourceBank[EResourceType::Wood]));
+			FString::Printf(TEXT("Wood %d"), ResourceBank[EResourceType::Wood]->GetValue()));
 	}
 
 	if(ResourceBank.Contains(EResourceType::Stone))
 	{
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Stone), 5.f, FColor::Black,
-			FString::Printf(TEXT("Stone %d"), ResourceBank[EResourceType::Stone]));
+			FString::Printf(TEXT("Stone %d"), ResourceBank[EResourceType::Stone]->GetValue()));
 	}
 }
 

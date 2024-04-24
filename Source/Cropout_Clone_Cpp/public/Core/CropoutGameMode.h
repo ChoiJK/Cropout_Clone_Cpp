@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Enum/ResourceType.h"
+#include "../SImpleRx/SimpleRxReactiveProperty.h"
 #include "CropoutGameMode.generated.h"
 
 class UCropoutGameInstance;
@@ -21,7 +22,7 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	TMap<EResourceType, int> ResourceBank;
+	TMap<EResourceType, std::shared_ptr<SimpleRxReactiveProperty<int>>> ResourceBank;
 	void ResourceDebugMessage();
 
 	UPROPERTY()
@@ -54,6 +55,8 @@ public:
 	bool HasResource(EResourceType type, int amount);
 	void StoreResource(EResourceType type, int amount);
 	bool ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount);
+
+	std::weak_ptr<SimpleRxReactiveProperty<int>> GetResourceRP(EResourceType type);
 
 protected:
 	void OnIslandGenComplete();

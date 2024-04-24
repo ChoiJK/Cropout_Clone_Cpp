@@ -38,6 +38,5 @@ public:
 
 	UUiBase* GetUIBase() const;
 
-	void UpdateResourcesWidget(EResourceType type);
 	void UpdateVillagerCount();
 };

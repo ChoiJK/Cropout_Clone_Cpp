@@ -62,19 +62,6 @@ UUiBase* UUiManager::GetUIBase() const
 	return UIBase;
 }
 
-void UUiManager::UpdateResourcesWidget(EResourceType type)
-{
-	const int resourceIndex = static_cast<int>(type) - 1;
-	if(IsValid(UI_HUD))
-	{
-		UResourceWidget* resourceWidget = UI_HUD->GetResourceWidget(resourceIndex);
-		if(IsValid(resourceWidget))
-		{
-			resourceWidget->SetValue(GameInstance->GetCurrentGameMode()->GetResourceAmount(type));
-		}
-	}
-}
-
 void UUiManager::UpdateVillagerCount()
 {
 	if(IsValid(UI_HUD))

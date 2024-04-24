@@ -13,6 +13,9 @@
 #include "UI/Element/ButtonWidget.h"
 #include "UI/UiManager.h"
 #include "CommonButtonBase.h"
+#include "Core/CropoutGameMode.h"
+
+#include "SimpleRx/SimpleRx.h"
 
 void UInGameLayerWidget::NativeConstruct()
 {
@@ -28,12 +31,30 @@ void UInGameLayerWidget::NativeConstruct()
 
 	if(resourceWidget)
 	{
+		CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
+
 		for(int i = 0; i < 3; ++i)
 		{
 			ResourceWidget[i] = CreateWidget<UResourceWidget>(this, resourceWidget->Get());
 			ResourceContainer->AddChildToVerticalBox(ResourceWidget[i]);
 			ResourceWidget[i]->SetResourceType(static_cast<EResourceType>(i + 1));
 			ResourceWidget[i]->SetValue(0);
+
+			auto resourceRP = gameInstance->GetCurrentGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1));
+			{
+				std::shared_ptr<SimpleRxReactiveProperty<int>> sharedResourceRP = resourceRP.lock();
+
+				if(sharedResourceRP)
+				{
+					sharedResourceRP->SubscribeWithLambdaAndNotify([this, i](int value)
+					{
+						if(ResourceWidget[i])
+						{
+							ResourceWidget[i]->SetValue(value);
+						}
+					})->AddTo(CompositeDisposable);
+				}
+			}
 		}
 	}
 
@@ -46,11 +67,28 @@ void UInGameLayerWidget::NativeConstruct()
 	PauseButton->OnClicked().AddUObject(this, &UInGameLayerWidget::OnPauseButtonClicked);
 }
 
+void UInGameLayerWidget::NativeOnDeactivated()
+{
+	Super::NativeOnDeactivated();
+
+	if(CompositeDisposable)
+	{
+		CompositeDisposable->Dispose();
+		CompositeDisposable.reset();
+	}
+}
+
 void UInGameLayerWidget::OnPauseButtonClicked()
 {
 	if(TableManager == nullptr || UiManager == nullptr)
 	{
 		return;
+	}
+
+	if(CompositeDisposable)
+	{
+		CompositeDisposable->Dispose();
+		CompositeDisposable.reset();
 	}
 
 	TSubclassOf<UUserWidget>* pauseMenu = TableManager->GetWidgetClass(EWidgetType::PauseMenu);

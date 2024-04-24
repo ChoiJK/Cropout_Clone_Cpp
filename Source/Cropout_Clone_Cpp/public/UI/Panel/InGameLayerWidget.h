@@ -12,6 +12,7 @@ class UResourceWidget;
 class UCommonTextBlock;
 class UTableManager;
 class UUiManager;
+class SimpleRxCompositeDisposable;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UInGameLayerWidget : public UCommonActivatableWidget
@@ -26,6 +27,8 @@ private:
 	UTableManager* TableManager;
 	UUiManager* UiManager;
 
+	std::shared_ptr<SimpleRxCompositeDisposable> CompositeDisposable;
+
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UVerticalBox* ResourceContainer;
@@ -37,6 +40,7 @@ protected:
 	UButtonWidget* PauseButton;
 
 	virtual void NativeConstruct() override;
+	virtual void NativeOnDeactivated() override;
 
 	UFUNCTION()
 	void OnPauseButtonClicked();
