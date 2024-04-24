@@ -9,20 +9,20 @@
 class UButtonWidget;
 class ACropoutPlayer;
 class UCommonBorder;
+class SimpleRxCompositeDisposable;
+struct FBuildableInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UBuildPlacementWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 
+	std::shared_ptr<SimpleRxCompositeDisposable> CompositeDisposable;
+	ACropoutPlayer* Player = nullptr;
+	const FBuildableInfo* BuildableInfo = nullptr;
+
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-
-protected:
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
-private:
-	ACropoutPlayer* Player = nullptr;
 
 	UFUNCTION()
 	void OnPlaceButtonClicked();
@@ -31,7 +31,12 @@ private:
 	UFUNCTION()
 	void OnCancelButtonClicked();
 
+	void CheckHasConstructionCost() const;
+	void SpendConstructionCost() const;
+
 protected:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCommonBorder* RootBorder;
 
@@ -43,4 +48,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButtonWidget* CancelButton;
+
+public:
+	void SetBuildableInfo(const FBuildableInfo* buildableInfo);
 };

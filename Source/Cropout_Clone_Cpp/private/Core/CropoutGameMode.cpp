@@ -216,6 +216,22 @@ void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 	}
 }
 
+void ACropoutGameMode::SpendResource(EResourceType type, int amount)
+{
+	if(ResourceBank.Contains(type) && ResourceBank[type] != nullptr)
+	{
+		if(ResourceBank[type]->GetValue() < amount)
+		{
+			ResourceBank[type]->SetValue(0);
+			UE_LOG(LogTemp, Error, TEXT("Resource is not enough"));
+		}
+		else
+		{
+			ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() - amount);
+		}
+	}
+}
+
 bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
 {
 	bool isWithdrawn = false;

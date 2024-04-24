@@ -10,8 +10,11 @@
 #include "Core/CropoutGameMode.h"
 #include "Data/BuildableInfo.h"
 #include "Player/CropoutPlayer.h"
+
 #include "UI/UiManager.h"
 #include "UI/Element/BuildEntityInfoWidget.h"
+#include "UI/Panel/BuildPlacementWidget.h"
+
 #include "SimpleRx/SimpleRx.h"
 
 void UBuildEntityCardWidget::NativeConstruct()
@@ -96,7 +99,9 @@ void UBuildEntityCardWidget::OnButtonClicked()
 		UUiManager* uiManager = gameInstance->GetLevelManager<UUiManager>();
 
 		TSubclassOf<UUserWidget>* buildPanel = tableManager->GetWidgetClass(EWidgetType::BuildPlacement);
-		uiManager->GetUIBase()->PushBottomClass(buildPanel->Get());
+		UBuildPlacementWidget* placementWidget = Cast<UBuildPlacementWidget>(
+			uiManager->GetUIBase()->PushBottomClass(buildPanel->Get()));
+		placementWidget->SetBuildableInfo(BuildableInfo);
 	}
 }
 

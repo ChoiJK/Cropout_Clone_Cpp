@@ -54,6 +54,7 @@ public:
 	int GetResourceAmount(EResourceType type);
 	bool HasResource(EResourceType type, int amount);
 	void StoreResource(EResourceType type, int amount);
+	void SpendResource(EResourceType type, int amount);
 	bool ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount);
 
 	std::shared_ptr<SimpleRxReactiveProperty<int>> GetResourceRP(EResourceType type);

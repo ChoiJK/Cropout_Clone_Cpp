@@ -11,6 +11,9 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "CommonBorder.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Core/CropoutGameMode.h"
+
+#include "SimpleRx/SimpleRx.h"
 
 void UBuildPlacementWidget::NativeConstruct()
 {
@@ -21,6 +24,8 @@ void UBuildPlacementWidget::NativeConstruct()
 	PlaceButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnPlaceButtonClicked);
 	RotateButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnRotateButtonClicked);
 	CancelButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnCancelButtonClicked);
+
+	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
 }
 
 void UBuildPlacementWidget::NativeDestruct()
@@ -29,6 +34,12 @@ void UBuildPlacementWidget::NativeDestruct()
 	PlaceButton->OnClicked().RemoveAll(this);
 	RotateButton->OnClicked().RemoveAll(this);
 	CancelButton->OnClicked().RemoveAll(this);
+
+	if(CompositeDisposable)
+	{
+		CompositeDisposable->Dispose();
+		CompositeDisposable.reset();
+	}
 }
 
 void UBuildPlacementWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -52,6 +63,7 @@ void UBuildPlacementWidget::OnPlaceButtonClicked()
 	if(Player)
 	{
 		Player->PlacementHandler->PlacingEntity();
+		SpendConstructionCost();
 	}
 }
 
@@ -71,4 +83,44 @@ void UBuildPlacementWidget::OnCancelButtonClicked()
 	}
 
 	DeactivateWidget();
+}
+
+void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo)
+{
+	BuildableInfo = buildableInfo;
+
+	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
+	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
+	{
+		gameMode->GetResourceRP(cost.ResourceType)->SubscribeWithLambdaAndNotify([this](int value)
+		{
+			CheckHasConstructionCost();
+		})->AddTo(CompositeDisposable);
+	}
+}
+
+void UBuildPlacementWidget::CheckHasConstructionCost() const
+{
+	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	bool hasResourceCost = true;
+	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
+	{
+		if(gameMode->HasResource(cost.ResourceType, cost.Coat) == false)
+		{
+			hasResourceCost = false;
+			break;
+		}
+	}
+
+	PlaceButton->SetIsInteractionEnabled(hasResourceCost);
+}
+
+void UBuildPlacementWidget::SpendConstructionCost() const
+{
+	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
+	{
+		gameMode->SpendResource(cost.ResourceType, cost.Coat);
+	}
 }
