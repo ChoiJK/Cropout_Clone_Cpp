@@ -40,6 +40,9 @@ class CROPOUT_CLONE_CPP_API AVillager : public APawn
 	UPROPERTY(VisibleAnywhere)
 	UDecalComponent* ShadowDecal;
 
+	UPROPERTY()
+	UStaticMesh* CrateMesh;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UFloatingPawnMovement* Movement;
@@ -84,6 +87,9 @@ private:
 	void PlayMontageCallback(FName NotifyName);
 
 	EResourceType StoreResourceType;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int StoreAmount;
 
 public:
@@ -97,7 +103,4 @@ public:
 
 	void StoreResource(EResourceType type, int amount);
 	void DeliverResource();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Quantity = 0;
 };

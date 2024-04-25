@@ -99,6 +99,11 @@ AVillager::AVillager()
 		FVillagerJob* job = villagerJob.Object->FindRow<FVillagerJob>(rowName, TEXT("VillagerJob"));
 		MapVillagerJob.Add(rowName, *job);
 	}
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> sm_Crate
+		(TEXT("Engine.StaticMesh'/Game/Characters/Meshes/Tools/Crate.Crate'"));
+	check(sm_Crate.Succeeded());
+	CrateMesh = sm_Crate.Object;
 }
 
 void AVillager::BeginPlay()
@@ -188,7 +193,10 @@ void AVillager::EndWorkAnim()
 
 void AVillager::PlayMontageCallback(FName NotifyName)
 {
-	ToolMesh->SetVisibility(false);
+	if(ToolMesh->GetStaticMesh() != CrateMesh)
+	{
+		ToolMesh->SetVisibility(false);
+	}
 }
 
 void AVillager::SetDefaultJob()
@@ -200,6 +208,9 @@ void AVillager::StoreResource(EResourceType type, int amount)
 {
 	StoreResourceType = type;
 	StoreAmount = amount;
+
+	ToolMesh->SetVisibility(true);
+	ToolMesh->SetStaticMesh(CrateMesh);
 }
 
 void AVillager::DeliverResource()
@@ -209,6 +220,7 @@ void AVillager::DeliverResource()
 		GameMode->StoreResource(StoreResourceType, StoreAmount);
 		StoreResourceType = EResourceType::None;
 		StoreAmount = 0;
+		ToolMesh->SetVisibility(false);
 	}
 }
 
@@ -325,6 +337,4 @@ void AVillager::StopJob()
 	{
 		aiController->StopMovement();
 	}
-
-	Quantity = 0;
 }
