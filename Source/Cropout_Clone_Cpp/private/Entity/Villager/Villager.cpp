@@ -150,7 +150,7 @@ void AVillager::Eat()
 
 void AVillager::Action(AActor* jobAction)
 {
-	if(jobAction == nullptr || jobAction->IsValidLowLevel() == false || jobAction->Tags.Num() == 0)
+	if(jobAction == nullptr || IsValid(jobAction) == false || jobAction->Tags.Num() == 0)
 	{
 		return;
 	}
@@ -226,11 +226,6 @@ void AVillager::DeliverResource()
 
 void AVillager::ChangeJob(EVillagerJobType jobType)
 {
-	if(CurrentJobType == jobType)
-	{
-		return;
-	}
-
 	CurrentJobType = jobType;
 	CurrentJobName = FName(GetVillagerJobTypeString(CurrentJobType));
 
