@@ -1,24 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "Player/CropoutPlayer.h"
-#include "Player/Components/MovementInputHandler.h"
-
-#include "Engine/EngineTypes.h"
-#include "Camera/CameraComponent.h"
-#include "Components/SphereComponent.h"
-#include "Core/CropoutGameInstance.h"
-#include "Core/CropoutPlayerController.h"
-#include "GameFramework/FloatingPawnMovement.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Global/GlobalEventDispatcher.h"
-#include "Player/Components/VillagerHandler.h"
-
 #include "limits"
 #include "DrawDebugHelpers.h"
-#include "Core/CropoutGameMode.h"
+
+#include "Engine/EngineTypes.h"
+#include "GameFramework/FloatingPawnMovement.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Core/CropoutGameInstance.h"
+#include "Core/CropoutPlayerController.h"
+#include "Global/GlobalEventDispatcher.h"
+#include "Player/CropoutPlayer.h"
+#include "Player/Components/MovementInputHandler.h"
+#include "Player/Components/VillagerHandler.h"
 #include "Player/Components/PlacementHandler.h"
+#include "Entity/Villager/Villager.h"
 #include "Spawn/Spawner.h"
 
 ACropoutPlayer::ACropoutPlayer()
@@ -68,6 +67,8 @@ ACropoutPlayer::ACropoutPlayer()
 
 	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	Collision->SetupAttachment(GetRootComponent());
+	Collision->SetSphereRadius(180.f);
+	Collision->SetRelativeScale3D(FVector(0.666f, 0.666f, 1.f));
 	Collision->SetCollisionObjectType(ECC_Pawn);
 	Collision->OnComponentBeginOverlap.AddDynamic(this, &ACropoutPlayer::OnBeginOverlap);
 	Collision->OnComponentEndOverlap.AddDynamic(this, &ACropoutPlayer::OnEndOverlap);
@@ -87,20 +88,12 @@ void ACropoutPlayer::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	if(HoverActor && HoverActor->IsValidLowLevel())
+	FTimerManager& worldTimerManager = GetWorldTimerManager();
+	if(worldTimerManager.IsTimerActive(ClosestHoverCheckTimerHandle) == false)
 	{
-		return;
+		worldTimerManager.SetTimer(ClosestHoverCheckTimerHandle, this, &ACropoutPlayer::ClosestHoverCheck, 0.1f,
+			true);
 	}
-
-	if(OtherActor == this)
-	{
-		return;
-	}
-
-	SetHoverActor(OtherActor);
-
-	GetWorldTimerManager().SetTimer(ClosestHoverCheckTimerHandle, this, &ACropoutPlayer::ClosestHoverCheck, 0.01f,
-		true);
 }
 
 void ACropoutPlayer::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -123,15 +116,31 @@ void ACropoutPlayer::ClosestHoverCheck()
 	Collision->GetOverlappingActors(overlappingActors, AActor::StaticClass());
 	if(overlappingActors.IsEmpty())
 	{
+		SetHoverActor(nullptr);
 		GetWorldTimerManager().PauseTimer(ClosestHoverCheckTimerHandle);
 	}
 	else
 	{
 		AActor* NewHover = nullptr;
+		bool villagerFound = false;
 		float closestDistance = std::numeric_limits<float>::max();
 		for(auto OverlappingActor : overlappingActors)
 		{
-			float newClosestDistance = FVector::DistSquared(GetActorLocation(), Collision->GetComponentLocation());
+			const bool isVillager = OverlappingActor->IsA<AVillager>();
+			if(isVillager && villagerFound == false)
+			{
+				villagerFound = true;
+				closestDistance = std::numeric_limits<float>::max();
+				NewHover = nullptr;
+			}
+
+			if(villagerFound && isVillager == false)
+			{
+				continue;
+			}
+
+			const float newClosestDistance = FVector::DistSquared(OverlappingActor->GetActorLocation(),
+				Collision->GetComponentLocation());
 			if(NewHover != this && closestDistance > newClosestDistance)
 			{
 				closestDistance = newClosestDistance;

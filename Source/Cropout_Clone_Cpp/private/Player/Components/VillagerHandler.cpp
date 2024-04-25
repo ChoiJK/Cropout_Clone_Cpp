@@ -133,7 +133,7 @@ void UVillagerHandler::OnVillagerActionEnd(const FInputActionValue& Value)
 	Owner->MovementInputHandler->ReleaseDragMoveIMC();
 	Owner->PlacementHandler->ReleasePlacementIMC();
 
-	if(SelectedVillager && SelectedVillager->IsValidLowLevel())
+	if(SelectedVillager && IsValid(SelectedVillager))
 	{
 		Cast<AVillager>(SelectedVillager)->Action(VillagerAction);
 		VillagerRelease();
