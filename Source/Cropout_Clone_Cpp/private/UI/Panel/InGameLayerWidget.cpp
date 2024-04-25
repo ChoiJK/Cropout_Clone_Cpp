@@ -62,7 +62,7 @@ void UInGameLayerWidget::NativeConstruct()
 
 void UInGameLayerWidget::NativeDestruct()
 {
-	Super::NativeOnDeactivated();
+	Super::NativeDestruct();
 
 	if(CompositeDisposable)
 	{
