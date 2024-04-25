@@ -342,15 +342,6 @@ AVillager* ACropoutGameMode::SpawnVillager()
 			NewPawn->SpawnDefaultController();
 		}
 
-		if(NewPawn != nullptr)
-		{
-			Villagers.Add(NewPawn);
-			if(UUiManager* uiManager = GetUiManager())
-			{
-				uiManager->UpdateVillagerCount();
-			}
-		}
-
 		return NewPawn;
 	}
 

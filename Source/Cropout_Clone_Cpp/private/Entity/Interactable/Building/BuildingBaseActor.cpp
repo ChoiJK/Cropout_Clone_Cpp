@@ -5,8 +5,12 @@
 
 #include "Components/BoxComponent.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/CropoutGameMode.h"
+#include "Core/CropoutPlayerController.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/EntityManager.h"
+#include "Player/CropoutPlayer.h"
+#include "Spawn/Spawner.h"
 
 ABuildingBaseActor::ABuildingBaseActor()
 {
@@ -44,6 +48,8 @@ void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 	Super::SetInteractableInfo(InInfo);
 
 	RemainingBuildTimeSec = BuildTimeSec;
+	BuildingType = InInfo->BuildingType;
+	NewVillagerCount = InInfo->NewVillagerCount;
 	if(RequireBuild)
 	{
 		Tags.Add("Build");
@@ -75,10 +81,7 @@ void ABuildingBaseActor::BuildTick()
 		BuildProgress = 1.0f;
 		RequireBuild = false;
 
-		if(EntityManager != nullptr)
-		{
-			EntityManager->RemoveBuilding(this);
-		}
+		BuildSuccess();
 	}
 
 	ChangeMesh(BuildProgress * (MeshList.Num() - 1));
@@ -175,5 +178,39 @@ void ABuildingBaseActor::ChangeMesh(int index)
 		}
 		NavBlocker->SetBoxExtent(StaticMeshComponent->Bounds.BoxExtent);
 		NavBlocker->SetWorldLocation(StaticMeshComponent->Bounds.Origin);
+	}
+}
+
+
+void ABuildingBaseActor::BuildSuccess()
+{
+	Tags.Remove("Build");
+	Tags.Add("Building");
+
+	if(EntityManager != nullptr)
+	{
+		EntityManager->RemoveBuilding(this);
+	}
+
+	switch(BuildingType)
+	{
+	case EBuildingType::House:
+		{
+			UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
+			for(int i = 0; i < NewVillagerCount; i++)
+			{
+				GameInstance->GetCurrentGameMode()->SpawnVillager();
+			}
+			break;
+		}
+
+	case EBuildingType::VictoryMonument:
+		{
+			// @Todo : GameMode에서 처리
+			//UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
+			//GameInstance->GetcurrentGameMode()->Victory();
+			break;
+		}
+	default: ;
 	}
 }

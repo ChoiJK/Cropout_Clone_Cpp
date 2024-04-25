@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "CommonButtonBase.h"
-#include "Enum/BuildEntityType.h"
 #include "BuildEntityCardWidget.generated.h"
 
 class UBuildEntityInfoWidget;
@@ -19,9 +18,6 @@ class CROPOUT_CLONE_CPP_API UBuildEntityCardWidget : public UCommonButtonBase
 	GENERATED_BODY()
 
 	const FBuildableInfo* BuildableInfo;
-
-	UPROPERTY(EditAnywhere)
-	EBuildEntityType BuildEntityType;
 
 	void CheckHasConstructionCost();
 	std::shared_ptr<SimpleRxCompositeDisposable> CompositeDisposable;

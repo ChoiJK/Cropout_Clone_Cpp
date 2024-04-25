@@ -308,6 +308,9 @@ void AVillager::ResetJobState()
 {
 	StopJob();
 
+	StoreResourceType = EResourceType::None;
+	StoreAmount = 0;
+
 	HatMesh->SetSkeletalMesh(nullptr);
 	HatMesh->SetVisibility(false);
 

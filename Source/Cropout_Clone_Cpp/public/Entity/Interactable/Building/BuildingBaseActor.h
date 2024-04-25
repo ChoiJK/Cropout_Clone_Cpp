@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
+#include "Enum/BuildingType.h"
 #include "BuildingBaseActor.generated.h"
 
 class AVillager;
@@ -22,6 +23,11 @@ class CROPOUT_CLONE_CPP_API ABuildingBaseActor : public AInteractableBaseActor
 	float RemainingBuildTimeSec = 0.0f;
 	float BuildProgress = 0.0f;
 	FTimerHandle BuildTimerHandle;
+
+	EBuildingType BuildingType = EBuildingType::None;
+	int NewVillagerCount;
+
+	void BuildSuccess();
 
 public:
 	ABuildingBaseActor();

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Enum/BuildEntityType.h"
 #include "BuildEntityInfoWidget.generated.h"
 
 class UImage;
@@ -16,9 +15,6 @@ UCLASS()
 class CROPOUT_CLONE_CPP_API UBuildEntityInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	EBuildEntityType BuildEntityType;
 
 protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))

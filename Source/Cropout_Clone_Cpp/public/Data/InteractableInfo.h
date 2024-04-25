@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "Enum/InteractableType.h"
 #include "Enum/ResourceType.h"
+#include "Enum/BuildingType.h"
 #include "InteractableInfo.generated.h"
 
 USTRUCT(BlueprintType)
@@ -50,6 +51,13 @@ struct FInteractableInfo : public FTableRowBase
 	float GrowthTime = 10.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Crop Properties")
 	int HarvestAmount = 40;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building Properties")
+	EBuildingType BuildingType = EBuildingType::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building Properties")
+	int NewVillagerCount = 0;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Info")
 	float BoundGap = 0.0f;
