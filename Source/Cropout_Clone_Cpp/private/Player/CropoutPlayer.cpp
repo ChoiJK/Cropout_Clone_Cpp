@@ -1,4 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+#include "Player/CropoutPlayer.h"
 
 #include "limits"
 #include "DrawDebugHelpers.h"
@@ -13,7 +14,6 @@
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutPlayerController.h"
 #include "Global/GlobalEventDispatcher.h"
-#include "Player/CropoutPlayer.h"
 #include "Player/Components/MovementInputHandler.h"
 #include "Player/Components/VillagerHandler.h"
 #include "Player/Components/PlacementHandler.h"

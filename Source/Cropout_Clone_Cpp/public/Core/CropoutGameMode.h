@@ -62,10 +62,6 @@ public:
 protected:
 	void OnIslandGenComplete();
 
-	UPROPERTY()
-	UAudioComponent* MusicComponent = nullptr;
-	void PlayMusic();
-
 	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
