@@ -58,7 +58,7 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
-		gameMode->GetResourceRP(cost.ResourceType)->SubscribeWithLambdaAndNotify([this](int value)
+		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
 		{
 			CheckHasConstructionCost();
 		})->AddTo(CompositeDisposable);

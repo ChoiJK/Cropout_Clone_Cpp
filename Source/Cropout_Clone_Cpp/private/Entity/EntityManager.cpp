@@ -7,6 +7,7 @@
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Entity/Interactable/Crop/CropBaseActor.h"
+#include "SimpleRx/SimpleRx.h"
 
 void UEntityManager::Init()
 {
@@ -362,6 +363,7 @@ void UEntityManager::AddVillager(AVillager* Villager)
 	if(Villagers.Contains(Villager) == false)
 	{
 		Villagers.Add(Villager);
+		UpdateVillagerCount();
 	}
 }
 
@@ -370,5 +372,21 @@ void UEntityManager::RemoveVillager(AVillager* Villager)
 	if(Villagers.Contains(Villager))
 	{
 		Villagers.Remove(Villager);
+		UpdateVillagerCount();
 	}
+}
+
+void UEntityManager::UpdateVillagerCount()
+{
+	if(VillagerCountRp == nullptr)
+	{
+		VillagerCountRp = std::make_shared<SimpleRxReactiveProperty<int>>(0);
+	}
+
+	VillagerCountRp->SetValue(Villagers.Num());
+}
+
+std::shared_ptr<SimpleRxReactiveProperty<int>> UEntityManager::GetVillagerCountRp()
+{
+	return VillagerCountRp;
 }

@@ -47,5 +47,5 @@ protected:
 
 public:
 	UResourceWidget* GetResourceWidget(int index) const;
-	void SetVillagerCount(int count) const;
+	void SetVillagerCount(int count);
 };

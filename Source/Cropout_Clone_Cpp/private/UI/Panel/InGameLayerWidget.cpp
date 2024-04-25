@@ -23,16 +23,20 @@ void UInGameLayerWidget::NativeConstruct()
 
 	check(ResourceContainer);
 
+	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
+
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	TableManager = gameInstance->GetSystemManager<UTableManager>();
 	UiManager = gameInstance->GetLevelManager<UUiManager>();
+
+	UEntityManager* entityManager = gameInstance->GetLevelManager<UEntityManager>();
+	entityManager->GetVillagerCountRp()->SubscribeAndNotify(std::bind(&UInGameLayerWidget::SetVillagerCount, this,
+		std::placeholders::_1))->AddTo(CompositeDisposable);
 
 	TSubclassOf<UUserWidget>* resourceWidget = TableManager->GetWidgetClass(EWidgetType::ResourceElement);
 
 	if(resourceWidget)
 	{
-		CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-
 		for(int i = 0; i < 3; ++i)
 		{
 			ResourceWidget[i] = CreateWidget<UResourceWidget>(this, resourceWidget->Get());
@@ -41,7 +45,7 @@ void UInGameLayerWidget::NativeConstruct()
 			ResourceWidget[i]->SetValue(0);
 
 			gameInstance->GetCurrentGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1))->
-			              SubscribeWithLambdaAndNotify([this, i](int value)
+			              SubscribeAndNotify([this, i](int value)
 			              {
 				              if(ResourceWidget[i])
 				              {
@@ -106,7 +110,7 @@ UResourceWidget* UInGameLayerWidget::GetResourceWidget(int index) const
 	return nullptr;
 }
 
-void UInGameLayerWidget::SetVillagerCount(int count) const
+void UInGameLayerWidget::SetVillagerCount(int count)
 {
 	if(IsValid(VillagerCountText))
 	{

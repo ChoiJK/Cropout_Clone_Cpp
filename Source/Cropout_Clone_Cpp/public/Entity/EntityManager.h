@@ -13,6 +13,9 @@ class AResourceBaseActor;
 class ACropBaseActor;
 class AVillager;
 
+template <typename T>
+class SimpleRxReactiveProperty;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 {
@@ -40,6 +43,8 @@ class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 
 	UPROPERTY()
 	TArray<AVillager*> Villagers;
+	std::shared_ptr<SimpleRxReactiveProperty<int>> VillagerCountRp;
+	void UpdateVillagerCount();
 
 	void AddInteractable(AInteractableBaseActor* Interactable);
 	void RemoveInteractable(AInteractableBaseActor* Interactable);
@@ -72,4 +77,5 @@ public:
 
 	void AddVillager(AVillager* Villager);
 	void RemoveVillager(AVillager* Villager);
+	std::shared_ptr<SimpleRxReactiveProperty<int>> GetVillagerCountRp();
 };

@@ -75,33 +75,7 @@ public:
 		}
 	}
 
-	template <typename Object>
-	std::shared_ptr<SimpleRxSubscribeHandle<T>> Subscribe(Object* obj, std::function<void(T)> onValueChanged)
-	{
-		if(obj == nullptr)
-		{
-			UE_LOG(LogTemp, Error, TEXT("ReactiveProperty::Subscribe - obj is nullptr"));
-			return nullptr;
-		}
-
-		std::function<void(T)> func = std::bind(onValueChanged, obj, std::placeholders::_1);
-		int subscribeID = GetSubscribeID();
-		std::shared_ptr<SimpleRxSubscribeHandle<T>> handle = std::make_shared<SimpleRxSubscribeHandle<T>>(
-			this->shared_from_this(), subscribeID);
-		OnValueChanged.insert({subscribeID, func});
-		return handle;
-	}
-
-	template <typename Object>
-	std::shared_ptr<SimpleRxSubscribeHandle<T>> SubscribeAndNotify(Object* obj, std::function<void(T)> onValueChanged)
-	{
-		std::shared_ptr<SimpleRxSubscribeHandle<T>> handle = Subscribe(obj, onValueChanged);
-		onValueChanged(Value);
-		return handle;
-	}
-
-	// lambda function을 이용한 Subscribe
-	std::shared_ptr<SimpleRxSubscribeHandle<T>> SubscribeWithLambda(std::function<void(T)> onValueChanged)
+	std::shared_ptr<SimpleRxSubscribeHandle<T>> Subscribe(std::function<void(T)> onValueChanged)
 	{
 		int subscribeID = GetSubscribeID();
 		std::shared_ptr<SimpleRxSubscribeHandle<T>> handle = std::make_shared<SimpleRxSubscribeHandle<T>>(
@@ -110,9 +84,9 @@ public:
 		return handle;
 	}
 
-	std::shared_ptr<SimpleRxSubscribeHandle<T>> SubscribeWithLambdaAndNotify(std::function<void(T)> onValueChanged)
+	std::shared_ptr<SimpleRxSubscribeHandle<T>> SubscribeAndNotify(std::function<void(T)> onValueChanged)
 	{
-		std::shared_ptr<SimpleRxSubscribeHandle<T>> handle = SubscribeWithLambda(onValueChanged);
+		std::shared_ptr<SimpleRxSubscribeHandle<T>> handle = Subscribe(onValueChanged);
 		onValueChanged(Value);
 		return handle;
 	}
