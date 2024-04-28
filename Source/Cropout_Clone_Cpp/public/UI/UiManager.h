@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Manager/Base/LevelManager.h"
-#include "Enum/ResourceType.h"
 #include "Data/WidgetTableData.h"
 #include "UI/UiBase.h"
 #include "UiManager.generated.h"

@@ -7,8 +7,6 @@
 #include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Engine/StreamableManager.h"
-#include "Manager/TableManager.h"
-#include "Entity/EntityManager.h"
 #include "Data/SaveData.h"
 #include "Level/CropoutLevelScriptBase.h"
 

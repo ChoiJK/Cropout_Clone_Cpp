@@ -4,10 +4,20 @@
 #include "Core/Level/CropoutLevelScriptBase.h"
 #include "Manager/Base/LevelManager.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/ApplicationState/ApplicationStateManager.h"
 
 
 ACropoutLevelScriptBase::ACropoutLevelScriptBase()
 {
+}
+
+void ACropoutLevelScriptBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+	ASM->UpdateState();
 }
 
 void ACropoutLevelScriptBase::BeginPlay()

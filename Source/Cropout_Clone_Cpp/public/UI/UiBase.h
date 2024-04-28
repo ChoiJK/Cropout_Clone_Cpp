@@ -28,8 +28,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UCommonActivatableWidgetStack* BottomStack;
 
-	UFUNCTION()
-	void OnPromptStackChanged(UCommonActivatableWidget* CommonActivatableWidget);
 	virtual void NativeConstruct() override;
 
 public:

@@ -14,6 +14,8 @@
 #include "UI/UiManager.h"
 #include "CommonButtonBase.h"
 #include "Core/CropoutGameMode.h"
+#include "Core/ApplicationState/ApplicationStateManager.h"
+#include "Entity/EntityManager.h"
 
 #include "SimpleRx/SimpleRx.h"
 
@@ -77,20 +79,9 @@ void UInGameLayerWidget::NativeDestruct()
 
 void UInGameLayerWidget::OnPauseButtonClicked()
 {
-	if(TableManager == nullptr || UiManager == nullptr)
-	{
-		return;
-	}
-
-	if(CompositeDisposable)
-	{
-		CompositeDisposable->Dispose();
-		CompositeDisposable.reset();
-	}
-
-	TSubclassOf<UUserWidget>* pauseMenu = TableManager->GetWidgetClass(EWidgetType::PauseMenu);
-
-	UiManager->GetUIBase()->PushPromptClass(pauseMenu->Get());
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+	ASM->TriggerStateTransition(EStateTrigger::PauseGame);
 }
 
 TOptional<FUIInputConfig> UInGameLayerWidget::GetDesiredInputConfig() const

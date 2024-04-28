@@ -3,6 +3,8 @@
 
 #include "UI/Panel/PauseMenuWidget.h"
 
+#include "Core/CropoutGameInstance.h"
+#include "Core/ApplicationState/ApplicationStateManager.h"
 #include "UI/Element/ButtonWidget.h"
 
 void UPauseMenuWidget::NativeConstruct()
@@ -24,5 +26,7 @@ void UPauseMenuWidget::NativeOnDeactivated()
 
 void UPauseMenuWidget::OnResumeButtonClicked()
 {
-	DeactivateWidget();
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+	ASM->TriggerStateTransition(EStateTrigger::ResumeGame);
 }

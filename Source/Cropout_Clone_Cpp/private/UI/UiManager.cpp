@@ -7,7 +7,7 @@
 #include "Core/CropoutGameMode.h"
 #include "UI/Panel/InGameLayerWidget.h"
 #include "UI/Element/ResourceWidget.h"
-#include "Enum/ResourceType.h"
+#include "Manager/TableManager.h"
 
 // Called when the game starts or when spawned
 void UUiManager::Init()

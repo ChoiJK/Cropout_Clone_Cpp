@@ -5,6 +5,7 @@
 #include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Data/SaveData.h"
+#include "Manager/Base/SystemManager.h"
 
 UCropoutGameInstance* UCropoutGameInstance::Instance = nullptr;
 
