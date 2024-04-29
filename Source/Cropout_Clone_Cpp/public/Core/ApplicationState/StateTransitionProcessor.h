@@ -11,13 +11,13 @@ class CROPOUT_CLONE_CPP_API UStateTransitionProcessor : public UObject
 {
 	GENERATED_BODY()
 
-	TArray<StateProcess> ClearPreviousState;
+	TArray<StateProcessFunction> ClearPreviousState;
 
-	TArray<StateProcess> PrepareNextState;
+	TArray<StateProcessFunction> PrepareNextState;
 
 public:
-	void AddClearPreviousStateProcess(StateProcess processFunction);
-	void AddPrepareNextStateProcess(StateProcess processFunction);
+	void AddClearPreviousStateProcess(StateProcessFunction processFunction);
+	void AddPrepareNextStateProcess(StateProcessFunction processFunction);
 	void DoClearPreviousState();
 	void DoPrepareNextState();
 };

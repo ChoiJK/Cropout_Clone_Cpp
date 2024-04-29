@@ -15,8 +15,22 @@ void UApplicationStateManager::Init()
 {
 	Super::Init();
 
+	Initialize_None_To_Initialize_With_DoInitialize();
+	Initialize_Initialize_To_Splash_With_InitializeSuccess();
+	Initialize_Splash_To_MainMenu_With_SplashComplete();
+	Initialize_MainMenu_To_InGame_With_NewGame();
+	Initialize_MainMenu_To_InGame_With_LoadGame();
+	Initialize_MainMenu_To_Exit_With_ExitGame();
 	Initialize_InGame_To_InGamePause_With_PauseGame();
+	Initialize_InGame_To_InGameResult_With_WinGame();
+	Initialize_InGame_To_InGameResult_With_LoseGame();
 	Initialize_InGamePause_To_InGame_With_ResumeGame();
+	Initialize_InGamePause_To_InGame_With_RestartGame();
+	Initialize_InGamePause_To_MainMenu_With_ToMainMenu();
+	Initialize_InGamePause_To_Exit_With_ExitGame();
+	Initialize_InGameResult_To_InGame_With_ResumeGame();
+	Initialize_InGameResult_To_InGame_With_RestartGame();
+	Initialize_InGameResult_To_MainMenu_With_ToMainMenu();
 }
 
 void UApplicationStateManager::Prepare()
@@ -92,10 +106,38 @@ void UApplicationStateManager::Initialize_InGame_To_InGamePause_With_PauseGame()
 		ECropoutState::InGamePause, InGame_To_InGamePause_Processor));
 }
 
-void UApplicationStateManager::Initialize_InGame_To_InGameResult_With_EndOfGame()
+void UApplicationStateManager::Initialize_InGame_To_InGameResult_With_WinGame()
 {
-	// InGame -> InGameResult : EndOfGame
+	// InGame -> InGameResult : WinGame
+	// 게임 승리조건을 만족했을 때 발생 (EBuildingType::VictoryMonument가 지어졌을 때)
+	UStateTransitionProcessor* InGame_To_InGameResult_Processor = NewObject<UStateTransitionProcessor>();
+	InGame_To_InGameResult_Processor->AddClearPreviousStateProcess(FStateStaticMethods::SetGamePaused);
+	InGame_To_InGameResult_Processor->AddPrepareNextStateProcess([](void)
+	{
+		FStateStaticMethods::OpenResultMenuWidget();
+		FStateStaticMethods::SetResultMenuWidgetText("Congratulations! You built the monument!");
+	});
+	InGame_To_InGameResult_Processor->AddPrepareNextStateProcess(FStateStaticMethods::SetOnlyUIInputMode);
+	AddTransitionProcessors(ECropoutState::InGame, FStateTransition(EStateTrigger::WinGame,
+		ECropoutState::InGameResult, InGame_To_InGameResult_Processor));
 }
+
+void UApplicationStateManager::Initialize_InGame_To_InGameResult_With_LoseGame()
+{
+	// InGame -> InGameResult : LoseGame
+	// 게임 패배조건을 만족했을 때 발생 (식량이 0보다 작아지는 경우)
+	UStateTransitionProcessor* InGame_To_InGameResult_Processor = NewObject<UStateTransitionProcessor>();
+	InGame_To_InGameResult_Processor->AddClearPreviousStateProcess(FStateStaticMethods::SetGamePaused);
+	InGame_To_InGameResult_Processor->AddPrepareNextStateProcess([](void)
+	{
+		FStateStaticMethods::OpenResultMenuWidget();
+		FStateStaticMethods::SetResultMenuWidgetText("Oh no! You Ran out of food.");
+	});
+	InGame_To_InGameResult_Processor->AddPrepareNextStateProcess(FStateStaticMethods::SetOnlyUIInputMode);
+	AddTransitionProcessors(ECropoutState::InGame, FStateTransition(EStateTrigger::LoseGame,
+		ECropoutState::InGameResult, InGame_To_InGameResult_Processor));
+}
+
 
 void UApplicationStateManager::Initialize_InGamePause_To_InGame_With_ResumeGame()
 {
@@ -124,6 +166,19 @@ void UApplicationStateManager::Initialize_InGamePause_To_Exit_With_ExitGame()
 	// InGamePause -> Exit : ExitGame
 }
 
+void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_ResumeGame()
+{
+	// InGameResult -> InGame : ResumeGame
+	// ResultMenuWidget에서 Continue버튼을 눌렀을 때 발생	
+	UStateTransitionProcessor* InGameResult_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
+	InGameResult_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::CloseResultMenuWidget);
+	InGameResult_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::SetGameAndUIInputMode);
+	InGameResult_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::SetGameContinue);
+	InGameResult_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::SetGameUnpaused);
+	AddTransitionProcessors(ECropoutState::InGameResult, FStateTransition(EStateTrigger::ResumeGame,
+		ECropoutState::InGame, InGameResult_To_InGame_Processor));
+}
+
 void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_RestartGame()
 {
 	// InGameResult -> InGame : RestartGame
@@ -132,11 +187,6 @@ void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_RestartGam
 void UApplicationStateManager::Initialize_InGameResult_To_MainMenu_With_ToMainMenu()
 {
 	// InGameResult -> MainMenu : ToMainMenu
-}
-
-void UApplicationStateManager::Initialize_InGameResult_To_Exit_With_ExitGame()
-{
-	// InGameResult -> Exit : ExitGame
 }
 
 
@@ -158,6 +208,10 @@ bool UApplicationStateManager::TriggerStateTransition(EStateTrigger trigger)
 			}
 		}
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("TriggerStateTransition : CurrentState(%d) Trigger(%d) is not valid"),
+		(int)CurrentState, (int)trigger);
+
 	return false;
 }
 

@@ -9,6 +9,7 @@
 #include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutPlayerController.h"
+#include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/CropoutPlayer.h"
@@ -17,6 +18,7 @@
 #include "UI/UiManager.h"
 #include "Enum/ResourceType.h"
 #include "Manager/SoundManager.h"
+#include "Manager/TableManager.h"
 
 
 ACropoutGameMode::ACropoutGameMode()
@@ -167,14 +169,13 @@ void ACropoutGameMode::SpendResource(EResourceType type, int amount)
 {
 	if(ResourceBank.Contains(type) && ResourceBank[type] != nullptr)
 	{
-		if(ResourceBank[type]->GetValue() < amount)
+		ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() - amount);
+
+		if(IsContinueGame == false && ResourceBank[type]->GetValue() < 0 && type == EResourceType::Food)
 		{
-			ResourceBank[type]->SetValue(0);
-			UE_LOG(LogTemp, Error, TEXT("Resource is not enough"));
-		}
-		else
-		{
-			ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() - amount);
+			UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+			UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+			ASM->TriggerStateTransition(EStateTrigger::LoseGame);
 		}
 	}
 }
@@ -185,15 +186,14 @@ bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, 
 	if(ResourceBank.Contains(type) && ResourceBank[type] != nullptr)
 	{
 		isWithdrawn = true;
-		if(ResourceBank[type]->GetValue() <= requestedAmount)
+		withdrawnAmount = requestedAmount;
+		ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() - requestedAmount);
+
+		if(IsContinueGame == false && ResourceBank[type]->GetValue() < 0 && type == EResourceType::Food)
 		{
-			withdrawnAmount = ResourceBank[type]->GetValue();
-			ResourceBank[type] = nullptr;
-		}
-		else
-		{
-			withdrawnAmount = requestedAmount;
-			ResourceBank[type]->SetValue(ResourceBank[type]->GetValue() - requestedAmount);
+			UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+			UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+			ASM->TriggerStateTransition(EStateTrigger::LoseGame);
 		}
 	}
 

@@ -27,7 +27,8 @@ enum class EStateTrigger : uint8
 	PauseGame UMETA(DisplayName = "PauseGame"),
 	ResumeGame UMETA(DisplayName = "ResumeGame"),
 	RestartGame UMETA(DisplayName = "RestartGame"),
-	EndOfGame UMETA(DisplayName = "EndOfGame"),
+	WinGame UMETA(DisplayName = "WinGame"),
+	LoseGame UMETA(DisplayName = "LoseGame"),
 	ToMainMenu UMETA(DisplayName = "ToMainMenu"),
 	ExitGame UMETA(DisplayName = "ExitGame"),
 };
@@ -65,7 +66,9 @@ USTRUCT()
 struct FStateTransitions
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
 	TArray<FStateTransition> Transitions;
 };
 
-using StateProcess = TFunction<void()>;
+using StateProcessFunction = TFunction<void()>;

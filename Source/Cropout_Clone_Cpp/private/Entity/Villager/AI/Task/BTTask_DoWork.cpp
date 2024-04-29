@@ -90,7 +90,11 @@ EBTNodeResult::Type UBTTask_DoWork::AbortTask(UBehaviorTreeComponent& OwnerComp,
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	AResourceBaseActor* takeFrom = Cast<AResourceBaseActor>(
 		BlackboardComp->GetValueAsObject(Key_TakeFrom.SelectedKeyName));
-	takeFrom->EndWooble();
+
+	if(takeFrom != nullptr)
+	{
+		takeFrom->EndWooble();
+	}
 
 	return EBTNodeResult::Aborted;
 }

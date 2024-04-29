@@ -18,6 +18,7 @@
 #include "Player/Components/VillagerHandler.h"
 #include "Player/Components/PlacementHandler.h"
 #include "Entity/Villager/Villager.h"
+#include "Manager/TableManager.h"
 #include "Spawn/Spawner.h"
 
 ACropoutPlayer::ACropoutPlayer()

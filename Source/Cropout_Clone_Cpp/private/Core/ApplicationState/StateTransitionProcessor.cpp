@@ -3,19 +3,19 @@
 
 #include "Core/ApplicationState/StateTransitionProcessor.h"
 
-void UStateTransitionProcessor::AddClearPreviousStateProcess(StateProcess processFunction)
+void UStateTransitionProcessor::AddClearPreviousStateProcess(StateProcessFunction processFunction)
 {
 	ClearPreviousState.Add(processFunction);
 }
 
-void UStateTransitionProcessor::AddPrepareNextStateProcess(StateProcess processFunction)
+void UStateTransitionProcessor::AddPrepareNextStateProcess(StateProcessFunction processFunction)
 {
 	PrepareNextState.Add(processFunction);
 }
 
 void UStateTransitionProcessor::DoClearPreviousState()
 {
-	for(StateProcess process : ClearPreviousState)
+	for(StateProcessFunction process : ClearPreviousState)
 	{
 		process();
 	}
@@ -23,7 +23,7 @@ void UStateTransitionProcessor::DoClearPreviousState()
 
 void UStateTransitionProcessor::DoPrepareNextState()
 {
-	for(StateProcess process : PrepareNextState)
+	for(StateProcessFunction process : PrepareNextState)
 	{
 		process();
 	}

@@ -11,6 +11,7 @@ enum class EWidgetType : uint8
 	InGameMain UMETA(DisplayName = "InGameMainWidget"),
 	ResourceElement UMETA(DisplayName = "ResourceElementWidget"),
 	PauseMenu UMETA(DisplayName = "PauseMenuWidget"),
+	ResultMenu UMETA(DisplayName = "ResultMenuWidget"),
 	BuildOpenButton UMETA(DisplayName = "BuildOpenButtonWidget"),
 	BuildPanel UMETA(DisplayName = "BuildPanelWidget"),
 	BuildEntityCard UMETA(DisplayName = "BuildEntityCardWidget"),

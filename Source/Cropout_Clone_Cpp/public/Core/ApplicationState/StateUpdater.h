@@ -11,9 +11,9 @@ class CROPOUT_CLONE_CPP_API UStateUpdater : public UObject
 {
 	GENERATED_BODY()
 
-	StateProcess ProcessUpdate;
+	StateProcessFunction ProcessUpdate;
 
 public:
-	void SetProcessUpdate(const StateProcess& processFunction);
+	void SetProcessUpdate(const StateProcessFunction& processFunction);
 	void DoUpdate() const;
 };

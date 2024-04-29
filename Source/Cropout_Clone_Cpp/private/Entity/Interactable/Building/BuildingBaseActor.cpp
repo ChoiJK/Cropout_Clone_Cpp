@@ -7,6 +7,7 @@
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
 #include "Core/CropoutPlayerController.h"
+#include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/EntityManager.h"
 #include "Player/CropoutPlayer.h"
@@ -206,9 +207,9 @@ void ABuildingBaseActor::BuildSuccess()
 
 	case EBuildingType::VictoryMonument:
 		{
-			// @Todo : GameMode에서 처리
-			//UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
-			//GameInstance->GetcurrentGameMode()->Victory();
+			UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+			UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+			ASM->TriggerStateTransition(EStateTrigger::WinGame);
 			break;
 		}
 	default: ;

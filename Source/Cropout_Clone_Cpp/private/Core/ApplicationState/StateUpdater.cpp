@@ -1,6 +1,6 @@
 #include "Core/ApplicationState/StateUpdater.h"
 
-void UStateUpdater::SetProcessUpdate(const StateProcess& processFunction)
+void UStateUpdater::SetProcessUpdate(const StateProcessFunction& processFunction)
 {
 	ProcessUpdate = processFunction;
 }

@@ -29,6 +29,17 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 	UUiManager* UiManager = nullptr;
 	UUiManager* GetUiManager();
 
+	bool IsContinueGame = false;
+
+protected:
+	void OnIslandGenComplete();
+
+	virtual void StartPlay() override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UCropoutGameInstance* GetGameInstance();
+
 public:
 	ACropoutGameMode();
 
@@ -59,16 +70,8 @@ public:
 
 	std::shared_ptr<SimpleRxReactiveProperty<int>> GetResourceRP(EResourceType type);
 
-protected:
-	void OnIslandGenComplete();
+	void SetIsContinueGame(bool value) { IsContinueGame = value; }
 
-	virtual void StartPlay() override;
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	UCropoutGameInstance* GetGameInstance();
-
-public:
 	UPROPERTY()
 	UCropoutGameInstance* GameInstance;
 

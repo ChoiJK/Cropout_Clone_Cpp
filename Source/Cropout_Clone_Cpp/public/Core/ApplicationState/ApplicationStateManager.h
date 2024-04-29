@@ -13,10 +13,10 @@
 //  				 ▼           
 //   ┌────────────┐ ┌──────┐       
 //   │InGameResult│ │Splash│       
-//   └───┬──┬────┬┘ └─┬────┘       
-//    ▲  │  │    └────┼──────┐    
-//    │  │  └───┐     │      │    
-//    │  ▼      ▼     ▼      ▼    
+//   └───┬──┬─────┘ └─┬────┘       
+//    ▲  │  │         │          
+//    │  │  └───┐     │          
+//    │  ▼      ▼     ▼          
 //   ┌┴─────┐  ┌────────┐  ┌────┐ 
 //   │InGame│◄─┤MainMenu├─►│Exit│ 
 //   └┬─────┘  └────────┘  └────┘ 
@@ -33,14 +33,15 @@
 // MainMenu -> InGame		: LoadGame
 // MainMenu -> Exit			: ExitGame
 // InGame -> InGamePause	: PauseGame
-// InGame -> InGameResult	: EndOfGame
+// InGame -> InGameResult	: WinGame
+// InGame -> InGameResult	: LoseGame
 // InGamePause -> InGame	: ResumeGame
 // InGamePause -> InGame	: RestartGame
 // InGamePause -> MainMenu	: ToMainMenu
 // InGamePause -> Exit		: ExitGame
+// InGameResult -> InGame	: ResumeGame
 // InGameResult -> InGame	: RestartGame
 // InGameResult -> MainMenu	: ToMainMenu
-// InGameResult -> Exit		: ExitGame
 
 class UStateUpdater;
 struct FStateTransitions;
@@ -68,14 +69,15 @@ class CROPOUT_CLONE_CPP_API UApplicationStateManager : public USystemManager
 	void Initialize_MainMenu_To_InGame_With_LoadGame();
 	void Initialize_MainMenu_To_Exit_With_ExitGame();
 	void Initialize_InGame_To_InGamePause_With_PauseGame();
-	void Initialize_InGame_To_InGameResult_With_EndOfGame();
+	void Initialize_InGame_To_InGameResult_With_WinGame();
+	void Initialize_InGame_To_InGameResult_With_LoseGame();
 	void Initialize_InGamePause_To_InGame_With_ResumeGame();
 	void Initialize_InGamePause_To_InGame_With_RestartGame();
 	void Initialize_InGamePause_To_MainMenu_With_ToMainMenu();
 	void Initialize_InGamePause_To_Exit_With_ExitGame();
+	void Initialize_InGameResult_To_InGame_With_ResumeGame();
 	void Initialize_InGameResult_To_InGame_With_RestartGame();
 	void Initialize_InGameResult_To_MainMenu_With_ToMainMenu();
-	void Initialize_InGameResult_To_Exit_With_ExitGame();
 
 public:
 	UApplicationStateManager();
