@@ -24,6 +24,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 
+	UPROPERTY()
 	USaveData* SaveData;
 
 	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
