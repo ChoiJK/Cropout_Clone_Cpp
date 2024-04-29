@@ -16,4 +16,12 @@ public:
 	virtual void Prepare() override;
 	virtual void Release() override;
 	virtual void Destroy() override;
+
+	virtual void OnLevelLoaded()
+	{
+	}
+
+	virtual void OnLevelDestroy()
+	{
+	}
 };

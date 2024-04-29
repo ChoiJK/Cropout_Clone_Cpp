@@ -24,5 +24,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	virtual void BeginDestroy() override;
+
+protected:
 	virtual void Destroyed() override;
 };

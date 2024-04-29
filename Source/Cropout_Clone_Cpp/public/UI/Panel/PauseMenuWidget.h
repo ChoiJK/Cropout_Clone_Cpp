@@ -21,6 +21,9 @@ protected:
 	UFUNCTION()
 	void OnResumeButtonClicked();
 
+	UFUNCTION()
+	void OnRestartButtonClicked();
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButtonWidget* ResumeButton;
 

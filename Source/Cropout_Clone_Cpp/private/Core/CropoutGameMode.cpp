@@ -81,6 +81,9 @@ void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		shared->RemoveListener(EGlobalEventType::IslandGenComplete, islandGenCompleteHandle);
 	}
 
+	USoundManager* soundManager = GetGameInstance()->GetLevelManager<USoundManager>();
+	soundManager->StopMusic();
+
 	Super::EndPlay(EndPlayReason);
 }
 

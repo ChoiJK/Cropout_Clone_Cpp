@@ -5,9 +5,18 @@ class UCommonActivatableWidget;
 static class FStateStaticMethods
 {
 	static UCommonActivatableWidget* PauseMenuWidget;
+
 	static UCommonActivatableWidget* ResultMenuWidget;
 
 public:
+	static void Initialize();
+
+	static void OpenInGameLevel();
+
+	static void SaveGame();
+	static void ClearSaveGame();
+	static void ClearSpawner();
+
 	static void SetGameContinue();
 
 	static void SetGamePaused();

@@ -28,11 +28,15 @@ void ACropoutLevelScriptBase::BeginPlay()
 	gameInstance->SetCurrentLevelScript(this);
 }
 
-void ACropoutLevelScriptBase::Destroyed()
+void ACropoutLevelScriptBase::BeginDestroy()
 {
+	Super::BeginDestroy();
+
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	gameInstance->SetCurrentLevelScript(nullptr);
+}
 
-
+void ACropoutLevelScriptBase::Destroyed()
+{
 	Super::Destroyed();
 }

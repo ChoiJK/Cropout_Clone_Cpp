@@ -58,6 +58,11 @@ void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropou
 
 	if(CurrentLevelScript != nullptr)
 	{
+		for(auto& Pair : SystemManagerMap)
+		{
+			Pair.Value->OnLevelLoaded();
+		}
+
 		if(IsLevelManagerInitialized == false)
 		{
 			InitializeLevelManagers();
@@ -66,6 +71,11 @@ void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropou
 	else
 	{
 		ReleaseLevelManagers();
+
+		for(auto& Pair : SystemManagerMap)
+		{
+			Pair.Value->OnLevelDestroy();
+		}
 	}
 }
 
@@ -129,6 +139,11 @@ void UCropoutGameInstance::ReleaseLevelManagers()
 {
 	for(auto& Pair : LevelManagerMap)
 	{
+		Pair.Value->ClearOnBeginDestroyHandle();
+	}
+
+	for(auto& Pair : LevelManagerMap)
+	{
 		Pair.Value->Release();
 	}
 
@@ -137,7 +152,9 @@ void UCropoutGameInstance::ReleaseLevelManagers()
 		Pair.Value->Destroy();
 	}
 
-	IsLevelManagerInitialized = true;
+	LevelManagerMap.Empty();
+
+	IsLevelManagerInitialized = false;
 	IsProgressLevelManagerInitialized = false;
 }
 

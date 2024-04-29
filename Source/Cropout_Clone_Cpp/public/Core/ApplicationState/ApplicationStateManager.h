@@ -87,6 +87,8 @@ public:
 	virtual void Release() override;
 	virtual void Destroy() override;
 
+	virtual void OnLevelLoaded() override;
+
 	bool TriggerStateTransition(EStateTrigger trigger);
 	void UpdateState();
 };

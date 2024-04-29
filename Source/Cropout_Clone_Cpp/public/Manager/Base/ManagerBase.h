@@ -45,6 +45,14 @@ public:
 		return OnBeginDestroyDelegate->AddUObject(classInstance, InFunc);
 	}
 
+	void ClearOnBeginDestroyHandle()
+	{
+		if(OnBeginDestroyDelegate.IsValid())
+		{
+			OnBeginDestroyDelegate->Clear();
+		}
+	}
+
 	FString GetManagerName() const
 	{
 		return ManagerName.ToString();

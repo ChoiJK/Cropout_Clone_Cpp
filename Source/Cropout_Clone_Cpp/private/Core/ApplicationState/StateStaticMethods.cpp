@@ -5,12 +5,43 @@
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
 #include "Core/CropoutPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Manager/TableManager.h"
+#include "Spawn/Spawner.h"
 #include "UI/UiManager.h"
 #include "UI/Panel/ResultMenuWidget.h"
 
 UCommonActivatableWidget* FStateStaticMethods::PauseMenuWidget = nullptr;
 UCommonActivatableWidget* FStateStaticMethods::ResultMenuWidget = nullptr;
+
+void FStateStaticMethods::Initialize()
+{
+	PauseMenuWidget = nullptr;
+	ResultMenuWidget = nullptr;
+}
+
+void FStateStaticMethods::OpenInGameLevel()
+{
+	UGameplayStatics::OpenLevel(UCropoutGameInstance::GetInstance(), "InGame");
+}
+
+void FStateStaticMethods::SaveGame()
+{
+	// @Todo : SaveGame
+}
+
+void FStateStaticMethods::ClearSaveGame()
+{
+	// @Todo : SaveGame을 초기화한다.
+}
+
+void FStateStaticMethods::ClearSpawner()
+{
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	ACropoutGameMode* gameMode = gameInstance->GetCurrentGameMode();
+	ASpawner* spawner = gameMode->GetSpawner();
+	spawner->ClearSpawnerTimer();
+}
 
 void FStateStaticMethods::SetGameContinue()
 {

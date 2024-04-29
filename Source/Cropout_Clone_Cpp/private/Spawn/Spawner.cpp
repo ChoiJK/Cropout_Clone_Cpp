@@ -46,6 +46,15 @@ void ASpawner::BeginPlay()
 	}
 }
 
+void ASpawner::BeginDestroy()
+{
+	Super::BeginDestroy();
+	if(UWorld* world = GetWorld())
+	{
+		world->GetTimerManager().ClearTimer(CheckNavMeshAndAsyncLoadTimerHandle);
+	}
+}
+
 void ASpawner::SpawnRandom()
 {
 	if(UWorld* world = GetWorld())
@@ -55,31 +64,42 @@ void ASpawner::SpawnRandom()
 			Counter = 0;
 			IndexCounter = 0;
 
-			world->GetTimerManager().SetTimer(CheckNavMeshAndAsyncLoadTimerHandle, FTimerDelegate::CreateLambda(
-				[this, world]
-				{
-					// @TODO : 존재하는 이슈 : Navigation에서의 Overlap이 정상적으로 진행되지 않음
-					// 객체간 겹치는 이슈 있음.
+			if(IsValid(world) == false)
+			{
+				return;
+			}
 
-					auto navigationSystem = world->GetNavigationSystem();
-					if(navigationSystem == nullptr)
+			world->GetTimerManager().SetTimer(CheckNavMeshAndAsyncLoadTimerHandle,
+				FTimerDelegate::CreateLambda(
+					[this, world]
 					{
-						return;
-					}
+						if(IsValid(this) == false)
+						{
+							return;
+						}
 
-					auto worldSettings = GetWorldSettings();
-					bool isNavigationBuilt = navigationSystem->IsNavigationBuilt(
-						worldSettings);
-					if(isNavigationBuilt == false)
-					{
-						return;
-					}
+						if(IsValid(world) == false)
+						{
+							return;
+						}
 
-					GetWorldTimerManager().PauseTimer(
-						CheckNavMeshAndAsyncLoadTimerHandle);
+						// @TODO : 존재하는 이슈 : Navigation에서의 Overlap이 정상적으로 진행되지 않음
+						// 객체간 겹치는 이슈 있음.
 
-					CheckNavMeshAndAsyncLoadFinished();
-				}), 0.5f, true, -0.5);
+						auto navigationSystem = world->GetNavigationSystem();
+						auto worldSettings = GetWorldSettings();
+						bool isNavigationBuilt = navigationSystem->IsNavigationBuilt(
+							worldSettings);
+						if(isNavigationBuilt == false)
+						{
+							return;
+						}
+
+						GetWorldTimerManager().PauseTimer(
+							CheckNavMeshAndAsyncLoadTimerHandle);
+
+						CheckNavMeshAndAsyncLoadFinished();
+					}), 0.5f, true, -0.5);
 		}));
 	}
 }
@@ -114,6 +134,14 @@ AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* Int
 	}
 
 	return spawnedActor;
+}
+
+void ASpawner::ClearSpawnerTimer()
+{
+	if(UWorld* world = GetWorld())
+	{
+		world->GetTimerManager().ClearTimer(CheckNavMeshAndAsyncLoadTimerHandle);
+	}
 }
 
 void ASpawner::CheckNavMeshAndAsyncLoadFinished()

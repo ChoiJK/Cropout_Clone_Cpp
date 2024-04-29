@@ -27,6 +27,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void BeginDestroy() override;
 
 private:
 	UCropoutGameInstance* GameInstance;
@@ -45,20 +46,12 @@ private:
 public:
 	void SpawnRandom();
 	AInteractableBaseActor* SpawnInteractable(const FInteractableInfo* InteractableInfo);
-
-	//UPROPERTY(EditAnywhere)
-	//TArray<FSpawnData> SpawnTypes;
-
-	//UPROPERTY(EditAnywhere)
-	//TArray<FSpawnInstance> SpawnInstances;
+	void ClearSpawnerTimer();
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ANavigationData> NavData;
 
-	// Class Load
 	int ClassRefIndex;
-	//bool AsyncLoadComplete;
-
 	int Counter;
 	int IndexCounter;
 	float TotalCount = 50.f;

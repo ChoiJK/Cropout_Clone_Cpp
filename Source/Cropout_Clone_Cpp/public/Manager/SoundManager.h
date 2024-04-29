@@ -22,4 +22,5 @@ public:
 	virtual void Destroy() override;
 
 	void PlayMusic();
+	void StopMusic();
 };

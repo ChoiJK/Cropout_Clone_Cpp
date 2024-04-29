@@ -378,15 +378,16 @@ void UEntityManager::RemoveVillager(AVillager* Villager)
 
 void UEntityManager::UpdateVillagerCount()
 {
-	if(VillagerCountRp == nullptr)
-	{
-		VillagerCountRp = std::make_shared<SimpleRxReactiveProperty<int>>(0);
-	}
-
+	GetVillagerCountRp();
 	VillagerCountRp->SetValue(Villagers.Num());
 }
 
 std::shared_ptr<SimpleRxReactiveProperty<int>> UEntityManager::GetVillagerCountRp()
 {
+	if(VillagerCountRp == nullptr)
+	{
+		VillagerCountRp = std::make_shared<SimpleRxReactiveProperty<int>>(0);
+	}
+
 	return VillagerCountRp;
 }

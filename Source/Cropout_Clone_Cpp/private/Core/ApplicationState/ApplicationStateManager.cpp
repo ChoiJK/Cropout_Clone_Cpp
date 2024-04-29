@@ -48,6 +48,13 @@ void UApplicationStateManager::Destroy()
 	Super::Destroy();
 }
 
+void UApplicationStateManager::OnLevelLoaded()
+{
+	Super::OnLevelLoaded();
+
+	FStateStaticMethods::Initialize();
+}
+
 
 void UApplicationStateManager::InitializeStateUpdaters()
 {
@@ -154,6 +161,12 @@ void UApplicationStateManager::Initialize_InGamePause_To_InGame_With_ResumeGame(
 void UApplicationStateManager::Initialize_InGamePause_To_InGame_With_RestartGame()
 {
 	// InGamePause -> InGame : RestartGame
+	// InGamePause메뉴에서 Restart버튼을 눌렀을 때 발생
+	UStateTransitionProcessor* InGamePause_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
+	InGamePause_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	InGamePause_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
+	AddTransitionProcessors(ECropoutState::InGamePause, FStateTransition(EStateTrigger::RestartGame,
+		ECropoutState::InGame, InGamePause_To_InGame_Processor));
 }
 
 void UApplicationStateManager::Initialize_InGamePause_To_MainMenu_With_ToMainMenu()
@@ -182,6 +195,12 @@ void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_ResumeGame
 void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_RestartGame()
 {
 	// InGameResult -> InGame : RestartGame
+	// ResultMenuWidget에서 Restart버튼을 눌렀을 때 발생
+	UStateTransitionProcessor* InGameResult_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
+	InGameResult_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	InGameResult_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
+	AddTransitionProcessors(ECropoutState::InGameResult, FStateTransition(EStateTrigger::RestartGame,
+		ECropoutState::InGame, InGameResult_To_InGame_Processor));
 }
 
 void UApplicationStateManager::Initialize_InGameResult_To_MainMenu_With_ToMainMenu()

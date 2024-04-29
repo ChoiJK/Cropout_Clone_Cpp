@@ -14,26 +14,7 @@ USoundManager::USoundManager()
 void USoundManager::Init()
 {
 	Super::Init();
-}
 
-void USoundManager::Prepare()
-{
-	Super::Prepare();
-}
-
-void USoundManager::Release()
-{
-	Super::Release();
-}
-
-void USoundManager::Destroy()
-{
-	Super::Destroy();
-}
-
-
-void USoundManager::PlayMusic()
-{
 	FName pianoVolPath = TEXT(
 		"AudioModulation.SoundControlBus'/Game/Audio/DATA/ControlBus/Cropout_Music_Piano_Vol.Cropout_Music_Piano_Vol'");
 	USoundControlBus* pianoVolControlBus = Cast<USoundControlBus>(
@@ -79,6 +60,30 @@ void USoundManager::PlayMusic()
 		StaticLoadObject(USoundBase::StaticClass(), nullptr, *mainMusicPath.ToString()));
 	MusicComponent = UGameplayStatics::CreateSound2D(GetWorld(), mainMusic, 1.f, 1.f, 0.f,
 		nullptr, true);
+}
 
+void USoundManager::Prepare()
+{
+	Super::Prepare();
+}
+
+void USoundManager::Release()
+{
+	Super::Release();
+}
+
+void USoundManager::Destroy()
+{
+	Super::Destroy();
+}
+
+
+void USoundManager::PlayMusic()
+{
 	MusicComponent->Play();
+}
+
+void USoundManager::StopMusic()
+{
+	MusicComponent->Stop();
 }

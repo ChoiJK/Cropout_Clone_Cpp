@@ -70,6 +70,8 @@ void UInGameLayerWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
+	PauseButton->OnClicked().Clear();
+
 	if(CompositeDisposable)
 	{
 		CompositeDisposable->Dispose();
