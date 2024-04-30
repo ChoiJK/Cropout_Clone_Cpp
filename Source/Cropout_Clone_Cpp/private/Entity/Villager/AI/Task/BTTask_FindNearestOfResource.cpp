@@ -9,6 +9,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
+#include "Entity/EntityManager.h"
 #include "Enum/ResourceType.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"

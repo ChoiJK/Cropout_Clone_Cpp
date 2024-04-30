@@ -74,30 +74,30 @@ void FStateStaticMethods::SetGameContinue()
 
 void FStateStaticMethods::SetGamePaused()
 {
-	const UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	ACropoutPlayerController* const PC = gameInstance->GetCurrentPlayerController();
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	APlayerController* PC = gameInstance->GetCurrentPlayerController();
 	PC->SetPause(true);
 }
 
 void FStateStaticMethods::SetGameUnpaused()
 {
-	const UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	ACropoutPlayerController* const PC = gameInstance->GetCurrentPlayerController();
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	APlayerController* PC = gameInstance->GetCurrentPlayerController();
 	PC->SetPause(false);
 }
 
 void FStateStaticMethods::SetOnlyUIInputMode()
 {
-	const UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	ACropoutPlayerController* const PC = gameInstance->GetCurrentPlayerController();
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	APlayerController* PC = gameInstance->GetCurrentPlayerController();
 	PC->SetInputMode(FInputModeUIOnly());
 	PC->bShowMouseCursor = true;
 }
 
 void FStateStaticMethods::SetGameAndUIInputMode()
 {
-	const UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	ACropoutPlayerController* const PC = gameInstance->GetCurrentPlayerController();
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	APlayerController* PC = gameInstance->GetCurrentPlayerController();
 	PC->SetInputMode(FInputModeGameAndUI());
 	PC->bShowMouseCursor = false;
 }

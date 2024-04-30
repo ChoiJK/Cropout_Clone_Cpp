@@ -12,6 +12,7 @@
 #include "CommonBorder.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Core/CropoutGameMode.h"
+#include "Data/BuildableInfo.h"
 
 #include "SimpleRx/SimpleRx.h"
 
@@ -19,7 +20,7 @@ void UBuildPlacementWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
-	Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentPlayerController()->GetPawn());
+	Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentCropoutPlayerController()->GetPawn());
 
 	PlaceButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnPlaceButtonClicked);
 	RotateButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnRotateButtonClicked);

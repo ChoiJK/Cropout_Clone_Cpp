@@ -2,6 +2,8 @@
 
 
 #include "Core/CropoutGameInstance.h"
+
+#include "Core/CropoutPlayerController.h"
 #include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Data/SaveData.h"
@@ -166,4 +168,44 @@ void UCropoutGameInstance::SystemManagerBeginDestroy(UManagerBase* Manager)
 void UCropoutGameInstance::LevelManagerBeginDestroy(UManagerBase* Manager)
 {
 	LevelManagerMap.Remove(Manager->GetClass());
+}
+
+void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerController)
+{
+	CurrentPlayerController = playerController;
+
+	if(playerController->IsA(ACropoutPlayerController::StaticClass()))
+	{
+		CurrentCropoutPlayerController = Cast<ACropoutPlayerController>(playerController);
+	}
+	else
+	{
+		CurrentCropoutPlayerController = nullptr;
+	}
+}
+
+APlayerController* UCropoutGameInstance::GetCurrentPlayerController()
+{
+	if(CurrentPlayerController == nullptr)
+	{
+		SetCurrentPlayerController(GetFirstLocalPlayerController());
+	}
+
+	return CurrentPlayerController;
+}
+
+void UCropoutGameInstance::SetCurrentCropoutPlayerController(ACropoutPlayerController* playerController)
+{
+	CurrentPlayerController = playerController;
+	CurrentCropoutPlayerController = playerController;
+}
+
+ACropoutPlayerController* UCropoutGameInstance::GetCurrentCropoutPlayerController()
+{
+	if(CurrentCropoutPlayerController == nullptr)
+	{
+		SetCurrentPlayerController(GetFirstLocalPlayerController());
+	}
+
+	return CurrentCropoutPlayerController;
 }

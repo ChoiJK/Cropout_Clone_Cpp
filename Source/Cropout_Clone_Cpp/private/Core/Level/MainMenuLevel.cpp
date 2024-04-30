@@ -14,6 +14,12 @@ void AMainMenuLevel::BeginPlay()
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	UUiManager* uiManager = gameInstance->GetLevelManager<UUiManager>();
 	uiManager->CreateMainMenuWidget();
+
+	if(APlayerController* playerController = gameInstance->GetCurrentPlayerController())
+	{
+		playerController->SetInputMode(FInputModeUIOnly());
+		playerController->bShowMouseCursor = true;
+	}
 }
 
 void AMainMenuLevel::Destroyed()

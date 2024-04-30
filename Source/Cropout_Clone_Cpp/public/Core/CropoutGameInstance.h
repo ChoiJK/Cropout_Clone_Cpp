@@ -48,7 +48,10 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	ACropoutLevelScriptBase* CurrentLevelScript;
 
 	UPROPERTY()
-	ACropoutPlayerController* CurrentPlayerController;
+	APlayerController* CurrentPlayerController;
+
+	UPROPERTY()
+	ACropoutPlayerController* CurrentCropoutPlayerController;
 
 
 	virtual void Init() override;
@@ -140,15 +143,11 @@ public:
 		return CurrentLevelScript;
 	}
 
-	void SetCurrentPlayerController(ACropoutPlayerController* playerController)
-	{
-		CurrentPlayerController = playerController;
-	}
+	void SetCurrentPlayerController(APlayerController* playerController);
+	APlayerController* GetCurrentPlayerController();
 
-	ACropoutPlayerController* GetCurrentPlayerController() const
-	{
-		return CurrentPlayerController;
-	}
+	void SetCurrentCropoutPlayerController(ACropoutPlayerController* playerController);
+	ACropoutPlayerController* GetCurrentCropoutPlayerController();
 
 	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase);
 	void SystemManagerBeginDestroy(UManagerBase* Manager);

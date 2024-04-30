@@ -89,7 +89,7 @@ void UBuildEntityCardWidget::OnButtonClicked()
 		UE_LOG(LogTemp, Warning, TEXT("UBuildEntityCardWidget::OnButtonClicked, %s"), *BuildableInfo->ToString());
 		UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
 
-		ACropoutPlayer* Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentPlayerController()->GetPawn());
+		ACropoutPlayer* Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentCropoutPlayerController()->GetPawn());
 		if(Player)
 		{
 			Player->BeginBuild(BuildableInfo);

@@ -17,6 +17,7 @@ void UPauseMenuWidget::NativeOnActivated()
 	Super::NativeOnActivated();
 	ResumeButton->OnClicked().AddUObject(this, &UPauseMenuWidget::OnResumeButtonClicked);
 	RestartButton->OnClicked().AddUObject(this, &UPauseMenuWidget::OnRestartButtonClicked);
+	MainMenuButton->OnClicked().AddUObject(this, &UPauseMenuWidget::OnMainMenuButtonClicked);
 }
 
 void UPauseMenuWidget::NativeOnDeactivated()
@@ -24,6 +25,7 @@ void UPauseMenuWidget::NativeOnDeactivated()
 	Super::NativeOnDeactivated();
 	ResumeButton->OnClicked().RemoveAll(this);
 	RestartButton->OnClicked().RemoveAll(this);
+	MainMenuButton->OnClicked().RemoveAll(this);
 }
 
 void UPauseMenuWidget::OnResumeButtonClicked()
@@ -38,4 +40,11 @@ void UPauseMenuWidget::OnRestartButtonClicked()
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
 	ASM->TriggerStateTransition(EStateTrigger::RestartGame);
+}
+
+void UPauseMenuWidget::OnMainMenuButtonClicked()
+{
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	UApplicationStateManager* ASM = gameInstance->GetSystemManager<UApplicationStateManager>();
+	ASM->TriggerStateTransition(EStateTrigger::ToMainMenu);
 }

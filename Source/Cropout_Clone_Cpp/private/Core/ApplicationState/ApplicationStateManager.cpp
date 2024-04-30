@@ -199,6 +199,11 @@ void UApplicationStateManager::Initialize_InGamePause_To_InGame_With_RestartGame
 void UApplicationStateManager::Initialize_InGamePause_To_MainMenu_With_ToMainMenu()
 {
 	// InGamePause -> MainMenu : ToMainMenu
+	UStateTransitionProcessor* InGamePause_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
+	InGamePause_To_MainMenu_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClosePauseMenuWidget);
+	InGamePause_To_MainMenu_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenMainMenuLevel);
+	AddTransitionProcessors(ECropoutState::InGamePause, FStateTransition(EStateTrigger::ToMainMenu,
+		ECropoutState::MainMenu, InGamePause_To_MainMenu_Processor));
 }
 
 void UApplicationStateManager::Initialize_InGamePause_To_Exit_With_ExitGame()
@@ -233,8 +238,13 @@ void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_RestartGam
 void UApplicationStateManager::Initialize_InGameResult_To_MainMenu_With_ToMainMenu()
 {
 	// InGameResult -> MainMenu : ToMainMenu
+	// ResultMenuWidget에서 MainMenu버튼을 눌렀을 때 발생
+	UStateTransitionProcessor* InGameResult_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
+	InGameResult_To_MainMenu_Processor->AddClearPreviousStateProcess(FStateStaticMethods::CloseResultMenuWidget);
+	InGameResult_To_MainMenu_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenMainMenuLevel);
+	AddTransitionProcessors(ECropoutState::InGameResult, FStateTransition(EStateTrigger::ToMainMenu,
+		ECropoutState::MainMenu, InGameResult_To_MainMenu_Processor));
 }
-
 
 bool UApplicationStateManager::TriggerStateTransition(EStateTrigger trigger)
 {
@@ -247,7 +257,8 @@ bool UApplicationStateManager::TriggerStateTransition(EStateTrigger trigger)
 				CurrentState = stateTransition.ToState;
 				// @Todo :  DoClearPreviousState, DoPrepareNextState를 Async하게 처리할 수 있도록 수정
 				// Clear를 Async로 처리하고 모든 Clear가 끝나면 Prepare를 Async로 처리하도록
-				// (Tick이랑 꼬일것같기도한데...)
+				// 씬을 전환하는 Processor가 있을 경우 그 뒤에 다른 Processor가 실행되면 원하는대로 동작하지 않을 수 있음.
+				// 씬 전환이 완료된 후에 그 두의 Processor가 실행되도록 처리해야 함.(아직 처리되지않음)
 				stateTransition.TransitionProcessor->DoClearPreviousState();
 				stateTransition.TransitionProcessor->DoPrepareNextState();
 				return true;
