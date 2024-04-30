@@ -33,7 +33,10 @@ void ACropoutLevelScriptBase::BeginDestroy()
 	Super::BeginDestroy();
 
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	gameInstance->SetCurrentLevelScript(nullptr);
+	if(gameInstance != nullptr)
+	{
+		gameInstance->SetCurrentLevelScript(nullptr);
+	}
 }
 
 void ACropoutLevelScriptBase::Destroyed()

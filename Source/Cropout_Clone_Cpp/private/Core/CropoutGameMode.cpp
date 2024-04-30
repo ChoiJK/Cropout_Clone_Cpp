@@ -297,16 +297,3 @@ AVillager* ACropoutGameMode::SpawnVillager()
 
 	return nullptr;
 }
-
-UUiManager* ACropoutGameMode::GetUiManager()
-{
-	if(UiManager != nullptr)
-	{
-		return UiManager;
-	}
-
-	UCropoutGameInstance* gameInstance = GetGameInstance();
-	UiManager = gameInstance->GetLevelManager<UUiManager>();
-
-	return UiManager;
-}

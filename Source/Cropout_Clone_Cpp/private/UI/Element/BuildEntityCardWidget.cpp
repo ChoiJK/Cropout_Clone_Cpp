@@ -9,6 +9,7 @@
 #include "Core/CropoutPlayerController.h"
 #include "Core/CropoutGameMode.h"
 #include "Data/BuildableInfo.h"
+#include "Manager/TableManager.h"
 #include "Player/CropoutPlayer.h"
 
 #include "UI/UiManager.h"

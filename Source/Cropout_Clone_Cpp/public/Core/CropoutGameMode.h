@@ -25,10 +25,6 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 	TMap<EResourceType, std::shared_ptr<SimpleRxReactiveProperty<int>>> ResourceBank;
 	void ResourceDebugMessage();
 
-	UPROPERTY()
-	UUiManager* UiManager = nullptr;
-	UUiManager* GetUiManager();
-
 	bool IsContinueGame = false;
 
 protected:

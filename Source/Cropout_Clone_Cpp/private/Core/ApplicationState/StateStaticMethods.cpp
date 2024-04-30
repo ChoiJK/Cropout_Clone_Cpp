@@ -20,6 +20,16 @@ void FStateStaticMethods::Initialize()
 	ResultMenuWidget = nullptr;
 }
 
+void FStateStaticMethods::OpenSplashLevel()
+{
+	UGameplayStatics::OpenLevel(UCropoutGameInstance::GetInstance(), "Splash");
+}
+
+void FStateStaticMethods::OpenMainMenuLevel()
+{
+	UGameplayStatics::OpenLevel(UCropoutGameInstance::GetInstance(), "MainMenu");
+}
+
 void FStateStaticMethods::OpenInGameLevel()
 {
 	UGameplayStatics::OpenLevel(UCropoutGameInstance::GetInstance(), "InGame");
@@ -39,7 +49,19 @@ void FStateStaticMethods::ClearSpawner()
 {
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	ACropoutGameMode* gameMode = gameInstance->GetCurrentGameMode();
+	if(gameMode == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("gameMode is nullptr"));
+		return;
+	}
+
 	ASpawner* spawner = gameMode->GetSpawner();
+	if(spawner == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("spawner is nullptr"));
+		return;
+	}
+
 	spawner->ClearSpawnerTimer();
 }
 

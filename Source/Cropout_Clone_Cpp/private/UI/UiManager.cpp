@@ -14,6 +14,8 @@ void UUiManager::Init()
 {
 	Super::Init();
 
+	OnInitializeSuccess = MakeShareable(new FVoidDelegate());
+
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([this]()
 	{
 		SetManagerName("UiManager");
@@ -27,18 +29,8 @@ void UUiManager::Init()
 			UIBase->AddToViewport();
 			UIBase->SetVisibility(ESlateVisibility::Visible);
 		}
-
-		TSubclassOf<UUserWidget>* userWidget = TableManager->GetWidgetClass(EWidgetType::InGameMain);
-		if(userWidget)
-		{
-			UI_HUD = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
-		}
-
-		TSubclassOf<UUserWidget>* buildOpenButton = TableManager->GetWidgetClass(EWidgetType::BuildOpenButton);
-		if(buildOpenButton)
-		{
-			UIBase->PushBottomClass(buildOpenButton->Get());
-		}
+		IsInitialized = true;
+		OnInitializeSuccess->Broadcast();
 	}));
 }
 
@@ -55,6 +47,7 @@ void UUiManager::Release()
 void UUiManager::Destroy()
 {
 	Super::Destroy();
+	OnInitializeSuccess->Clear();
 }
 
 UUiBase* UUiManager::GetUIBase() const
@@ -62,12 +55,88 @@ UUiBase* UUiManager::GetUIBase() const
 	return UIBase;
 }
 
-void UUiManager::UpdateVillagerCount()
+void UUiManager::InternalCreateSplashWidget()
 {
-	if(IsValid(UI_HUD))
+	TSubclassOf<UUserWidget>* splashWidget = TableManager->GetWidgetClass(EWidgetType::Splash);
+	if(splashWidget)
 	{
-		UI_HUD->SetVillagerCount(GameInstance->GetCurrentGameMode()->GetVillagerCount());
+		UI_Main = UIBase->PushMenuClass(splashWidget->Get());
+	}
+}
+
+void UUiManager::InternalCreateMainMenuWidget()
+{
+	TSubclassOf<UUserWidget>* mainMenuWidget = TableManager->GetWidgetClass(EWidgetType::MainMenu);
+	if(mainMenuWidget)
+	{
+		UI_Main = UIBase->PushMenuClass(mainMenuWidget->Get());
+	}
+}
+
+void UUiManager::InternalCreateInGameLayerWidget()
+{
+	TSubclassOf<UUserWidget>* userWidget = TableManager->GetWidgetClass(EWidgetType::InGameMain);
+	if(userWidget)
+	{
+		UI_InGameMain = Cast<UInGameLayerWidget>(UIBase->PushMenuClass(userWidget->Get()));
 	}
 
-	// @TODO : gameInstance를 통해 저장
+	TSubclassOf<UUserWidget>* buildOpenButton = TableManager->GetWidgetClass(EWidgetType::BuildOpenButton);
+	if(buildOpenButton)
+	{
+		UIBase->PushBottomClass(buildOpenButton->Get());
+	}
+}
+
+void UUiManager::CreateSplashWidget()
+{
+	if(IsInitialized)
+	{
+		InternalCreateSplashWidget();
+	}
+	else
+	{
+		OnInitializeSuccess->AddLambda([this]()
+		{
+			InternalCreateSplashWidget();
+		});
+	}
+}
+
+void UUiManager::CreateMainMenuWidget()
+{
+	if(IsInitialized)
+	{
+		InternalCreateMainMenuWidget();
+	}
+	else
+	{
+		OnInitializeSuccess->AddLambda([this]()
+		{
+			InternalCreateMainMenuWidget();
+		});
+	}
+}
+
+void UUiManager::CreateInGameLayerWidget()
+{
+	if(IsInitialized)
+	{
+		InternalCreateInGameLayerWidget();
+	}
+	else
+	{
+		OnInitializeSuccess->AddLambda([this]()
+		{
+			InternalCreateInGameLayerWidget();
+		});
+	}
+}
+
+void UUiManager::UpdateVillagerCount()
+{
+	if(IsValid(UI_InGameMain))
+	{
+		UI_InGameMain->SetVillagerCount(GameInstance->GetCurrentGameMode()->GetVillagerCount());
+	}
 }

@@ -3,9 +3,16 @@
 
 #include "Core/Level/InGameLavel.h"
 
+#include "Core/CropoutGameInstance.h"
+#include "UI/UiManager.h"
+
 void AInGameLavel::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	UUiManager* uiManager = gameInstance->GetLevelManager<UUiManager>();
+	uiManager->CreateInGameLayerWidget();
 }
 
 void AInGameLavel::Destroyed()

@@ -7,7 +7,7 @@
 #include "Core/ApplicationState/StateUpdater.h"
 
 
-UApplicationStateManager::UApplicationStateManager(): CurrentState(ECropoutState::InGame)
+UApplicationStateManager::UApplicationStateManager(): CurrentState(ECropoutState::None)
 {
 }
 
@@ -36,6 +36,8 @@ void UApplicationStateManager::Init()
 void UApplicationStateManager::Prepare()
 {
 	Super::Prepare();
+
+	TriggerStateTransition(EStateTrigger::DoInitialize);
 }
 
 void UApplicationStateManager::Release()
@@ -74,21 +76,46 @@ void UApplicationStateManager::AddTransitionProcessors(ECropoutState state, FSta
 void UApplicationStateManager::Initialize_None_To_Initialize_With_DoInitialize()
 {
 	// None -> Initialize : DoInitialize
+	// 게임이 시작될 때 발생
+	UStateTransitionProcessor* None_To_Initialize_Processor = NewObject<UStateTransitionProcessor>();
+	//None_To_Initialize_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
+	None_To_Initialize_Processor->AddPrepareNextStateProcess([this](void)
+	{
+		TriggerStateTransition(EStateTrigger::InitializeSuccess);
+	});
+	AddTransitionProcessors(ECropoutState::None, FStateTransition(EStateTrigger::DoInitialize,
+		ECropoutState::Initialize, None_To_Initialize_Processor));
 }
 
 void UApplicationStateManager::Initialize_Initialize_To_Splash_With_InitializeSuccess()
 {
 	// Initialize -> Splash : InitializeSuccess
+	// 게임이 시작되고 초기화가 완료되었을 때 발생
+	UStateTransitionProcessor* Initialize_To_Splash_Processor = NewObject<UStateTransitionProcessor>();
+	Initialize_To_Splash_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenSplashLevel);
+	AddTransitionProcessors(ECropoutState::Initialize, FStateTransition(EStateTrigger::InitializeSuccess,
+		ECropoutState::Splash, Initialize_To_Splash_Processor));
 }
 
 void UApplicationStateManager::Initialize_Splash_To_MainMenu_With_SplashComplete()
 {
 	// Splash -> MainMenu : SplashComplete
+	// Splash화면이 끝나고 MainMenu화면으로 넘어갈 때 발생
+	UStateTransitionProcessor* Splash_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
+	Splash_To_MainMenu_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenMainMenuLevel);
+	AddTransitionProcessors(ECropoutState::Splash, FStateTransition(EStateTrigger::SplashComplete,
+		ECropoutState::MainMenu, Splash_To_MainMenu_Processor));
 }
 
 void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_NewGame()
 {
 	// MainMenu -> InGame : NewGame
+	// MainMenu에서 NewGame버튼을 눌렀을 때 발생
+	UStateTransitionProcessor* MainMenu_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
+	MainMenu_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	MainMenu_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
+	AddTransitionProcessors(ECropoutState::MainMenu, FStateTransition(EStateTrigger::NewGame,
+		ECropoutState::InGame, MainMenu_To_InGame_Processor));
 }
 
 void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_LoadGame()

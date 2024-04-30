@@ -11,6 +11,8 @@ static class FStateStaticMethods
 public:
 	static void Initialize();
 
+	static void OpenSplashLevel();
+	static void OpenMainMenuLevel();
 	static void OpenInGameLevel();
 
 	static void SaveGame();

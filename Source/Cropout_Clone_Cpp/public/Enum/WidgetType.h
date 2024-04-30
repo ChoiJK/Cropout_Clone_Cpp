@@ -8,6 +8,8 @@ enum class EWidgetType : uint8
 {
 	None UMETA(DisplayName = "None"),
 	UiBase UMETA(DisplayName = "UiBase"),
+	Splash UMETA(DisplayName = "SplashWidget"),
+	MainMenu UMETA(DisplayName = "MainMenuWidget"),
 	InGameMain UMETA(DisplayName = "InGameMainWidget"),
 	ResourceElement UMETA(DisplayName = "ResourceElementWidget"),
 	PauseMenu UMETA(DisplayName = "PauseMenuWidget"),
