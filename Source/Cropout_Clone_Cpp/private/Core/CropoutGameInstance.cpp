@@ -32,22 +32,30 @@ void UCropoutGameInstance::Shutdown()
 
 	if((GIsEditor && IsEngineExitRequested()) == false)
 	{
-		for(auto& Pair : SystemManagerMap)
+		if(SystemManagerMap.Num() != 0)
 		{
-			if(Pair.Value != nullptr)
+			for(auto& Pair : SystemManagerMap)
 			{
-				Pair.Value->Release();
+				if(Pair.Value != nullptr)
+				{
+					Pair.Value->Release();
+				}
 			}
-		}
 
-		for(auto& Pair : SystemManagerMap)
-		{
-			if(IsValid(Pair.Value))
+			for(auto& Pair : SystemManagerMap)
 			{
-				Pair.Value->Destroy();
+				if(IsValid(Pair.Value))
+				{
+					Pair.Value->Destroy();
+
+					if(Managers.Contains(Pair.Value))
+					{
+						Managers.Remove(Pair.Value);
+					}
+				}
 			}
+			SystemManagerMap.Empty();
 		}
-		SystemManagerMap.Empty();
 	}
 
 
@@ -93,6 +101,7 @@ void UCropoutGameInstance::InitializeSystemManagers()
 			SystemManager->SetGameInstance(this);
 			SystemManager->AddOnBeginDestroyHandle(this, &UCropoutGameInstance::SystemManagerBeginDestroy);
 			SystemManagerMap.Add(Class, SystemManager);
+			Managers.Add(SystemManager);
 		}
 	}
 
@@ -120,6 +129,7 @@ void UCropoutGameInstance::InitializeLevelManagers()
 			LevelManager->SetGameInstance(this);
 			LevelManager->AddOnBeginDestroyHandle(this, &UCropoutGameInstance::LevelManagerBeginDestroy);
 			LevelManagerMap.Add(Class, LevelManager);
+			Managers.Add(LevelManager);
 		}
 	}
 
@@ -139,22 +149,30 @@ void UCropoutGameInstance::InitializeLevelManagers()
 
 void UCropoutGameInstance::ReleaseLevelManagers()
 {
-	for(auto& Pair : LevelManagerMap)
+	if(LevelManagerMap.Num() != 0)
 	{
-		Pair.Value->ClearOnBeginDestroyHandle();
-	}
+		for(auto& Pair : LevelManagerMap)
+		{
+			Pair.Value->ClearOnBeginDestroyHandle();
+		}
 
-	for(auto& Pair : LevelManagerMap)
-	{
-		Pair.Value->Release();
-	}
+		for(auto& Pair : LevelManagerMap)
+		{
+			Pair.Value->Release();
+		}
 
-	for(auto& Pair : LevelManagerMap)
-	{
-		Pair.Value->Destroy();
-	}
+		for(auto& Pair : LevelManagerMap)
+		{
+			Pair.Value->Destroy();
 
-	LevelManagerMap.Empty();
+			if(Managers.Contains(Pair.Value))
+			{
+				Managers.Remove(Pair.Value);
+			}
+		}
+
+		LevelManagerMap.Empty();
+	}
 
 	IsLevelManagerInitialized = false;
 	IsProgressLevelManagerInitialized = false;
@@ -163,11 +181,21 @@ void UCropoutGameInstance::ReleaseLevelManagers()
 void UCropoutGameInstance::SystemManagerBeginDestroy(UManagerBase* Manager)
 {
 	SystemManagerMap.Remove(Manager->GetClass());
+
+	if(Managers.Contains(Manager))
+	{
+		Managers.Remove(Manager);
+	}
 }
 
 void UCropoutGameInstance::LevelManagerBeginDestroy(UManagerBase* Manager)
 {
 	LevelManagerMap.Remove(Manager->GetClass());
+
+	if(Managers.Contains(Manager))
+	{
+		Managers.Remove(Manager);
+	}
 }
 
 void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerController)

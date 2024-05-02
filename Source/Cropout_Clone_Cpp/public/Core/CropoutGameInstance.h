@@ -38,6 +38,10 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 	UPROPERTY()
 	TMap<UClass*, ULevelManager*> LevelManagerMap;
+
+	UPROPERTY()
+	TArray<UManagerBase*> Managers;
+
 	bool IsLevelManagerInitialized = false;
 	bool IsProgressLevelManagerInitialized = false;
 
