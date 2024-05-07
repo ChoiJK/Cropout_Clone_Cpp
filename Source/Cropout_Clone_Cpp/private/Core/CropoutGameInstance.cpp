@@ -3,8 +3,8 @@
 
 #include "Core/CropoutGameInstance.h"
 
+#include "Core/CropoutGameMode.h"
 #include "Core/CropoutPlayerController.h"
-#include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Data/SaveData.h"
 #include "Manager/Base/SystemManager.h"
@@ -32,11 +32,11 @@ void UCropoutGameInstance::Shutdown()
 
 	if((GIsEditor && IsEngineExitRequested()) == false)
 	{
-		if(SystemManagerMap.Num() != 0)
+		if(SystemManagerMap.IsEmpty() == false)
 		{
 			for(auto& Pair : SystemManagerMap)
 			{
-				if(Pair.Value != nullptr)
+				if(IsValid(Pair.Value))
 				{
 					Pair.Value->Release();
 				}
@@ -58,6 +58,7 @@ void UCropoutGameInstance::Shutdown()
 		}
 	}
 
+	Instance = nullptr;
 
 	Super::Shutdown();
 }
@@ -70,7 +71,10 @@ void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropou
 	{
 		for(auto& Pair : SystemManagerMap)
 		{
-			Pair.Value->OnLevelLoaded();
+			if(IsValid(Pair.Value))
+			{
+				Pair.Value->OnLevelLoaded();
+			}
 		}
 
 		if(IsLevelManagerInitialized == false)
@@ -82,9 +86,15 @@ void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropou
 	{
 		ReleaseLevelManagers();
 
-		for(auto& Pair : SystemManagerMap)
+		if(SystemManagerMap.IsEmpty() == false)
 		{
-			Pair.Value->OnLevelDestroy();
+			for(auto& Pair : SystemManagerMap)
+			{
+				if(IsValid(Pair.Value))
+				{
+					Pair.Value->OnLevelDestroy();
+				}
+			}
 		}
 	}
 }
@@ -107,12 +117,18 @@ void UCropoutGameInstance::InitializeSystemManagers()
 
 	for(auto& Pair : SystemManagerMap)
 	{
-		Pair.Value->Init();
+		if(IsValid(Pair.Value))
+		{
+			Pair.Value->Init();
+		}
 	}
 
 	for(auto& Pair : SystemManagerMap)
 	{
-		Pair.Value->Prepare();
+		if(IsValid(Pair.Value))
+		{
+			Pair.Value->Prepare();
+		}
 	}
 }
 
@@ -135,7 +151,10 @@ void UCropoutGameInstance::InitializeLevelManagers()
 
 	for(auto& Pair : LevelManagerMap)
 	{
-		Pair.Value->Init();
+		if(IsValid(Pair.Value))
+		{
+			Pair.Value->Init();
+		}
 	}
 
 	IsLevelManagerInitialized = true;
@@ -143,31 +162,43 @@ void UCropoutGameInstance::InitializeLevelManagers()
 
 	for(auto& Pair : LevelManagerMap)
 	{
-		Pair.Value->Prepare();
+		if(IsValid(Pair.Value))
+		{
+			Pair.Value->Prepare();
+		}
 	}
 }
 
 void UCropoutGameInstance::ReleaseLevelManagers()
 {
-	if(LevelManagerMap.Num() != 0)
+	if(LevelManagerMap.IsEmpty() == false)
 	{
 		for(auto& Pair : LevelManagerMap)
 		{
-			Pair.Value->ClearOnBeginDestroyHandle();
-		}
-
-		for(auto& Pair : LevelManagerMap)
-		{
-			Pair.Value->Release();
-		}
-
-		for(auto& Pair : LevelManagerMap)
-		{
-			Pair.Value->Destroy();
-
-			if(Managers.Contains(Pair.Value))
+			if(IsValid(Pair.Value))
 			{
-				Managers.Remove(Pair.Value);
+				Pair.Value->ClearOnBeginDestroyHandle();
+			}
+		}
+
+		for(auto& Pair : LevelManagerMap)
+		{
+			if(IsValid(Pair.Value))
+			{
+				Pair.Value->Release();
+			}
+		}
+
+		for(auto& Pair : LevelManagerMap)
+		{
+			if(IsValid(Pair.Value))
+			{
+				Pair.Value->Destroy();
+
+				if(Managers.Contains(Pair.Value))
+				{
+					Managers.Remove(Pair.Value);
+				}
 			}
 		}
 
@@ -202,13 +233,10 @@ void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerC
 {
 	CurrentPlayerController = playerController;
 
-	if(playerController->IsA(ACropoutPlayerController::StaticClass()))
+	CurrentCropoutPlayerController = nullptr;
+	if(playerController && playerController->IsA(ACropoutPlayerController::StaticClass()))
 	{
 		CurrentCropoutPlayerController = Cast<ACropoutPlayerController>(playerController);
-	}
-	else
-	{
-		CurrentCropoutPlayerController = nullptr;
 	}
 }
 
