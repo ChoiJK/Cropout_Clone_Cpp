@@ -1,7 +1,7 @@
 #include "Util/CoordinateUtils.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutGameMode.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutGameMode.h"
+#include "Core/InGame/CropoutPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 

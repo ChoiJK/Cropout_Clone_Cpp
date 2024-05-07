@@ -4,7 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StreamableManager.h"

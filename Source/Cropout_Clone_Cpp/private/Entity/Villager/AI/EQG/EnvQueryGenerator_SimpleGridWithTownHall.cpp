@@ -3,7 +3,7 @@
 
 #include "Entity/Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithTownHall.h"
 
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "GameFramework/GameModeBase.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"

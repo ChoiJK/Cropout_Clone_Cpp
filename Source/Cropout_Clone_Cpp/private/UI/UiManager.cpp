@@ -4,7 +4,7 @@
 #include "UI/UiManager.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "UI/Panel/InGameLayerWidget.h"
 #include "UI/Element/ResourceWidget.h"
 #include "Manager/TableManager.h"

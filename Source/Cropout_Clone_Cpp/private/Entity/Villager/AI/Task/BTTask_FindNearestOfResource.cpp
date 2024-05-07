@@ -8,7 +8,7 @@
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "Entity/EntityManager.h"
 #include "Enum/ResourceType.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"

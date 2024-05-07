@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 
 #include "EngineUtils.h"
 #include "NavigationSystem.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutPlayerController.h"
 #include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"

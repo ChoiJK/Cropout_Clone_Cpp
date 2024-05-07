@@ -3,6 +3,7 @@
 
 #include "Spawn/IslandGen.h"
 
+#include "AI/NavigationSystemBase.h"
 #include "GeometryScript/MeshPrimitiveFunctions.h"
 #include "GeometryScript/MeshVoxelFunctions.h"
 #include "GeometryScript/MeshNormalsFunctions.h"
@@ -173,6 +174,12 @@ void AIslandGen::SecondStep()
 	if(UCropoutGameInstance::GetInstance() == nullptr)
 	{
 		return;
+	}
+
+	UWorld* world = GetWorld();
+	if(IsValid(world))
+	{
+		FNavigationSystem::Build(*world);
 	}
 
 	if(AIslandBaseGameMode* islandGameMode = UCropoutGameInstance::GetInstance()->GetCurrentIslandGameMode())

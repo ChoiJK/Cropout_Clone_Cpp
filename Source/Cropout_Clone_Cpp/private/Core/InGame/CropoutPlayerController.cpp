@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutPlayerController.h"
 
 #include "Core/CropoutGameInstance.h"
 #include "Util/CoordinateUtils.h"

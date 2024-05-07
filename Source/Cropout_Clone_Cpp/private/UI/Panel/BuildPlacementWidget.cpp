@@ -4,14 +4,14 @@
 #include "UI/Panel/BuildPlacementWidget.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutPlayerController.h"
 #include "Player/CropoutPlayer.h"
 #include "Player/Components/PlacementHandler.h"
 #include "UI/Element/ButtonWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "CommonBorder.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "Data/BuildableInfo.h"
 
 #include "SimpleRx/SimpleRx.h"

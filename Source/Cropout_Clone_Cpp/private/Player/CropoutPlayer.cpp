@@ -12,7 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutPlayerController.h"
 #include "Player/Components/MovementInputHandler.h"
 #include "Player/Components/VillagerHandler.h"
 #include "Player/Components/PlacementHandler.h"

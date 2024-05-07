@@ -3,8 +3,8 @@
 
 #include "Core/CropoutGameInstance.h"
 
-#include "Core/CropoutGameMode.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutGameMode.h"
+#include "Core/InGame/CropoutPlayerController.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Data/SaveData.h"
 #include "Manager/Base/SystemManager.h"

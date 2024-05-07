@@ -13,7 +13,7 @@
 #include "UI/Element/ButtonWidget.h"
 #include "UI/UiManager.h"
 #include "CommonButtonBase.h"
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Entity/EntityManager.h"
 

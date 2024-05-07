@@ -5,7 +5,7 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Core/CropoutGameMode.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -44,7 +44,7 @@ EBTNodeResult::Type UBTTask_InitialCollectResource::ExecuteTask(UBehaviorTreeCom
 
 	TArray<AActor*> ResourceActors;
 	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), AResourceBaseActor::StaticClass(), MyPawn->Tags[0],
-	                                             ResourceActors);
+		ResourceActors);
 	if(ResourceActors.Num() > 0)
 	{
 		UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();

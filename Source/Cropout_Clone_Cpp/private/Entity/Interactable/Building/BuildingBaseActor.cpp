@@ -5,12 +5,10 @@
 
 #include "Components/BoxComponent.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutGameMode.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/EntityManager.h"
-#include "Player/CropoutPlayer.h"
 #include "Spawn/Spawner.h"
 
 ABuildingBaseActor::ABuildingBaseActor()

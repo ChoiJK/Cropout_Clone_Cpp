@@ -3,8 +3,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/CropoutGameMode.h"
-#include "Core/CropoutPlayerController.h"
+#include "Core/InGame/CropoutGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/TableManager.h"
 #include "Spawn/Spawner.h"
