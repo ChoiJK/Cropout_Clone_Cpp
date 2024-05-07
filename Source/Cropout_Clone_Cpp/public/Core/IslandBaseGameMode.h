@@ -32,7 +32,6 @@ protected:
 
 	virtual void OnIslandGenCompleteInternal();
 
-	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 

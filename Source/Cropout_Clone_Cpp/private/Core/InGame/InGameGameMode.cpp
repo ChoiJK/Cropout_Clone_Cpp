@@ -28,11 +28,6 @@ AInGameGameMode::AInGameGameMode()
 	Villager_Ref = AVillager::StaticClass();
 }
 
-void AInGameGameMode::StartPlay()
-{
-	Super::StartPlay();
-}
-
 void AInGameGameMode::BeginPlay()
 {
 	Super::BeginPlay();

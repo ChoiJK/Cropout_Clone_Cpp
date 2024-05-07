@@ -12,6 +12,5 @@ class CROPOUT_CLONE_CPP_API ACropoutMainMenuGameMode : public AIslandBaseGameMod
 	GENERATED_BODY()
 
 protected:
-	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 };

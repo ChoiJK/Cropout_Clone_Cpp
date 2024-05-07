@@ -16,11 +16,6 @@ AIslandBaseGameMode::AIslandBaseGameMode()
 	}
 }
 
-void AIslandBaseGameMode::StartPlay()
-{
-	Super::StartPlay();
-}
-
 void AIslandBaseGameMode::BeginPlay()
 {
 	Super::BeginPlay();

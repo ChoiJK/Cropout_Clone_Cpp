@@ -22,7 +22,6 @@ class CROPOUT_CLONE_CPP_API AInGameGameMode : public AIslandBaseGameMode
 	bool IsContinueGame = false;
 
 protected:
-	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
