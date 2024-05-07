@@ -11,7 +11,7 @@ public class Cropout_Clone_Cpp : ModuleRules
 		PublicDependencyModuleNames.AddRange(new[]
 		{
 			"Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "EnhancedInput", "Niagara", "AIModule",
-			"AnimGraphRuntime", "AudioModulation", "UMG", "UMGEditor", "CommonUI"
+			"AnimGraphRuntime", "AudioModulation", "UMG", "UMGEditor", "CommonUI", "GameplayCameras"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[] { "GeometryScriptingCore" });

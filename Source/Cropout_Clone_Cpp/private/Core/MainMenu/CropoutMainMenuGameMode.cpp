@@ -2,6 +2,12 @@
 
 
 #include "Core/MainMenu/CropoutMainMenuGameMode.h"
+#include "Core/MainMenu/MainMenuPawn.h"
+
+ACropoutMainMenuGameMode::ACropoutMainMenuGameMode()
+{
+	DefaultPawnClass = AMainMenuPawn::StaticClass();
+}
 
 void ACropoutMainMenuGameMode::BeginPlay()
 {
