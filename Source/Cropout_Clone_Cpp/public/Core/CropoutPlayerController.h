@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "SimpleRx/SimpleRxReactiveProperty.h"
 #include "CropoutPlayerController.generated.h"
-
 
 enum class EInputType
 {
@@ -15,15 +15,12 @@ enum class EInputType
 	Touch
 };
 
-class FGlobalEventDispatcher;
-
 UCLASS()
 class CROPOUT_CLONE_CPP_API ACropoutPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	TWeakPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
-	EInputType CurrentInputType = EInputType::Unknown;
+	ACropoutPlayerController();
 
 	void OnKeyDetect(const FKey Key);
 	void OnTouchDetect(const FKey Key);
@@ -38,5 +35,8 @@ protected:
 	virtual void Destroyed() override;
 
 public:
-	EInputType GetCurrentInputType() { return CurrentInputType; }
+	std::shared_ptr<SimpleRxReactiveProperty<EInputType>> CurrentInputType;
+
+	std::shared_ptr<SimpleRxReactiveProperty<EInputType>> GetCurrentInputTypeRP();
+	EInputType GetCurrentInputType() const { return CurrentInputType->GetValue(); }
 };

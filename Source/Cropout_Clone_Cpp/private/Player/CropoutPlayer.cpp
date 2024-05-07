@@ -13,12 +13,12 @@
 
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutPlayerController.h"
-#include "Global/GlobalEventDispatcher.h"
 #include "Player/Components/MovementInputHandler.h"
 #include "Player/Components/VillagerHandler.h"
 #include "Player/Components/PlacementHandler.h"
 #include "Entity/Villager/Villager.h"
 #include "Manager/TableManager.h"
+#include "SimpleRx/SimpleRx.h"
 #include "Spawn/Spawner.h"
 
 ACropoutPlayer::ACropoutPlayer()
@@ -162,15 +162,22 @@ void ACropoutPlayer::BeginPlay()
 	Super::BeginPlay();
 	RootComponent->SetWorldLocationAndRotation(FVector(0, 0, 0), FRotator(0, -45.f, 0));
 
-	GameInstance = UCropoutGameInstance::GetInstance();
-	if(GameInstance)
+	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
+
+	GetPlayerController()->GetCurrentInputTypeRP()->SubscribeAndNotify([this](EInputType inputType)
 	{
-		GlobalEventDispatcher = GameInstance->GetGlobalEventDispatcher();
-		if(TSharedPtr<FGlobalEventDispatcher> EventDispatcher = GlobalEventDispatcher.Pin())
-		{
-			EventDispatcher->AddListenerUObject(EGlobalEventType::ChangedInputType, this,
-				&ACropoutPlayer::OnChangedInputType);
-		}
+		OnChangedInputType();
+	})->AddTo(CompositeDisposable);
+}
+
+void ACropoutPlayer::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if(CompositeDisposable)
+	{
+		CompositeDisposable->Dispose();
+		CompositeDisposable.reset();
 	}
 }
 
@@ -196,7 +203,8 @@ ACropoutPlayerController* ACropoutPlayer::GetPlayerController()
 {
 	if(PlayerController == nullptr)
 	{
-		PlayerController = Cast<ACropoutPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+		PlayerController = Cast<ACropoutPlayerController>(
+			UCropoutGameInstance::GetInstance()->GetCurrentPlayerController());
 		check(PlayerController != nullptr);
 	}
 

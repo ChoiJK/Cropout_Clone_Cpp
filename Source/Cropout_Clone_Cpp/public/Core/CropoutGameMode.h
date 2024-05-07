@@ -3,22 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "Core/IslandBaseGameMode.h"
 #include "Enum/ResourceType.h"
-#include "../SImpleRx/SimpleRxReactiveProperty.h"
+#include "SimpleRx/SimpleRxReactiveProperty.h"
 #include "CropoutGameMode.generated.h"
 
-class UCropoutGameInstance;
-class FGlobalEventDispatcher;
-class UGlobalSharedVariable;
 class ABuildingBaseActor;
-class ASpawner;
 class AVillager;
-class UInGameLayerWidget;
-class UUiManager;
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
+class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AIslandBaseGameMode
 {
 	GENERATED_BODY()
 
@@ -28,23 +22,14 @@ class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AGameModeBase
 	bool IsContinueGame = false;
 
 protected:
-	void OnIslandGenComplete();
-
 	virtual void StartPlay() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	UCropoutGameInstance* GetGameInstance();
+	virtual void OnIslandGenCompleteInternal() override;
 
 public:
 	ACropoutGameMode();
-
-	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
-	UGlobalSharedVariable* globalSharedVariable;
-
-	FDelegateHandle islandGenCompleteHandle;
-
-	void BeginAsyncSpawning();
 
 	TSubclassOf<AVillager> Villager_Ref;
 	TArray<AVillager*> Villagers;
@@ -55,9 +40,6 @@ public:
 	ABuildingBaseActor* TownHall;
 	void SpawnTownHall();
 
-	ASpawner* Spawner = nullptr;
-	ASpawner* GetSpawner();
-
 	int GetResourceAmount(EResourceType type);
 	bool HasResource(EResourceType type, int amount);
 	void StoreResource(EResourceType type, int amount);
@@ -67,10 +49,4 @@ public:
 	std::shared_ptr<SimpleRxReactiveProperty<int>> GetResourceRP(EResourceType type);
 
 	void SetIsContinueGame(bool value) { IsContinueGame = value; }
-
-	UPROPERTY()
-	UCropoutGameInstance* GameInstance;
-
-	UPROPERTY()
-	ASpawner* SpawnerRef;
 };

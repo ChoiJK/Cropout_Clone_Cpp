@@ -18,7 +18,6 @@ enum class EPlatformPerformance : uint8
 	HighEnd = 1
 };
 
-class FGlobalEventDispatcher;
 class UGlobalSharedVariable;
 
 UCLASS()
@@ -38,7 +37,7 @@ private:
 	UDynamicMesh* GetDynamicMesh();
 	EPlatformPerformance GetPlatformPerformance();
 
-	TWeakPtr<FGlobalEventDispatcher> eventDispatcher;
+	UPROPERTY()
 	UGlobalSharedVariable* globalSharedVariable;
 
 protected:

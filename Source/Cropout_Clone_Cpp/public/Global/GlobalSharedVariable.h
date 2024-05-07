@@ -5,7 +5,6 @@
 #include "Enum/PrimitiveShapeType.h"
 #include "GlobalSharedVariable.generated.h"
 
-class FGlobalEventDispatcher;
 class UCropoutGameInstance;
 
 UCLASS()
@@ -45,7 +44,6 @@ private:
 	}
 
 	UCropoutGameInstance* GameInstance;
-	TWeakPtr<FGlobalEventDispatcher> EventDispatcher;
 
 	UStaticMesh* PrimitiveShapeMeshs[static_cast<int>(EPrimitiveShapeType::Count)];
 

@@ -46,13 +46,14 @@ void ASpawner::BeginPlay()
 	}
 }
 
-void ASpawner::BeginDestroy()
+void ASpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::BeginDestroy();
 	if(UWorld* world = GetWorld())
 	{
 		world->GetTimerManager().ClearTimer(CheckNavMeshAndAsyncLoadTimerHandle);
 	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void ASpawner::SpawnRandom()

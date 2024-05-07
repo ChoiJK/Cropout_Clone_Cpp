@@ -4,8 +4,12 @@
 #include "Core/CropoutPlayerController.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Global/GlobalEventDispatcher.h"
 #include "Util/CoordinateUtils.h"
+
+ACropoutPlayerController::ACropoutPlayerController()
+{
+	CurrentInputType = std::make_shared<SimpleRxReactiveProperty<EInputType>>(EInputType::Unknown);
+}
 
 void ACropoutPlayerController::BeginPlay()
 {
@@ -17,10 +21,6 @@ void ACropoutPlayerController::BeginPlay()
 
 	auto gameInstance = UCropoutGameInstance::GetInstance();
 	gameInstance->SetCurrentPlayerController(this);
-	if(gameInstance)
-	{
-		GlobalEventDispatcher = gameInstance->GetGlobalEventDispatcher();
-	}
 }
 
 void ACropoutPlayerController::SetupInputComponent()
@@ -58,6 +58,11 @@ void ACropoutPlayerController::Destroyed()
 	CoordinateUtils::SetPlayerController(nullptr);
 }
 
+std::shared_ptr<SimpleRxReactiveProperty<EInputType>> ACropoutPlayerController::GetCurrentInputTypeRP()
+{
+	return CurrentInputType;
+}
+
 void ACropoutPlayerController::OnMouseMove(const float Value)
 {
 	if(Value == 0.0f)
@@ -70,15 +75,10 @@ void ACropoutPlayerController::OnMouseMove(const float Value)
 
 void ACropoutPlayerController::SwitchInputType(EInputType inputType)
 {
-	if(CurrentInputType == inputType)
+	if(CurrentInputType->GetValue() == inputType)
 	{
 		return;
 	}
 
-	CurrentInputType = inputType;
-
-	if(TSharedPtr<FGlobalEventDispatcher> shared = GlobalEventDispatcher.Pin())
-	{
-		shared->Dispatch(EGlobalEventType::ChangedInputType);
-	}
+	CurrentInputType->SetValue(inputType);
 }

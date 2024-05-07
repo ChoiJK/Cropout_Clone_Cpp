@@ -13,13 +13,14 @@ class UCameraComponent;
 class UStaticMeshComponent;
 class USphereComponent;
 class UFloatingPawnMovement;
-class FGlobalEventDispatcher;
 class ACropoutPlayerController;
 class AInteractableBaseActor;
 
 class UMovementInputHandler;
 class UVillagerHandler;
 class UPlacementHandler;
+
+class SimpleRxCompositeDisposable;
 
 struct FTimerHandle;
 struct FBuildableInfo;
@@ -34,11 +35,11 @@ public:
 
 private:
 	UCropoutGameInstance* GameInstance = nullptr;
-	TWeakPtr<FGlobalEventDispatcher> GlobalEventDispatcher = nullptr;
 	ACropoutPlayerController* PlayerController = nullptr;
 	ASpawner* Spawner = nullptr;
 	AActor* HoverActor = nullptr;
 
+	std::shared_ptr<SimpleRxCompositeDisposable> CompositeDisposable;
 
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -52,6 +53,7 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
 	UPROPERTY(EditAnywhere)

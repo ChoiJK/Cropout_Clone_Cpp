@@ -2,3 +2,14 @@
 
 
 #include "Core/CropoutMainMenuGameMode.h"
+
+
+void ACropoutMainMenuGameMode::StartPlay()
+{
+	Super::StartPlay();
+}
+
+void ACropoutMainMenuGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+}

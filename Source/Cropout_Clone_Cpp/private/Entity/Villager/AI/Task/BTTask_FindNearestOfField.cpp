@@ -9,6 +9,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/CropoutGameMode.h"
+#include "Entity/EntityManager.h"
 #include "Entity/Interactable/Crop/CropBaseActor.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/VIllager/Villager.h"

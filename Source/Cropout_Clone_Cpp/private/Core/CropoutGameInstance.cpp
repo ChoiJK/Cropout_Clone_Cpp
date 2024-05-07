@@ -16,8 +16,6 @@ void UCropoutGameInstance::Init()
 	Super::Init();
 	Instance = this;
 
-	GlobalEventDispatcher = MakeShared<FGlobalEventDispatcher>();
-
 	GlobalSharedVariable = NewObject<UGlobalSharedVariable>();
 	GlobalSharedVariable->SetCropoutGameInstance(this);
 
@@ -227,6 +225,22 @@ void UCropoutGameInstance::LevelManagerBeginDestroy(UManagerBase* Manager)
 	{
 		Managers.Remove(Manager);
 	}
+}
+
+void UCropoutGameInstance::SetCurrentGameMode(AIslandBaseGameMode* gameMode)
+{
+	CurrentIslandGameMode = gameMode;
+	CurrentGameMode = nullptr;
+	if(gameMode && gameMode->IsA(ACropoutGameMode::StaticClass()))
+	{
+		CurrentGameMode = Cast<ACropoutGameMode>(gameMode);
+	}
+}
+
+void UCropoutGameInstance::SetCurrentGameMode(ACropoutGameMode* gameMode)
+{
+	CurrentIslandGameMode = gameMode;
+	CurrentGameMode = gameMode;
 }
 
 void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerController)

@@ -4,7 +4,6 @@
 
 #include "EngineUtils.h"
 #include "NavigationSystem.h"
-#include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
@@ -13,12 +12,12 @@
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/CropoutPlayer.h"
-#include "Spawn/Spawner.h"
 #include "Entity/Villager/Villager.h"
-#include "UI/UiManager.h"
 #include "Enum/ResourceType.h"
-#include "Manager/SoundManager.h"
 #include "Manager/TableManager.h"
+
+
+#include "Spawn/Spawner.h"
 
 
 ACropoutGameMode::ACropoutGameMode()
@@ -31,23 +30,6 @@ ACropoutGameMode::ACropoutGameMode()
 
 void ACropoutGameMode::StartPlay()
 {
-	if(auto gameInstance = GetGameInstance())
-	{
-		gameInstance->SetCurrentGameMode(this);
-		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
-		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
-	}
-
-	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
-	{
-		islandGenCompleteHandle = shared->AddListenerUObject(EGlobalEventType::IslandGenComplete, this,
-			&ACropoutGameMode::OnIslandGenComplete);
-		if(islandGenCompleteHandle.IsValid() == false)
-		{
-			UE_LOG(LogTemp, Error, TEXT( "Failed to add listener for IslandGenComplete" ));
-		}
-	}
-
 	Super::StartPlay();
 }
 
@@ -56,16 +38,6 @@ void ACropoutGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	// @ TODO : ScreenEffect FadeOut
-
-	USoundManager* soundManager = GetGameInstance()->GetLevelManager<USoundManager>();
-	soundManager->PlayMusic();
-
-	SpawnerRef = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
-	if(SpawnerRef == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("SpawnerRef is nullptr"));
-		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
-	}
 
 	// 다음 프레임에 적용 (GameMode와 LevelScriptActor의 생성 순서 때문)
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
@@ -76,31 +48,12 @@ void ACropoutGameMode::BeginPlay()
 
 void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
-	{
-		shared->RemoveListener(EGlobalEventType::IslandGenComplete, islandGenCompleteHandle);
-	}
-
-	USoundManager* soundManager = GetGameInstance()->GetLevelManager<USoundManager>();
-	soundManager->StopMusic();
-
 	Super::EndPlay(EndPlayReason);
 }
 
-UCropoutGameInstance* ACropoutGameMode::GetGameInstance()
-{
-	if(GameInstance == nullptr)
-	{
-		GameInstance = UCropoutGameInstance::GetInstance();
-	}
-
-	return GameInstance;
-}
-
-
 void ACropoutGameMode::SpawnTownHall()
 {
-	UClass* bp_class = globalSharedVariable->GetSpawnMarkerClass();
+	UClass* bp_class = GlobalSharedVariable->GetSpawnMarkerClass();
 
 	if(bp_class == nullptr)
 	{
@@ -121,24 +74,13 @@ void ACropoutGameMode::SpawnTownHall()
 			FoundActors[FMath::RandRange(0, FoundActors.Num() - 1)]->GetActorLocation());
 	}
 
-	UTableManager* tableManager = GameInstance->GetSystemManager<UTableManager>();
+	UTableManager* tableManager = GetCropoutGameInstance()->GetSystemManager<UTableManager>();
 	const FInteractableInfo* info = tableManager->GetInteractableInfo("TownHall");
 	TownHall = Cast<ABuildingBaseActor>(GetSpawner()->SpawnInteractable(info));
 	if(TownHall)
 	{
 		TownHall->SetActorLocation(spawnLocation);
 	}
-}
-
-ASpawner* ACropoutGameMode::GetSpawner()
-{
-	if(Spawner == nullptr)
-	{
-		Spawner = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
-		check(Spawner != nullptr);
-	}
-
-	return Spawner;
 }
 
 int ACropoutGameMode::GetResourceAmount(EResourceType type)
@@ -234,7 +176,7 @@ void ACropoutGameMode::ResourceDebugMessage()
 	}
 }
 
-void ACropoutGameMode::OnIslandGenComplete()
+void ACropoutGameMode::OnIslandGenCompleteInternal()
 {
 	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
@@ -248,7 +190,7 @@ void ACropoutGameMode::OnIslandGenComplete()
 			SpawnTownHall();
 			SpawnVillagersInBegin();
 
-			SpawnerRef->SpawnRandom();
+			Super::OnIslandGenCompleteInternal();
 		}
 	}));
 }

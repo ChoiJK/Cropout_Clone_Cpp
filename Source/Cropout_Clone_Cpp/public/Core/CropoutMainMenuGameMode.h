@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "Core/IslandBaseGameMode.h"
 #include "CropoutMainMenuGameMode.generated.h"
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API ACropoutMainMenuGameMode : public AGameModeBase
+class CROPOUT_CLONE_CPP_API ACropoutMainMenuGameMode : public AIslandBaseGameMode
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void StartPlay() override;
+	virtual void BeginPlay() override;
 };

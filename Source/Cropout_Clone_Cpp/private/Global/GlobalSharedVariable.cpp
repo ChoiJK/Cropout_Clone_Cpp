@@ -25,7 +25,6 @@ void UGlobalSharedVariable::Initialize()
 void UGlobalSharedVariable::SetCropoutGameInstance(UCropoutGameInstance* instance)
 {
 	GameInstance = instance;
-	this->EventDispatcher = GameInstance->GetGlobalEventDispatcher();
 }
 
 UStaticMesh* UGlobalSharedVariable::GetPrimitiveShapeMesh(EPrimitiveShapeType type)

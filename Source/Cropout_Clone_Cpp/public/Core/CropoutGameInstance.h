@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "Global/GlobalEventDispatcher.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Engine/StreamableManager.h"
 #include "Data/SaveData.h"
@@ -14,6 +13,7 @@
 
 class ACropoutPlayerController;
 class ACropoutGameMode;
+class AIslandBaseGameMode;
 class ACropoutLevelScriptBase;
 class USystemManager;
 class ULevelManager;
@@ -26,8 +26,6 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 	UPROPERTY()
 	USaveData* SaveData;
-
-	TSharedPtr<FGlobalEventDispatcher> GlobalEventDispatcher;
 
 	UPROPERTY()
 	UGlobalSharedVariable* GlobalSharedVariable;
@@ -44,6 +42,9 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 	bool IsLevelManagerInitialized = false;
 	bool IsProgressLevelManagerInitialized = false;
+
+	UPROPERTY()
+	AIslandBaseGameMode* CurrentIslandGameMode;
 
 	UPROPERTY()
 	ACropoutGameMode* CurrentGameMode;
@@ -117,11 +118,6 @@ public:
 		return streamableManager;
 	}
 
-	TWeakPtr<FGlobalEventDispatcher> GetGlobalEventDispatcher() const
-	{
-		return GlobalEventDispatcher;
-	}
-
 	UGlobalSharedVariable* GetGlobalSharedVariable() const
 	{
 		return GlobalSharedVariable;
@@ -132,9 +128,12 @@ public:
 		return SaveData;
 	}
 
-	void SetCurrentGameMode(ACropoutGameMode* gameMode)
+	void SetCurrentGameMode(AIslandBaseGameMode* gameMode);
+	void SetCurrentGameMode(ACropoutGameMode* gameMode);
+
+	AIslandBaseGameMode* GetCurrentIslandGameMode() const
 	{
-		CurrentGameMode = gameMode;
+		return CurrentIslandGameMode;
 	}
 
 	ACropoutGameMode* GetCurrentGameMode() const

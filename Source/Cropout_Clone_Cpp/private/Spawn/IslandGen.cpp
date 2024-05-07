@@ -11,11 +11,10 @@
 #include "GeometryScript/MeshBooleanFunctions.h"
 #include "GeometryScript/MeshUVFunctions.h"
 #include "GenericPlatform/GenericPlatformProperties.h"
-#include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialParameterCollectionInstance.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Kismet/GameplayStatics.h"
+#include "Core/IslandBaseGameMode.h"
 
 void AIslandGen::BeginPlay()
 {
@@ -24,7 +23,6 @@ void AIslandGen::BeginPlay()
 	auto gameInstance = UCropoutGameInstance::GetInstance();
 	if(gameInstance)
 	{
-		eventDispatcher = gameInstance->GetGlobalEventDispatcher();
 		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
 	}
 
@@ -37,6 +35,12 @@ void AIslandGen::OnConstruction(const FTransform& Transform)
 {
 	if(PreConstruct == true)
 	{
+		if(DynMesh != nullptr)
+		{
+			DynMesh->Reset();
+			DynMesh = nullptr;
+		}
+
 		GenerateIslands(false);
 	}
 }
@@ -166,9 +170,17 @@ void AIslandGen::SecondStep()
 	ReleaseAllComputeMeshes();
 	AddActorWorldOffset(FVector(0, 0, 0.05)); // retrigger nav mesh gen
 
-	if(TSharedPtr<FGlobalEventDispatcher> shared = eventDispatcher.Pin())
+	if(UCropoutGameInstance::GetInstance() == nullptr)
 	{
-		shared->Dispatch(EGlobalEventType::IslandGenComplete);
+		return;
+	}
+
+	if(AIslandBaseGameMode* islandGameMode = UCropoutGameInstance::GetInstance()->GetCurrentIslandGameMode())
+	{
+		if(IsValid(islandGameMode))
+		{
+			islandGameMode->OnIslandGenComplete();
+		}
 	}
 }
 
@@ -205,12 +217,17 @@ void AIslandGen::SetIslandSeed(int seed)
 
 UDynamicMesh* AIslandGen::GetDynamicMesh()
 {
-	if(globalSharedVariable == nullptr)
+	UMaterial* landScapeMaterial = nullptr;
+	if(globalSharedVariable != nullptr)
 	{
-		return nullptr;
+		landScapeMaterial = globalSharedVariable->GetLandScapeMaterial();
+	}
+	else
+	{
+		landScapeMaterial = LoadObject<UMaterial>(nullptr,
+			TEXT("Material'/Game/Resources/Materials/M_Landscape.M_Landscape'"));
 	}
 
-	UMaterial* landScapeMaterial = globalSharedVariable->GetLandScapeMaterial();
 	if(DynMesh == nullptr && landScapeMaterial != nullptr)
 	{
 		const auto dynMeshComp = GetComponentByClass<UDynamicMeshComponent>();
