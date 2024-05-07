@@ -4,7 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutGameMode.h"
+#include "../../../public/Core/InGame/InGameGameMode.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StreamableManager.h"
@@ -111,7 +111,7 @@ void AVillager::BeginPlay()
 	Super::BeginPlay();
 
 	GameInstance = UCropoutGameInstance::GetInstance();
-	GameMode = Cast<ACropoutGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GameMode = Cast<AInGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	AddActorWorldOffset(FVector(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight()));
 

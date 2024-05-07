@@ -13,7 +13,7 @@ class UCameraComponent;
 class UStaticMeshComponent;
 class USphereComponent;
 class UFloatingPawnMovement;
-class ACropoutPlayerController;
+class AInGamePlayerController;
 class AInteractableBaseActor;
 
 class UMovementInputHandler;
@@ -35,7 +35,7 @@ public:
 
 private:
 	UCropoutGameInstance* GameInstance = nullptr;
-	ACropoutPlayerController* PlayerController = nullptr;
+	AInGamePlayerController* PlayerController = nullptr;
 	ASpawner* Spawner = nullptr;
 	AActor* HoverActor = nullptr;
 
@@ -78,7 +78,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UPlacementHandler* PlacementHandler = nullptr;
 
-	ACropoutPlayerController* GetPlayerController();
+	AInGamePlayerController* GetPlayerController();
 	ASpawner* GetSpawner();
 
 	virtual void Tick(float DeltaTime) override;

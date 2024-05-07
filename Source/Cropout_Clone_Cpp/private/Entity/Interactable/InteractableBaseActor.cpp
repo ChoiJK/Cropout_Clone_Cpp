@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Entity/Interactable/InteractableBaseActor.h"
+#include "Entity/EntityManager.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
@@ -268,6 +269,7 @@ void AInteractableBaseActor::ReCalcBoxExtent() const
 
 	BoxComponent->SetBoxExtent(boundsMax);
 	BoxComponent->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(FVector(1, 0, 0)));
+
 
 	if(ReCalcBoxExtentDelegate != nullptr)
 	{

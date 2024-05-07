@@ -4,14 +4,14 @@
 #include "UI/Panel/BuildPlacementWidget.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGamePlayerController.h"
 #include "Player/CropoutPlayer.h"
 #include "Player/Components/PlacementHandler.h"
 #include "UI/Element/ButtonWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "CommonBorder.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Core/InGame/CropoutGameMode.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "Data/BuildableInfo.h"
 
 #include "SimpleRx/SimpleRx.h"
@@ -91,7 +91,7 @@ void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo
 	BuildableInfo = buildableInfo;
 
 	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
 		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
@@ -103,7 +103,7 @@ void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo
 
 void UBuildPlacementWidget::CheckHasConstructionCost() const
 {
-	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
 	bool hasResourceCost = true;
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
@@ -119,7 +119,7 @@ void UBuildPlacementWidget::CheckHasConstructionCost() const
 
 void UBuildPlacementWidget::SpendConstructionCost() const
 {
-	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
 		gameMode->SpendResource(cost.ResourceType, cost.Coat);

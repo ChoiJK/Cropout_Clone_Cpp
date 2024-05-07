@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGamePlayerController.h"
 
 #include "Core/CropoutGameInstance.h"
 #include "Util/CoordinateUtils.h"
 
-ACropoutPlayerController::ACropoutPlayerController()
+AInGamePlayerController::AInGamePlayerController()
 {
 	CurrentInputType = std::make_shared<SimpleRxReactiveProperty<EInputType>>(EInputType::Unknown);
 }
 
-void ACropoutPlayerController::BeginPlay()
+void AInGamePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -23,18 +23,18 @@ void ACropoutPlayerController::BeginPlay()
 	gameInstance->SetCurrentPlayerController(this);
 }
 
-void ACropoutPlayerController::SetupInputComponent()
+void AInGamePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("KeyDetect", IE_Pressed, this,
-		&ACropoutPlayerController::OnKeyDetect);
+		&AInGamePlayerController::OnKeyDetect);
 	InputComponent->BindAction("TouchDetect", IE_Pressed, this,
-		&ACropoutPlayerController::OnTouchDetect);
+		&AInGamePlayerController::OnTouchDetect);
 	InputComponent->BindAxis("MouseMove", this,
-		&ACropoutPlayerController::OnMouseMove);
+		&AInGamePlayerController::OnMouseMove);
 }
 
-void ACropoutPlayerController::OnKeyDetect(const FKey Key)
+void AInGamePlayerController::OnKeyDetect(const FKey Key)
 {
 	if(Key.IsGamepadKey())
 	{
@@ -46,24 +46,24 @@ void ACropoutPlayerController::OnKeyDetect(const FKey Key)
 	}
 }
 
-void ACropoutPlayerController::OnTouchDetect(const FKey Key)
+void AInGamePlayerController::OnTouchDetect(const FKey Key)
 {
 	SwitchInputType(EInputType::Touch);
 }
 
-void ACropoutPlayerController::Destroyed()
+void AInGamePlayerController::Destroyed()
 {
 	Super::Destroyed();
 
 	CoordinateUtils::SetPlayerController(nullptr);
 }
 
-std::shared_ptr<SimpleRxReactiveProperty<EInputType>> ACropoutPlayerController::GetCurrentInputTypeRP()
+std::shared_ptr<SimpleRxReactiveProperty<EInputType>> AInGamePlayerController::GetCurrentInputTypeRP()
 {
 	return CurrentInputType;
 }
 
-void ACropoutPlayerController::OnMouseMove(const float Value)
+void AInGamePlayerController::OnMouseMove(const float Value)
 {
 	if(Value == 0.0f)
 	{
@@ -73,7 +73,7 @@ void ACropoutPlayerController::OnMouseMove(const float Value)
 	SwitchInputType(EInputType::KeyMouse);
 }
 
-void ACropoutPlayerController::SwitchInputType(EInputType inputType)
+void AInGamePlayerController::SwitchInputType(EInputType inputType)
 {
 	if(CurrentInputType->GetValue() == inputType)
 	{

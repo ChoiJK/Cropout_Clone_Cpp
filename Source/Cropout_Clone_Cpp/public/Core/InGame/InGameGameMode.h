@@ -6,13 +6,13 @@
 #include "Core/IslandBaseGameMode.h"
 #include "Enum/ResourceType.h"
 #include "SimpleRx/SimpleRxReactiveProperty.h"
-#include "CropoutGameMode.generated.h"
+#include "InGameGameMode.generated.h"
 
 class ABuildingBaseActor;
 class AVillager;
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API ACropoutGameMode : public AIslandBaseGameMode
+class CROPOUT_CLONE_CPP_API AInGameGameMode : public AIslandBaseGameMode
 {
 	GENERATED_BODY()
 
@@ -29,7 +29,7 @@ protected:
 	virtual void OnIslandGenCompleteInternal() override;
 
 public:
-	ACropoutGameMode();
+	AInGameGameMode();
 
 	TSubclassOf<AVillager> Villager_Ref;
 	TArray<AVillager*> Villagers;

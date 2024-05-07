@@ -3,8 +3,8 @@
 
 #include "Core/CropoutGameInstance.h"
 
-#include "Core/InGame/CropoutGameMode.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGameGameMode.h"
+#include "Core/InGame/InGamePlayerController.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Data/SaveData.h"
 #include "Manager/Base/SystemManager.h"
@@ -231,13 +231,13 @@ void UCropoutGameInstance::SetCurrentGameMode(AIslandBaseGameMode* gameMode)
 {
 	CurrentIslandGameMode = gameMode;
 	CurrentGameMode = nullptr;
-	if(gameMode && gameMode->IsA(ACropoutGameMode::StaticClass()))
+	if(gameMode && gameMode->IsA(AInGameGameMode::StaticClass()))
 	{
-		CurrentGameMode = Cast<ACropoutGameMode>(gameMode);
+		CurrentGameMode = Cast<AInGameGameMode>(gameMode);
 	}
 }
 
-void UCropoutGameInstance::SetCurrentGameMode(ACropoutGameMode* gameMode)
+void UCropoutGameInstance::SetCurrentGameMode(AInGameGameMode* gameMode)
 {
 	CurrentIslandGameMode = gameMode;
 	CurrentGameMode = gameMode;
@@ -248,9 +248,9 @@ void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerC
 	CurrentPlayerController = playerController;
 
 	CurrentCropoutPlayerController = nullptr;
-	if(playerController && playerController->IsA(ACropoutPlayerController::StaticClass()))
+	if(playerController && playerController->IsA(AInGamePlayerController::StaticClass()))
 	{
-		CurrentCropoutPlayerController = Cast<ACropoutPlayerController>(playerController);
+		CurrentCropoutPlayerController = Cast<AInGamePlayerController>(playerController);
 	}
 }
 
@@ -264,13 +264,13 @@ APlayerController* UCropoutGameInstance::GetCurrentPlayerController()
 	return CurrentPlayerController;
 }
 
-void UCropoutGameInstance::SetCurrentCropoutPlayerController(ACropoutPlayerController* playerController)
+void UCropoutGameInstance::SetCurrentCropoutPlayerController(AInGamePlayerController* playerController)
 {
 	CurrentPlayerController = playerController;
 	CurrentCropoutPlayerController = playerController;
 }
 
-ACropoutPlayerController* UCropoutGameInstance::GetCurrentCropoutPlayerController()
+AInGamePlayerController* UCropoutGameInstance::GetCurrentCropoutPlayerController()
 {
 	if(CurrentCropoutPlayerController == nullptr)
 	{

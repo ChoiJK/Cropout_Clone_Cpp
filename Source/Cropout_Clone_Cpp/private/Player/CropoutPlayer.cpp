@@ -12,7 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGamePlayerController.h"
 #include "Player/Components/MovementInputHandler.h"
 #include "Player/Components/VillagerHandler.h"
 #include "Player/Components/PlacementHandler.h"
@@ -199,11 +199,11 @@ void ACropoutPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlacementHandler->SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-ACropoutPlayerController* ACropoutPlayer::GetPlayerController()
+AInGamePlayerController* ACropoutPlayer::GetPlayerController()
 {
 	if(PlayerController == nullptr)
 	{
-		PlayerController = Cast<ACropoutPlayerController>(
+		PlayerController = Cast<AInGamePlayerController>(
 			UCropoutGameInstance::GetInstance()->GetCurrentPlayerController());
 		check(PlayerController != nullptr);
 	}

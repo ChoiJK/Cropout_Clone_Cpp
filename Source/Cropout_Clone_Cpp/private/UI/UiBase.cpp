@@ -5,7 +5,7 @@
 
 #include "Widgets/CommonactivatableWidgetContainer.h"
 #include "Kismet/GameplayStatics.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGamePlayerController.h"
 
 
 void UUiBase::NativeConstruct()

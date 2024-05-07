@@ -1,14 +1,14 @@
 #include "Util/CoordinateUtils.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutGameMode.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGameGameMode.h"
+#include "Core/InGame/InGamePlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 
-ACropoutPlayerController* CoordinateUtils::PlayerController = nullptr;
+AInGamePlayerController* CoordinateUtils::PlayerController = nullptr;
 
 
-ACropoutPlayerController* CoordinateUtils::GetPlayerController()
+AInGamePlayerController* CoordinateUtils::GetPlayerController()
 {
 	return PlayerController;
 }

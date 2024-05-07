@@ -11,8 +11,8 @@
 
 #include "CropoutGameInstance.generated.h"
 
-class ACropoutPlayerController;
-class ACropoutGameMode;
+class AInGamePlayerController;
+class AInGameGameMode;
 class AIslandBaseGameMode;
 class ACropoutLevelScriptBase;
 class USystemManager;
@@ -47,7 +47,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	AIslandBaseGameMode* CurrentIslandGameMode;
 
 	UPROPERTY()
-	ACropoutGameMode* CurrentGameMode;
+	AInGameGameMode* CurrentGameMode;
 
 	UPROPERTY()
 	ACropoutLevelScriptBase* CurrentLevelScript;
@@ -56,7 +56,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	APlayerController* CurrentPlayerController;
 
 	UPROPERTY()
-	ACropoutPlayerController* CurrentCropoutPlayerController;
+	AInGamePlayerController* CurrentCropoutPlayerController;
 
 
 	virtual void Init() override;
@@ -129,14 +129,14 @@ public:
 	}
 
 	void SetCurrentGameMode(AIslandBaseGameMode* gameMode);
-	void SetCurrentGameMode(ACropoutGameMode* gameMode);
+	void SetCurrentGameMode(AInGameGameMode* gameMode);
 
 	AIslandBaseGameMode* GetCurrentIslandGameMode() const
 	{
 		return CurrentIslandGameMode;
 	}
 
-	ACropoutGameMode* GetCurrentGameMode() const
+	AInGameGameMode* GetCurrentGameMode() const
 	{
 		return CurrentGameMode;
 	}
@@ -149,8 +149,8 @@ public:
 	void SetCurrentPlayerController(APlayerController* playerController);
 	APlayerController* GetCurrentPlayerController();
 
-	void SetCurrentCropoutPlayerController(ACropoutPlayerController* playerController);
-	ACropoutPlayerController* GetCurrentCropoutPlayerController();
+	void SetCurrentCropoutPlayerController(AInGamePlayerController* playerController);
+	AInGamePlayerController* GetCurrentCropoutPlayerController();
 
 	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase);
 	void SystemManagerBeginDestroy(UManagerBase* Manager);

@@ -6,8 +6,8 @@
 #include "Animation/WidgetAnimation.h"
 #include "Components/Image.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutPlayerController.h"
-#include "Core/InGame/CropoutGameMode.h"
+#include "Core/InGame/InGamePlayerController.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "Data/BuildableInfo.h"
 #include "Manager/TableManager.h"
 #include "Player/CropoutPlayer.h"
@@ -56,7 +56,7 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 		}));
 
 	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
 		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
@@ -68,7 +68,7 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 
 void UBuildEntityCardWidget::CheckHasConstructionCost()
 {
-	ACropoutGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
 	bool hasResourceCost = true;
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{

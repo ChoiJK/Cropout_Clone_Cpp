@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "SimpleRx/SimpleRxReactiveProperty.h"
-#include "CropoutPlayerController.generated.h"
+#include "InGamePlayerController.generated.h"
 
 enum class EInputType
 {
@@ -16,11 +16,11 @@ enum class EInputType
 };
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API ACropoutPlayerController : public APlayerController
+class CROPOUT_CLONE_CPP_API AInGamePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-	ACropoutPlayerController();
+	AInGamePlayerController();
 
 	void OnKeyDetect(const FKey Key);
 	void OnTouchDetect(const FKey Key);

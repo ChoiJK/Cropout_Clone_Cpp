@@ -2,16 +2,16 @@
 
 #include "CoreMinimal.h"
 
-class ACropoutPlayerController;
+class AInGamePlayerController;
 
 static class CoordinateUtils
 {
 private:
-	static ACropoutPlayerController* PlayerController;
-	static ACropoutPlayerController* GetPlayerController();
+	static AInGamePlayerController* PlayerController;
+	static AInGamePlayerController* GetPlayerController();
 
 public:
-	static void SetPlayerController(ACropoutPlayerController* controller)
+	static void SetPlayerController(AInGamePlayerController* controller)
 	{
 		PlayerController = controller;
 	}

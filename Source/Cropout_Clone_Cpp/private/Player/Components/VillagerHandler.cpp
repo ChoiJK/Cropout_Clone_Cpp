@@ -1,7 +1,7 @@
 #include "Player/Components/VillagerHandler.h"
 #include "Player/CropoutPlayer.h"
 
-#include "Core/InGame/CropoutPlayerController.h"
+#include "../../../public/Core/InGame/InGamePlayerController.h"
 #include "Entity/Villager/Villager.h"
 #include "Player/Components/MovementInputHandler.h"
 

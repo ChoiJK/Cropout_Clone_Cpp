@@ -3,7 +3,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutGameMode.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/TableManager.h"
 #include "Spawn/Spawner.h"
@@ -47,7 +47,7 @@ void FStateStaticMethods::ClearSaveGame()
 void FStateStaticMethods::ClearSpawner()
 {
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	ACropoutGameMode* gameMode = gameInstance->GetCurrentGameMode();
+	AInGameGameMode* gameMode = gameInstance->GetCurrentGameMode();
 	if(gameMode == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("gameMode is nullptr"));
@@ -67,7 +67,7 @@ void FStateStaticMethods::ClearSpawner()
 void FStateStaticMethods::SetGameContinue()
 {
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	ACropoutGameMode* gameMode = gameInstance->GetCurrentGameMode();
+	AInGameGameMode* gameMode = gameInstance->GetCurrentGameMode();
 	gameMode->SetIsContinueGame(true);
 }
 

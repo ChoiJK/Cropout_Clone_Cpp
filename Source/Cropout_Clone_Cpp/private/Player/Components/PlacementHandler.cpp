@@ -8,7 +8,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "../../../public/Core/InGame/InGamePlayerController.h"
 #include "Util/CoordinateUtils.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
@@ -202,7 +202,7 @@ FVector2D UPlacementHandler::GetPlacementTargetBottomScreenPosition() const
 		return screenCenter;
 	}
 
-	const ACropoutPlayerController* playerController = Owner->GetPlayerController();
+	const AInGamePlayerController* playerController = Owner->GetPlayerController();
 	FVector2D PlacementTargetBottomScreenPosition;
 
 	FVector boundOrigin;

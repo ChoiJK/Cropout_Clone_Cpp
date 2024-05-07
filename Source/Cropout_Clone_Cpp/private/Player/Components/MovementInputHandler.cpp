@@ -13,7 +13,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "../../../public/Core/InGame/InGamePlayerController.h"
 #include "Util/CoordinateUtils.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/Components/PlacementHandler.h"

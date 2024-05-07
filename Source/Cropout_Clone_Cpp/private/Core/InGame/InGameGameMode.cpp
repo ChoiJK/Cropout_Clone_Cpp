@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Core/InGame/CropoutGameMode.h"
+#include "Core/InGame/InGameGameMode.h"
 
 #include "EngineUtils.h"
 #include "NavigationSystem.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/InGame/CropoutPlayerController.h"
+#include "Core/InGame/InGamePlayerController.h"
 #include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,20 +20,20 @@
 #include "Spawn/Spawner.h"
 
 
-ACropoutGameMode::ACropoutGameMode()
+AInGameGameMode::AInGameGameMode()
 {
 	DefaultPawnClass = ACropoutPlayer::StaticClass();
-	PlayerControllerClass = ACropoutPlayerController::StaticClass();
+	PlayerControllerClass = AInGamePlayerController::StaticClass();
 
 	Villager_Ref = AVillager::StaticClass();
 }
 
-void ACropoutGameMode::StartPlay()
+void AInGameGameMode::StartPlay()
 {
 	Super::StartPlay();
 }
 
-void ACropoutGameMode::BeginPlay()
+void AInGameGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -46,12 +46,12 @@ void ACropoutGameMode::BeginPlay()
 	}));
 }
 
-void ACropoutGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void AInGameGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 }
 
-void ACropoutGameMode::SpawnTownHall()
+void AInGameGameMode::SpawnTownHall()
 {
 	UClass* bp_class = GlobalSharedVariable->GetSpawnMarkerClass();
 
@@ -83,12 +83,12 @@ void ACropoutGameMode::SpawnTownHall()
 	}
 }
 
-int ACropoutGameMode::GetResourceAmount(EResourceType type)
+int AInGameGameMode::GetResourceAmount(EResourceType type)
 {
 	return ResourceBank.Contains(type) ? ResourceBank[type]->GetValue() : -1;
 }
 
-bool ACropoutGameMode::HasResource(EResourceType type, int amount)
+bool AInGameGameMode::HasResource(EResourceType type, int amount)
 {
 	if(ResourceBank.Contains(type) && ResourceBank[type]->GetValue() >= amount)
 	{
@@ -98,7 +98,7 @@ bool ACropoutGameMode::HasResource(EResourceType type, int amount)
 	return false;
 }
 
-void ACropoutGameMode::StoreResource(EResourceType type, int amount)
+void AInGameGameMode::StoreResource(EResourceType type, int amount)
 {
 	if(!ResourceBank.Contains(type))
 	{
@@ -110,7 +110,7 @@ void ACropoutGameMode::StoreResource(EResourceType type, int amount)
 	}
 }
 
-void ACropoutGameMode::SpendResource(EResourceType type, int amount)
+void AInGameGameMode::SpendResource(EResourceType type, int amount)
 {
 	if(ResourceBank.Contains(type) && ResourceBank[type] != nullptr)
 	{
@@ -125,7 +125,7 @@ void ACropoutGameMode::SpendResource(EResourceType type, int amount)
 	}
 }
 
-bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
+bool AInGameGameMode::ExtractResource(EResourceType type, int requestedAmount, int& withdrawnAmount)
 {
 	bool isWithdrawn = false;
 	if(ResourceBank.Contains(type) && ResourceBank[type] != nullptr)
@@ -145,7 +145,7 @@ bool ACropoutGameMode::ExtractResource(EResourceType type, int requestedAmount, 
 	return isWithdrawn;
 }
 
-std::shared_ptr<SimpleRxReactiveProperty<int>> ACropoutGameMode::GetResourceRP(EResourceType type)
+std::shared_ptr<SimpleRxReactiveProperty<int>> AInGameGameMode::GetResourceRP(EResourceType type)
 {
 	if(ResourceBank.Contains(type) == false)
 	{
@@ -155,7 +155,7 @@ std::shared_ptr<SimpleRxReactiveProperty<int>> ACropoutGameMode::GetResourceRP(E
 	return ResourceBank[type];
 }
 
-void ACropoutGameMode::ResourceDebugMessage()
+void AInGameGameMode::ResourceDebugMessage()
 {
 	if(ResourceBank.Contains(EResourceType::Food))
 	{
@@ -176,7 +176,7 @@ void ACropoutGameMode::ResourceDebugMessage()
 	}
 }
 
-void ACropoutGameMode::OnIslandGenCompleteInternal()
+void AInGameGameMode::OnIslandGenCompleteInternal()
 {
 	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
@@ -195,7 +195,7 @@ void ACropoutGameMode::OnIslandGenCompleteInternal()
 	}));
 }
 
-void ACropoutGameMode::SpawnVillagersInBegin()
+void AInGameGameMode::SpawnVillagersInBegin()
 {
 	for(int i = 0; i < 3; ++i)
 	{
@@ -204,7 +204,7 @@ void ACropoutGameMode::SpawnVillagersInBegin()
 }
 
 
-AVillager* ACropoutGameMode::SpawnVillager()
+AVillager* AInGameGameMode::SpawnVillager()
 {
 	FActorSpawnParameters ActorSpawnParams;
 	ActorSpawnParams.Owner = Owner;

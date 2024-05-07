@@ -13,7 +13,7 @@ class UCapsuleComponent;
 class USkeletalMesh;
 class UCropoutGameInstance;
 class UAnimBlueprint;
-class ACropoutGameMode;
+class AInGameGameMode;
 
 UCLASS(BlueprintType)
 class CROPOUT_CLONE_CPP_API AVillager : public APawn
@@ -63,7 +63,7 @@ public:
 
 private:
 	UCropoutGameInstance* GameInstance;
-	ACropoutGameMode* GameMode;
+	AInGameGameMode* GameMode;
 	EVillagerJobType CurrentJobType = EVillagerJobType::None;
 	FName CurrentJobName;
 

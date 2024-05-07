@@ -8,7 +8,7 @@
 #include "UI/UiBase.h"
 #include "UiManager.generated.h"
 
-class ACropoutGameMode;
+class AInGameGameMode;
 class UInGameLayerWidget;
 class UResourceWidget;
 class UTableManager;
