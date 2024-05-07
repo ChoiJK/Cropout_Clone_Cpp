@@ -9,6 +9,7 @@
 #include "InputMappingContext.h"
 #include "Core/CropoutGameInstance.h"
 #include "../../../public/Core/InGame/InGamePlayerController.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "Util/CoordinateUtils.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
@@ -96,7 +97,8 @@ void UPlacementHandler::SetPlacementTargetEntity(const FInteractableInfo* intera
 {
 	PlacementTargetInfo = interactableInfo;
 
-	AInteractableBaseActor* interactableActor = Owner->GetSpawner()->SpawnInteractable(PlacementTargetInfo);
+	ASpawner* spawner = UCropoutGameInstance::GetInstance()->GetCurrentGameMode()->GetSpawner();
+	AInteractableBaseActor* interactableActor = spawner->SpawnInteractable(PlacementTargetInfo);
 	if(interactableActor == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to spawn interactable actor"));
@@ -152,7 +154,8 @@ void UPlacementHandler::PlacingEntity()
 		return;
 	}
 
-	AInteractableBaseActor* interactableActor = Owner->GetSpawner()->SpawnInteractable(PlacementTargetInfo);
+	ASpawner* spawner = UCropoutGameInstance::GetInstance()->GetCurrentGameMode()->GetSpawner();
+	AInteractableBaseActor* interactableActor = spawner->SpawnInteractable(PlacementTargetInfo);
 	if(interactableActor == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to spawn interactable actor"));

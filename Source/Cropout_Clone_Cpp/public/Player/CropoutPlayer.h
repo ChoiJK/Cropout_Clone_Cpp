@@ -34,9 +34,7 @@ public:
 	ACropoutPlayer();
 
 private:
-	UCropoutGameInstance* GameInstance = nullptr;
 	AInGamePlayerController* PlayerController = nullptr;
-	ASpawner* Spawner = nullptr;
 	AActor* HoverActor = nullptr;
 
 	std::shared_ptr<SimpleRxCompositeDisposable> CompositeDisposable;
@@ -79,7 +77,6 @@ public:
 	UPlacementHandler* PlacementHandler = nullptr;
 
 	AInGamePlayerController* GetPlayerController();
-	ASpawner* GetSpawner();
 
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

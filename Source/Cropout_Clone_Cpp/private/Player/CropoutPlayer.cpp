@@ -211,17 +211,6 @@ AInGamePlayerController* ACropoutPlayer::GetPlayerController()
 	return PlayerController;
 }
 
-ASpawner* ACropoutPlayer::GetSpawner()
-{
-	if(Spawner == nullptr)
-	{
-		Spawner = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
-		check(Spawner != nullptr);
-	}
-
-	return Spawner;
-}
-
 void ACropoutPlayer::OnChangedInputType()
 {
 	auto currentInputType = GetPlayerController()->GetCurrentInputType();
@@ -247,7 +236,7 @@ void ACropoutPlayer::OnChangedInputType()
 
 void ACropoutPlayer::BeginBuild(const FBuildableInfo* buildableInfo)
 {
-	UTableManager* tableManager = GameInstance->GetSystemManager<UTableManager>();
+	UTableManager* tableManager = UCropoutGameInstance::GetInstance()->GetSystemManager<UTableManager>();
 	const FInteractableInfo* interactableInfo = tableManager->GetInteractableInfo(buildableInfo->Name);
 
 	if(interactableInfo == nullptr)

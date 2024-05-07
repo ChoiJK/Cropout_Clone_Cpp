@@ -78,7 +78,7 @@ public:
 	template <typename Type>
 	Type* GetSystemManager()
 	{
-		static_assert(std::is_base_of_v<USystemManager, Type>, "Type must be derived from ULevelManager");
+		static_assert(std::is_base_of_v<USystemManager, Type>, "Type must be derived from USystemManager");
 		if(SystemManagerMap.Contains(Type::StaticClass()) == false)
 		{
 			UE_LOG(LogTemp, Error, TEXT("SystemManager not found: %s"), *Type::StaticClass()->GetName());
