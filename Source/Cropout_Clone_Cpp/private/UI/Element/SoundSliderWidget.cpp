@@ -6,7 +6,7 @@
 #include "CommonTextBlock.h"
 #include "Components/Slider.h"
 #include "Core/CropoutGameInstance.h"
-#include "Kismet/GameplayStatics.h"
+#include "Manager/SoundManager.h"
 
 
 void USoundSliderWidget::NativePreConstruct()
@@ -34,11 +34,10 @@ void USoundSliderWidget::UpdateSlider()
 	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 	if(IsValid(gi))
 	{
-		USaveData* saveData = gi->GetSaveData();
-		if(IsValid(saveData))
+		USoundManager* soundManager = gi->GetLevelManager<USoundManager>();
+		if(IsValid(soundManager))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SoundMix: %f"), saveData->GetSoundMix(static_cast<int>(Index)));
-			Slider->SetValue(saveData->GetSoundMix(static_cast<int>(Index)));
+			Slider->SetValue(soundManager->GetSoundMix(static_cast<int>(Index)));
 		}
 	}
 }
@@ -48,12 +47,10 @@ void USoundSliderWidget::OnValueChanged(float Value)
 	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 	if(IsValid(gi))
 	{
-		USaveData* saveData = gi->GetSaveData();
-		if(IsValid(saveData))
+		USoundManager* soundManager = gi->GetLevelManager<USoundManager>();
+		if(IsValid(soundManager))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SoundMix: %f"), Value);
-			UGameplayStatics::SetSoundMixClassOverride(GetWorld(), InSoundMixModifier, InSoundClass, Value);
-			saveData->SetSoundMix(static_cast<int>(Index), Value);
+			soundManager->SetSoundMix(static_cast<int>(Index), Value, InSoundClass, InSoundMixModifier);
 		}
 	}
 }

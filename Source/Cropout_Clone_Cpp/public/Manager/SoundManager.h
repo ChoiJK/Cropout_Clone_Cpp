@@ -6,6 +6,9 @@
 #include "Base/LevelManager.h"
 #include "SoundManager.generated.h"
 
+class USoundClass;
+class USoundMix;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API USoundManager : public ULevelManager
 {
@@ -13,6 +16,8 @@ class CROPOUT_CLONE_CPP_API USoundManager : public ULevelManager
 
 	UPROPERTY()
 	UAudioComponent* MusicComponent = nullptr;
+
+	float SoundMixes[2] = {1.f, 1.f};
 
 public:
 	USoundManager();
@@ -23,4 +28,7 @@ public:
 
 	void PlayMusic();
 	void StopMusic();
+
+	float GetSoundMix(int index) const;
+	void SetSoundMix(int index, float value, USoundClass* InSoundClass, USoundMix* InSoundMixModifier);
 };

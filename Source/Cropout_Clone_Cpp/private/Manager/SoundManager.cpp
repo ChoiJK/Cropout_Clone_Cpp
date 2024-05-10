@@ -87,3 +87,26 @@ void USoundManager::StopMusic()
 {
 	MusicComponent->Stop();
 }
+
+float USoundManager::GetSoundMix(int index) const
+{
+	if(index < 0 || index >= 2)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid SoundMix index"));
+		return 1.f;
+	}
+
+	return SoundMixes[index];
+}
+
+void USoundManager::SetSoundMix(int index, float value, USoundClass* InSoundClass, USoundMix* InSoundMixModifier)
+{
+	if(index < 0 || index >= 2)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid SoundMix index"));
+		return;
+	}
+
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), InSoundMixModifier, InSoundClass, value);
+	SoundMixes[index] = value;
+}
