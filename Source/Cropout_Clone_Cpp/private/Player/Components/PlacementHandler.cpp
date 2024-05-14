@@ -8,7 +8,7 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "Core/CropoutGameInstance.h"
-#include "../../../public/Core/InGame/InGamePlayerController.h"
+#include "Core/InGame/InGamePlayerController.h"
 #include "Core/InGame/InGameGameMode.h"
 #include "Util/CoordinateUtils.h"
 #include "Data/InteractableInfo.h"

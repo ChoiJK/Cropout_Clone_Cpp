@@ -4,7 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Core/CropoutGameInstance.h"
-#include "../../../public/Core/InGame/InGameGameMode.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StreamableManager.h"
@@ -12,7 +12,6 @@
 #include "PlayMontageCallbackProxy.h"
 #include "Entity/EntityManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
-#include "Entity/Interactable/Crop/CropBaseActor.h"
 #include "Enum/ResourceType.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;

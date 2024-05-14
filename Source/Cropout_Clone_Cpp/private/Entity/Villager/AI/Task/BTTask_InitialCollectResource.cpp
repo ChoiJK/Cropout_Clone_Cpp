@@ -5,7 +5,7 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "../../../../../public/Core/InGame/InGameGameMode.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"

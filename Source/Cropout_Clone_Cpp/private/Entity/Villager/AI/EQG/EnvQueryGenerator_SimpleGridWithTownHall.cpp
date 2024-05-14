@@ -3,7 +3,7 @@
 
 #include "Entity/Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithTownHall.h"
 
-#include "../../../../../public/Core/InGame/InGameGameMode.h"
+#include "Core/InGame/InGameGameMode.h"
 #include "GameFramework/GameModeBase.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
