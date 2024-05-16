@@ -15,6 +15,7 @@ class CROPOUT_CLONE_CPP_API UBuildPanelWidget : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	UTableManager* TableManager;
 
 protected:

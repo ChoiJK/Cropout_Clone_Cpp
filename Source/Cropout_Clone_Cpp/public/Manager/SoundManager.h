@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Base/LevelManager.h"
+#include "Base/SystemManager.h"
 #include "SoundManager.generated.h"
 
 class USoundClass;
 class USoundMix;
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API USoundManager : public ULevelManager
+class CROPOUT_CLONE_CPP_API USoundManager : public USystemManager
 {
 	GENERATED_BODY()
 

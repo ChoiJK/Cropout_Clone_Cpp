@@ -6,7 +6,7 @@
 #include "Core/InGame/InGameGameMode.h"
 #include "Core/InGame/InGamePlayerController.h"
 #include "Global/GlobalSharedVariable.h"
-#include "Data/SaveData.h"
+#include "../../public/Data/OptionSaveData.h"
 #include "Manager/Base/SystemManager.h"
 
 UCropoutGameInstance* UCropoutGameInstance::Instance = nullptr;
@@ -19,7 +19,7 @@ void UCropoutGameInstance::Init()
 	GlobalSharedVariable = NewObject<UGlobalSharedVariable>();
 	GlobalSharedVariable->SetCropoutGameInstance(this);
 
-	SaveData = NewObject<USaveData>();
+	SaveData = NewObject<UOptionSaveData>();
 
 	InitializeSystemManagers();
 }

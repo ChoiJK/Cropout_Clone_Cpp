@@ -34,7 +34,7 @@ void USoundSliderWidget::UpdateSlider()
 	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 	if(IsValid(gi))
 	{
-		USoundManager* soundManager = gi->GetLevelManager<USoundManager>();
+		USoundManager* soundManager = gi->GetSystemManager<USoundManager>();
 		if(IsValid(soundManager))
 		{
 			Slider->SetValue(soundManager->GetSoundMix(static_cast<int>(Index)));
@@ -47,7 +47,7 @@ void USoundSliderWidget::OnValueChanged(float Value)
 	UCropoutGameInstance* gi = UCropoutGameInstance::GetInstance();
 	if(IsValid(gi))
 	{
-		USoundManager* soundManager = gi->GetLevelManager<USoundManager>();
+		USoundManager* soundManager = gi->GetSystemManager<USoundManager>();
 		if(IsValid(soundManager))
 		{
 			soundManager->SetSoundMix(static_cast<int>(Index), Value, InSoundClass, InSoundMixModifier);

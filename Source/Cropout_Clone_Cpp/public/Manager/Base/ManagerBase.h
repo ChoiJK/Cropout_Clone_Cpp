@@ -76,15 +76,5 @@ public:
 		IsDestroy = true;
 	}
 
-#pragma region SaveData
-	virtual void OnSaveGame()
-	{
-	}
-
-	virtual void OnLoadGame()
-	{
-	}
-#pragma endregion SaveData
-
 	virtual void BeginDestroy() override;
 };

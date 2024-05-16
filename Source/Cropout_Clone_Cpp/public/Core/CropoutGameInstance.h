@@ -6,7 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Engine/StreamableManager.h"
-#include "Data/SaveData.h"
+#include "../Data/OptionSaveData.h"
 #include "Level/CropoutLevelScriptBase.h"
 
 #include "CropoutGameInstance.generated.h"
@@ -25,7 +25,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 
 	UPROPERTY()
-	USaveData* SaveData;
+	UOptionSaveData* SaveData;
 
 	UPROPERTY()
 	UGlobalSharedVariable* GlobalSharedVariable;
@@ -123,7 +123,7 @@ public:
 		return GlobalSharedVariable;
 	}
 
-	USaveData* GetSaveData() const
+	UOptionSaveData* GetSaveData() const
 	{
 		return SaveData;
 	}

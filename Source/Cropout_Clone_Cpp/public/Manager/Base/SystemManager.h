@@ -6,6 +6,8 @@
 #include "ManagerBase.h"
 #include "SystemManager.generated.h"
 
+class UOptionSaveData;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API USystemManager : public UManagerBase
 {
@@ -24,4 +26,14 @@ public:
 	virtual void OnLevelDestroy()
 	{
 	}
+
+#pragma region SaveData
+	virtual void OnSaveGame(UOptionSaveData* SaveData)
+	{
+	}
+
+	virtual void OnLoadGame(UOptionSaveData* SaveData)
+	{
+	}
+#pragma endregion SaveData
 };

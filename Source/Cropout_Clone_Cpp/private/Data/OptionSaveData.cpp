@@ -1,10 +1,10 @@
-#include "Data/SaveData.h"
+#include "Data/OptionSaveData.h"
 
-USaveData::USaveData()
+UOptionSaveData::UOptionSaveData()
 {
 }
 
-float USaveData::GetSoundMix(int index) const
+float UOptionSaveData::GetSoundMix(int index) const
 {
 	if(index < 0 || index >= 2)
 	{
@@ -15,7 +15,7 @@ float USaveData::GetSoundMix(int index) const
 	return SoundMixes[index];
 }
 
-void USaveData::SetSoundMix(int index, float value)
+void UOptionSaveData::SetSoundMix(int index, float value)
 {
 	if(index < 0 || index >= 2)
 	{

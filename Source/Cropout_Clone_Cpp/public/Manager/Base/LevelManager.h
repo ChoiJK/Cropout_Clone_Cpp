@@ -6,6 +6,8 @@
 #include "ManagerBase.h"
 #include "LevelManager.generated.h"
 
+class UInGameSaveData;
+
 UCLASS()
 class CROPOUT_CLONE_CPP_API ULevelManager : public UManagerBase
 {
@@ -16,4 +18,14 @@ public:
 	virtual void Prepare() override;
 	virtual void Release() override;
 	virtual void Destroy() override;
+
+#pragma region SaveData
+	virtual void OnSaveGame(UInGameSaveData* SaveData)
+	{
+	}
+
+	virtual void OnLoadGame(UInGameSaveData* SaveData)
+	{
+	}
+#pragma endregion SaveData
 };

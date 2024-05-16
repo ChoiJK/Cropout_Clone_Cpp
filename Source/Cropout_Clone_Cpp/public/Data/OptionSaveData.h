@@ -1,15 +1,15 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "SaveData.generated.h"
+#include "OptionSaveData.generated.h"
 
 UCLASS()
-class CROPOUT_CLONE_CPP_API USaveData : public USaveGame
+class CROPOUT_CLONE_CPP_API UOptionSaveData : public USaveGame
 {
 	GENERATED_BODY()
 
 public:
-	USaveData();
+	UOptionSaveData();
 
 private:
 	float SoundMixes[2] = {1.f, 1.f};
