@@ -101,4 +101,8 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
     - Localization 처리
         - 외부 엑셀 테이블을 Localization Dashboard 데이터로 Import
 
-https://github.com/ChoiJK/Cropout_Clone_Cpp/assets/14192551/dd1c1670-f1d3-467f-9a97-75af6d196a46
+
+
+https://github.com/ChoiJK/Cropout_Clone_Cpp/assets/14192551/f4d12078-1ee8-42be-b97c-bdae18f90a5b
+
+
