@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Core/IslandBaseGameMode.h"
-#include "Enum/ResourceType.h"
 #include "InGameGameMode.generated.h"
 
 class ABuildingBaseActor;

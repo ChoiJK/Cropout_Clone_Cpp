@@ -167,6 +167,8 @@ void UCropoutGameInstance::InitializeLevelManagers()
 			Pair.Value->Prepare();
 		}
 	}
+
+	LoadInGameData();
 }
 
 void UCropoutGameInstance::ReleaseLevelManagers()
@@ -276,11 +278,7 @@ void UCropoutGameInstance::LoadInGameData()
 	UInGameSaveData* InGameSaveData = Cast<UInGameSaveData>(
 		UGameplayStatics::LoadGameFromSlot(TEXT("InGameSaveSlot"), 0));
 
-	if(InGameSaveData == nullptr)
-	{
-		return;
-	}
-
+	// InGameSaveData이 nullptr이면 저장데이터가 없다는 의미로서 진행
 	for(auto levelManagerTuple : LevelManagerMap)
 	{
 		levelManagerTuple.Value->OnLoadData(InGameSaveData);

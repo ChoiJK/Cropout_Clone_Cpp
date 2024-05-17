@@ -21,16 +21,6 @@
 void AIslandGen::BeginPlay()
 {
 	Super::BeginPlay();
-
-	auto gameInstance = UCropoutGameInstance::GetInstance();
-	if(gameInstance)
-	{
-		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
-	}
-
-	SetIslandSeed();
-
-	GenerateIslands(true);
 }
 
 void AIslandGen::OnConstruction(const FTransform& Transform)
@@ -49,6 +39,12 @@ void AIslandGen::OnConstruction(const FTransform& Transform)
 
 void AIslandGen::GenerateIslands(bool spawnMarkers)
 {
+	auto gameInstance = UCropoutGameInstance::GetInstance();
+	if(gameInstance)
+	{
+		globalSharedVariable = gameInstance->GetGlobalSharedVariable();
+	}
+
 	const auto dynMesh = GetDynamicMesh();
 	if(dynMesh == nullptr)
 	{
@@ -222,6 +218,11 @@ void AIslandGen::ThirdStep()
 void AIslandGen::SetIslandSeed(int seed)
 {
 	Seed = FRandomStream(seed);
+}
+
+int32 AIslandGen::GetIslandSeed() const
+{
+	return Seed.GetInitialSeed();
 }
 
 UDynamicMesh* AIslandGen::GetDynamicMesh()

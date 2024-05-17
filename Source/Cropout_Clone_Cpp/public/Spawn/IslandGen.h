@@ -25,12 +25,10 @@ class CROPOUT_CLONE_CPP_API AIslandGen : public ADynamicMeshActor
 {
 	GENERATED_BODY()
 
-	void GenerateIslands(bool spawnMarkers);
 	void FirstStep(bool spawnMarkers);
 	void SecondStep();
 	void ThirdStep();
 
-	void SetIslandSeed(int32 seed = 0);
 	void ClearSpawnPoints();
 
 	UDynamicMesh* GetDynamicMesh();
@@ -44,6 +42,10 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
+	void SetIslandSeed(int32 seed = 0);
+	int32 GetIslandSeed() const;
+	void GenerateIslands(bool spawnMarkers);
+
 	UPROPERTY(EditAnywhere)
 	FRandomStream Seed;
 

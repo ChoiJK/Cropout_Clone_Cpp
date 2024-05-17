@@ -16,6 +16,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Manager/TableManager.h"
 #include "SimpleRx/SimpleRx.h"
+#include "Spawn/IslandGen.h"
 #include "Spawn/Spawner.h"
 
 void UEntityManager::Init()
@@ -50,6 +51,22 @@ void UEntityManager::OnSaveData(UInGameSaveData* SaveData)
 void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
 {
 	Super::OnLoadData(SaveData);
+
+	bool hasSaveData = SaveData != nullptr;
+	auto islandGen = GetIslandGen();
+
+
+	if(IsValid(islandGen))
+	{
+		if(hasSaveData)
+		{
+		}
+		else
+		{
+			islandGen->SetIslandSeed(FMath::RandRange(1000, 100000));
+		}
+		islandGen->GenerateIslands(true);
+	}
 }
 
 void UEntityManager::AddInteractable(AInteractableBaseActor* Interactable)
@@ -428,6 +445,16 @@ ASpawner* UEntityManager::GetSpawner()
 	}
 
 	return SpawnerRef;
+}
+
+AIslandGen* UEntityManager::GetIslandGen()
+{
+	if(IslandGenRef == nullptr)
+	{
+		IslandGenRef = Cast<AIslandGen>(UGameplayStatics::GetActorOfClass(GetWorld(), AIslandGen::StaticClass()));
+	}
+
+	return IslandGenRef;
 }
 
 void UEntityManager::SpawnTownHall()

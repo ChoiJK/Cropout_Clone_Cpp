@@ -7,6 +7,7 @@
 #include "Enum/ResourceType.h"
 #include "EntityManager.generated.h"
 
+class AIslandGen;
 class AInteractableBaseActor;
 class UGlobalSharedVariable;
 class ABuildingBaseActor;
@@ -26,6 +27,10 @@ class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 
 	UPROPERTY()
 	ASpawner* SpawnerRef;
+
+	UPROPERTY()
+	AIslandGen* IslandGenRef;
+
 	UGlobalSharedVariable* GlobalSharedVariable;
 
 	UPROPERTY()
@@ -70,6 +75,7 @@ public:
 	virtual void OnLoadData(UInGameSaveData* SaveData) override;
 
 	ASpawner* GetSpawner();
+	AIslandGen* GetIslandGen();
 	void OnIslandGenComplete();
 
 	void AddBuilding(ABuildingBaseActor* Building, bool bRequireBuild = true);
