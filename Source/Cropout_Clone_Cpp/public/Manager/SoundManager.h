@@ -39,4 +39,6 @@ public:
 
 	float GetSoundMix(int index) const;
 	void SetSoundMix(int index, float value);
+
+	void ApplySoundVolume() const;
 };

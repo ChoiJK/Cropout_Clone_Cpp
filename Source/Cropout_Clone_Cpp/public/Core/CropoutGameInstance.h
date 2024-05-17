@@ -6,7 +6,6 @@
 #include "Engine/GameInstance.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Engine/StreamableManager.h"
-#include "../Data/OptionSaveData.h"
 #include "Level/CropoutLevelScriptBase.h"
 
 #include "CropoutGameInstance.generated.h"
@@ -22,10 +21,6 @@ UCLASS()
 class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-
-
-	UPROPERTY()
-	UOptionSaveData* SaveData;
 
 	UPROPERTY()
 	UGlobalSharedVariable* GlobalSharedVariable;
@@ -62,7 +57,6 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	virtual void Init() override;
 	virtual void Shutdown() override;
 
-private:
 	void InitializeSystemManagers();
 	void InitializeLevelManagers();
 	void ReleaseLevelManagers();
@@ -123,11 +117,6 @@ public:
 		return GlobalSharedVariable;
 	}
 
-	UOptionSaveData* GetSaveData() const
-	{
-		return SaveData;
-	}
-
 	void SetCurrentGameMode(AIslandBaseGameMode* gameMode);
 	void SetCurrentGameMode(AInGameGameMode* gameMode);
 
@@ -155,4 +144,9 @@ public:
 	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase);
 	void SystemManagerBeginDestroy(UManagerBase* Manager);
 	void LevelManagerBeginDestroy(UManagerBase* Manager);
+
+	void SaveOptionData();
+	void LoadOptionData();
+	void SaveInGameData();
+	void LoadInGameData();
 };

@@ -11,10 +11,9 @@ class CROPOUT_CLONE_CPP_API UOptionSaveData : public USaveGame
 public:
 	UOptionSaveData();
 
-private:
+	UPROPERTY(VisibleAnywhere, Category = "Options")
 	float SoundMixes[2] = {1.f, 1.f};
 
-public:
 	float GetSoundMix(int index) const;
 	void SetSoundMix(int index, float value);
 };

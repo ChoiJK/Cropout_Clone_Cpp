@@ -6,7 +6,7 @@
 #include "Core/InGame/InGameGameMode.h"
 #include "Core/InGame/InGamePlayerController.h"
 #include "Global/GlobalSharedVariable.h"
-#include "../../public/Data/OptionSaveData.h"
+#include "Kismet/GameplayStatics.h"
 #include "Manager/Base/SystemManager.h"
 
 UCropoutGameInstance* UCropoutGameInstance::Instance = nullptr;
@@ -19,8 +19,6 @@ void UCropoutGameInstance::Init()
 	GlobalSharedVariable = NewObject<UGlobalSharedVariable>();
 	GlobalSharedVariable->SetCropoutGameInstance(this);
 
-	SaveData = NewObject<UOptionSaveData>();
-
 	InitializeSystemManagers();
 }
 
@@ -30,6 +28,8 @@ void UCropoutGameInstance::Shutdown()
 
 	if((GIsEditor && IsEngineExitRequested()) == false)
 	{
+		SaveOptionData();
+
 		if(SystemManagerMap.IsEmpty() == false)
 		{
 			for(auto& Pair : SystemManagerMap)
@@ -128,6 +128,8 @@ void UCropoutGameInstance::InitializeSystemManagers()
 			Pair.Value->Prepare();
 		}
 	}
+
+	LoadOptionData();
 }
 
 void UCropoutGameInstance::InitializeLevelManagers()
@@ -224,6 +226,64 @@ void UCropoutGameInstance::LevelManagerBeginDestroy(UManagerBase* Manager)
 	if(Managers.Contains(Manager))
 	{
 		Managers.Remove(Manager);
+	}
+}
+
+void UCropoutGameInstance::SaveOptionData()
+{
+	UOptionSaveData* OptionSaveData = Cast<UOptionSaveData>(
+		UGameplayStatics::CreateSaveGameObject(UOptionSaveData::StaticClass()));
+
+	for(auto systemManagerTuple : SystemManagerMap)
+	{
+		systemManagerTuple.Value->OnSaveData(OptionSaveData);
+	}
+
+	UGameplayStatics::SaveGameToSlot(OptionSaveData, TEXT("OptionSaveSlot"), 0);
+}
+
+void UCropoutGameInstance::LoadOptionData()
+{
+	UOptionSaveData* OptionSaveData = Cast<UOptionSaveData>(
+		UGameplayStatics::LoadGameFromSlot(TEXT("OptionSaveSlot"), 0));
+
+	if(OptionSaveData == nullptr)
+	{
+		return;
+	}
+
+	for(auto systemManagerTuple : SystemManagerMap)
+	{
+		systemManagerTuple.Value->OnLoadData(OptionSaveData);
+	}
+}
+
+void UCropoutGameInstance::SaveInGameData()
+{
+	UInGameSaveData* InGameSaveData = Cast<UInGameSaveData>(
+		UGameplayStatics::CreateSaveGameObject(UInGameSaveData::StaticClass()));
+
+	for(auto levelManagerTuple : LevelManagerMap)
+	{
+		levelManagerTuple.Value->OnSaveData(InGameSaveData);
+	}
+
+	UGameplayStatics::SaveGameToSlot(InGameSaveData, TEXT("InGameSaveSlot"), 0);
+}
+
+void UCropoutGameInstance::LoadInGameData()
+{
+	UInGameSaveData* InGameSaveData = Cast<UInGameSaveData>(
+		UGameplayStatics::LoadGameFromSlot(TEXT("InGameSaveSlot"), 0));
+
+	if(InGameSaveData == nullptr)
+	{
+		return;
+	}
+
+	for(auto levelManagerTuple : LevelManagerMap)
+	{
+		levelManagerTuple.Value->OnLoadData(InGameSaveData);
 	}
 }
 

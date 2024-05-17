@@ -18,6 +18,7 @@ public:
 	virtual void Release() override;
 	virtual void Destroy() override;
 
+#pragma region Level Change
 	virtual void OnLevelLoaded()
 	{
 	}
@@ -25,6 +26,7 @@ public:
 	virtual void OnLevelDestroy()
 	{
 	}
+#pragma endregion
 
 #pragma region SaveData
 	virtual void OnSaveData(UOptionSaveData* SaveData)
