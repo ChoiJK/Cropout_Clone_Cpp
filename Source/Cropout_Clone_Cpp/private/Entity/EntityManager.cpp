@@ -425,7 +425,6 @@ ASpawner* UEntityManager::GetSpawner()
 	if(SpawnerRef == nullptr)
 	{
 		SpawnerRef = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
-		check(SpawnerRef != nullptr);
 	}
 
 	return SpawnerRef;

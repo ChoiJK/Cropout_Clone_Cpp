@@ -13,6 +13,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Core/InGame/InGameGameMode.h"
 #include "Data/BuildableInfo.h"
+#include "Manager/ResourceItemManager.h"
 
 #include "SimpleRx/SimpleRx.h"
 
@@ -91,10 +92,11 @@ void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo
 	BuildableInfo = buildableInfo;
 
 	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
+	UResourceItemManager* resourceItemManager = UCropoutGameInstance::GetInstance()->GetLevelManager<
+		UResourceItemManager>();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
-		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
+		resourceItemManager->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
 		{
 			CheckHasConstructionCost();
 		})->AddTo(CompositeDisposable);
@@ -103,11 +105,12 @@ void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo
 
 void UBuildPlacementWidget::CheckHasConstructionCost() const
 {
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
+	UResourceItemManager* resourceItemManager = UCropoutGameInstance::GetInstance()->GetLevelManager<
+		UResourceItemManager>();
 	bool hasResourceCost = true;
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
-		if(gameMode->HasResource(cost.ResourceType, cost.Coat) == false)
+		if(resourceItemManager->HasResource(cost.ResourceType, cost.Coat) == false)
 		{
 			hasResourceCost = false;
 			break;
@@ -119,9 +122,10 @@ void UBuildPlacementWidget::CheckHasConstructionCost() const
 
 void UBuildPlacementWidget::SpendConstructionCost() const
 {
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
+	UResourceItemManager* resourceItemManager = UCropoutGameInstance::GetInstance()->GetLevelManager<
+		UResourceItemManager>();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
-		gameMode->SpendResource(cost.ResourceType, cost.Coat);
+		resourceItemManager->SpendResource(cost.ResourceType, cost.Coat);
 	}
 }

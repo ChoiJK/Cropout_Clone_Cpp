@@ -63,7 +63,6 @@ public:
 
 private:
 	UCropoutGameInstance* GameInstance;
-	AInGameGameMode* GameMode;
 	EVillagerJobType CurrentJobType = EVillagerJobType::None;
 	FName CurrentJobName;
 

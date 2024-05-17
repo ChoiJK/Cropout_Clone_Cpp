@@ -13,6 +13,7 @@
 #include "Entity/EntityManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Enum/ResourceType.h"
+#include "Manager/ResourceItemManager.h"
 
 TArray<USkeletalMesh*> AVillager::HairMeshes;
 
@@ -110,7 +111,6 @@ void AVillager::BeginPlay()
 	Super::BeginPlay();
 
 	GameInstance = UCropoutGameInstance::GetInstance();
-	GameMode = Cast<AInGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	AddActorWorldOffset(FVector(0.f, 0.f, Capsule->GetScaledCapsuleHalfHeight()));
 
@@ -144,7 +144,8 @@ void AVillager::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AVillager::Eat()
 {
 	int withdrawnAmount = 0;
-	GameMode->ExtractResource(EResourceType::Food, 3, withdrawnAmount);
+	UResourceItemManager* resourceItemManager = GameInstance->GetLevelManager<UResourceItemManager>();
+	resourceItemManager->ExtractResource(EResourceType::Food, 3, withdrawnAmount);
 }
 
 void AVillager::Action(AActor* jobAction)
@@ -216,7 +217,8 @@ void AVillager::DeliverResource()
 {
 	if(StoreResourceType != EResourceType::None)
 	{
-		GameMode->StoreResource(StoreResourceType, StoreAmount);
+		UResourceItemManager* resourceItemManager = GameInstance->GetLevelManager<UResourceItemManager>();
+		resourceItemManager->StoreResource(StoreResourceType, StoreAmount);
 		StoreResourceType = EResourceType::None;
 		StoreAmount = 0;
 		ToolMesh->SetVisibility(false);

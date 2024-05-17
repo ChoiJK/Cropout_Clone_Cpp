@@ -9,6 +9,7 @@
 #include "Core/InGame/InGamePlayerController.h"
 #include "Core/InGame/InGameGameMode.h"
 #include "Data/BuildableInfo.h"
+#include "Manager/ResourceItemManager.h"
 #include "Manager/TableManager.h"
 #include "Player/CropoutPlayer.h"
 
@@ -56,10 +57,11 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 		}));
 
 	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
+	UResourceItemManager* resourceItemManager = UCropoutGameInstance::GetInstance()->GetLevelManager<
+		UResourceItemManager>();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
-		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
+		resourceItemManager->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
 		{
 			CheckHasConstructionCost();
 		})->AddTo(CompositeDisposable);
@@ -68,11 +70,12 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 
 void UBuildEntityCardWidget::CheckHasConstructionCost()
 {
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
+	UResourceItemManager* resourceItemManager = UCropoutGameInstance::GetInstance()->GetLevelManager<
+		UResourceItemManager>();
 	bool hasResourceCost = true;
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
-		if(gameMode->HasResource(cost.ResourceType, cost.Coat) == false)
+		if(resourceItemManager->HasResource(cost.ResourceType, cost.Coat) == false)
 		{
 			hasResourceCost = false;
 			break;

@@ -16,6 +16,7 @@
 #include "Core/InGame/InGameGameMode.h"
 #include "Core/ApplicationState/ApplicationStateManager.h"
 #include "Entity/EntityManager.h"
+#include "Manager/ResourceItemManager.h"
 
 #include "SimpleRx/SimpleRx.h"
 
@@ -36,6 +37,7 @@ void UInGameLayerWidget::NativeConstruct()
 		std::placeholders::_1))->AddTo(CompositeDisposable);
 
 	TSubclassOf<UUserWidget>* resourceWidget = TableManager->GetWidgetClass(EWidgetType::ResourceElement);
+	UResourceItemManager* resourceItemManager = gameInstance->GetLevelManager<UResourceItemManager>();
 
 	if(resourceWidget)
 	{
@@ -46,14 +48,14 @@ void UInGameLayerWidget::NativeConstruct()
 			ResourceWidget[i]->SetResourceType(static_cast<EResourceType>(i + 1));
 			ResourceWidget[i]->SetValue(0);
 
-			gameInstance->GetCurrentInGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1))->
-			              SubscribeAndNotify([this, i](int value)
-			              {
-				              if(ResourceWidget[i])
-				              {
-					              ResourceWidget[i]->SetValue(value);
-				              }
-			              })->AddTo(CompositeDisposable);
+			resourceItemManager->GetResourceRP(static_cast<EResourceType>(i + 1))->
+			                     SubscribeAndNotify([this, i](int value)
+			                     {
+				                     if(ResourceWidget[i])
+				                     {
+					                     ResourceWidget[i]->SetValue(value);
+				                     }
+			                     })->AddTo(CompositeDisposable);
 		}
 	}
 
