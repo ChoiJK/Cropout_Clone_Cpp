@@ -21,6 +21,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 protected:
+	virtual void PostInitializeComponents() override;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

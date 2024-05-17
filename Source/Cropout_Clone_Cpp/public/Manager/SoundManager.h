@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Base/LevelManager.h"
 #include "Base/SystemManager.h"
 #include "SoundManager.generated.h"
 
@@ -16,6 +15,9 @@ class CROPOUT_CLONE_CPP_API USoundManager : public USystemManager
 	GENERATED_BODY()
 
 	UPROPERTY()
+	USoundBase* MainMusic = nullptr;
+
+	UPROPERTY()
 	UAudioComponent* MusicComponent = nullptr;
 
 	float SoundMixes[2] = {1.f, 1.f};
@@ -26,10 +28,15 @@ public:
 	virtual void Prepare() override;
 	virtual void Release() override;
 	virtual void Destroy() override;
+	virtual void OnLevelLoaded() override;;
+	virtual void OnLevelDestroy() override;
+
+	virtual void OnSaveData(UOptionSaveData* SaveData) override;
+	virtual void OnLoadData(UOptionSaveData* SaveData) override;
 
 	void PlayMusic();
 	void StopMusic();
 
 	float GetSoundMix(int index) const;
-	void SetSoundMix(int index, float value, USoundClass* InSoundClass, USoundMix* InSoundMixModifier);
+	void SetSoundMix(int index, float value);
 };

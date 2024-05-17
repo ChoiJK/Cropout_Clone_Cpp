@@ -12,7 +12,7 @@
 void USoundSliderWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
-	Descriptor->SetText(SoundClassTitle);
+	Descriptor->SetText(FText::FromString(EnumToString(Index)));
 }
 
 void USoundSliderWidget::NativeConstruct()
@@ -50,7 +50,7 @@ void USoundSliderWidget::OnValueChanged(float Value)
 		USoundManager* soundManager = gi->GetSystemManager<USoundManager>();
 		if(IsValid(soundManager))
 		{
-			soundManager->SetSoundMix(static_cast<int>(Index), Value, InSoundClass, InSoundMixModifier);
+			soundManager->SetSoundMix(static_cast<int>(Index), Value);
 		}
 	}
 }

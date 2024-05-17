@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "ManagerBase.h"
+#include "Data/InGameSaveData.h"
 #include "LevelManager.generated.h"
-
-class UInGameSaveData;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ULevelManager : public UManagerBase
@@ -20,11 +19,11 @@ public:
 	virtual void Destroy() override;
 
 #pragma region SaveData
-	virtual void OnSaveGame(UInGameSaveData* SaveData)
+	virtual void OnSaveData(UInGameSaveData* SaveData)
 	{
 	}
 
-	virtual void OnLoadGame(UInGameSaveData* SaveData)
+	virtual void OnLoadData(UInGameSaveData* SaveData)
 	{
 	}
 #pragma endregion SaveData

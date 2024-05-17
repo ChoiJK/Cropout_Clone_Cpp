@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "ManagerBase.h"
+#include "Data/OptionSaveData.h"
 #include "SystemManager.generated.h"
-
-class UOptionSaveData;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API USystemManager : public UManagerBase
@@ -28,11 +27,11 @@ public:
 	}
 
 #pragma region SaveData
-	virtual void OnSaveGame(UOptionSaveData* SaveData)
+	virtual void OnSaveData(UOptionSaveData* SaveData)
 	{
 	}
 
-	virtual void OnLoadGame(UOptionSaveData* SaveData)
+	virtual void OnLoadData(UOptionSaveData* SaveData)
 	{
 	}
 #pragma endregion SaveData

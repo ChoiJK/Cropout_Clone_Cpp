@@ -6,6 +6,7 @@
 #include "Data/WidgetTableData.h"
 #include "Data/BuildableInfo.h"
 #include "Data/InteractableInfo.h"
+#include "Data/SoundMixClassInfo.h"
 #include "Data/SpawnerInfo.h"
 
 
@@ -20,6 +21,7 @@ UTableManager::UTableManager()
 	InitializeBuildableTable();
 	InitializeInteractableTable();
 	InitializeSpawnerTable();
+	InitializeSoundMixTable();
 }
 
 void UTableManager::Init()
@@ -107,6 +109,26 @@ void UTableManager::InitializeSpawnerTable()
 	}
 }
 
+void UTableManager::InitializeSoundMixTable()
+{
+	ConstructorHelpers::FObjectFinder<UDataTable> SoundMixClassTable
+		(TEXT("Engine.DataTable'/Game/Table/SoundMixClassTable.SoundMixClassTable'"));
+
+	if(SoundMixClassTable.Succeeded())
+	{
+		TArray<FName> rowNames = SoundMixClassTable.Object->GetRowNames();
+		for(auto rowName : rowNames)
+		{
+			FSoundMixClassInfo* soundMixClassInfo = SoundMixClassTable.Object->FindRow<FSoundMixClassInfo>(
+				rowName, TEXT("soundMixClassInfo"));
+			if(soundMixClassInfo)
+			{
+				SoundMixTable.Add(soundMixClassInfo->Index, soundMixClassInfo);
+			}
+		}
+	}
+}
+
 void UTableManager::Prepare()
 {
 	Super::Prepare();
@@ -160,4 +182,9 @@ TArray<const FSpawnerInfo*> UTableManager::GetSpawnerInfo()
 		spawnerInfos.Add(spawnerInfo.Value);
 	}
 	return spawnerInfos;
+}
+
+FSoundMixClassInfo* UTableManager::GetSoundMixClassInfo(ESoundMixType type)
+{
+	return SoundMixTable.FindRef(type);
 }

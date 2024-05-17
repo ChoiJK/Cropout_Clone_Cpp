@@ -6,6 +6,7 @@
 #include "Spawn/Spawner.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Manager/SoundManager.h"
 
 AIslandBaseGameMode::AIslandBaseGameMode()
 {
@@ -19,6 +20,12 @@ AIslandBaseGameMode::AIslandBaseGameMode()
 void AIslandBaseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if(auto gameInstance = GetCropoutGameInstance())
+	{
+		USoundManager* soundManager = gameInstance->GetSystemManager<USoundManager>();
+		soundManager->PlayMusic();
+	}
 }
 
 void AIslandBaseGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

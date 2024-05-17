@@ -19,7 +19,6 @@ class CROPOUT_CLONE_CPP_API USoundSliderWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
@@ -29,16 +28,6 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	USlider* Slider;
-
-	UPROPERTY(EditAnywhere)
-	// @Todo - SoundClass, SoundMixModifier는 추후 Table로 뺄 수 있음. [ESoundMixType, USoundClass, USoundMix, ClassTitle]
-	USoundClass* InSoundClass;
-
-	UPROPERTY(EditAnywhere)
-	FText SoundClassTitle;
-
-	UPROPERTY(EditAnywhere)
-	USoundMix* InSoundMixModifier;
 
 	UPROPERTY(EditAnywhere)
 	ESoundMixType Index;

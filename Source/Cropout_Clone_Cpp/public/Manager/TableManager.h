@@ -6,18 +6,19 @@
 #include "Base/SystemManager.h"
 #include "UObject/Object.h"
 #include "Enum/WidgetType.h"
+#include "Enum/SoundMixType.h"
 #include "Data/BuildableInfo.h"
 #include "TableManager.generated.h"
 
 struct FSpawnerInfo;
 struct FInteractableInfo;
+struct FSoundMixClassInfo;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API UTableManager : public USystemManager
 {
 	GENERATED_BODY()
 
-private:
 	TMap<EWidgetType, TSubclassOf<UUserWidget>> WidgetTable;
 	void InitializeWidgetTable();
 
@@ -29,6 +30,9 @@ private:
 
 	TMap<FName, FSpawnerInfo*> SpawnerTable;
 	void InitializeSpawnerTable();
+
+	TMap<ESoundMixType, FSoundMixClassInfo*> SoundMixTable;
+	void InitializeSoundMixTable();
 
 public:
 	UTableManager();
@@ -49,4 +53,7 @@ public:
 
 	// Spawner
 	TArray<const FSpawnerInfo*> GetSpawnerInfo();
+
+	// SoundMixTable
+	FSoundMixClassInfo* GetSoundMixClassInfo(ESoundMixType type);
 };

@@ -20,12 +20,17 @@ void ACropoutLevelScriptBase::Tick(float DeltaSeconds)
 	ASM->UpdateState();
 }
 
-void ACropoutLevelScriptBase::BeginPlay()
+void ACropoutLevelScriptBase::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	gameInstance->SetCurrentLevelScript(this);
+}
+
+void ACropoutLevelScriptBase::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void ACropoutLevelScriptBase::BeginDestroy()

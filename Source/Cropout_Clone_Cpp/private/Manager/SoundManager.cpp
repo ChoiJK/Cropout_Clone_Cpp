@@ -5,7 +5,10 @@
 
 #include "AudioModulationStatics.h"
 #include "SoundControlBus.h"
+#include "Core/CropoutGameInstance.h"
+#include "Data/SoundMixClassInfo.h"
 #include "Kismet/GameplayStatics.h"
+#include "Manager/TableManager.h"
 
 USoundManager::USoundManager()
 {
@@ -56,10 +59,8 @@ void USoundManager::Init()
 
 	FName mainMusicPath = TEXT(
 		"MetasoundEngine.MetaSoundSource'/Game/Audio/MUSIC/MUS_Main_MSS.MUS_Main_MSS'");
-	USoundBase* mainMusic = Cast<USoundBase>(
+	MainMusic = Cast<USoundBase>(
 		StaticLoadObject(USoundBase::StaticClass(), nullptr, *mainMusicPath.ToString()));
-	MusicComponent = UGameplayStatics::CreateSound2D(GetWorld(), mainMusic, 1.f, 1.f, 0.f,
-		nullptr, true);
 }
 
 void USoundManager::Prepare()
@@ -77,14 +78,60 @@ void USoundManager::Destroy()
 	Super::Destroy();
 }
 
+void USoundManager::OnLevelLoaded()
+{
+	Super::OnLevelLoaded();
+	MusicComponent = UGameplayStatics::CreateSound2D(GetWorld(), MainMusic, 1.f, 1.f, 0.f,
+		nullptr, true);
+}
+
+void USoundManager::OnLevelDestroy()
+{
+	Super::OnLevelDestroy();
+
+	if(MusicComponent)
+	{
+		MusicComponent->Stop();
+		MusicComponent = nullptr;
+	}
+}
+
+void USoundManager::OnSaveData(UOptionSaveData* SaveData)
+{
+	Super::OnSaveData(SaveData);
+
+	SaveData->SetSoundMix(0, SoundMixes[0]);
+	SaveData->SetSoundMix(1, SoundMixes[1]);
+}
+
+void USoundManager::OnLoadData(UOptionSaveData* SaveData)
+{
+	Super::OnLoadData(SaveData);
+
+	SoundMixes[0] = SaveData->GetSoundMix(0);
+	SoundMixes[1] = SaveData->GetSoundMix(1);
+}
+
 
 void USoundManager::PlayMusic()
 {
+	if(MusicComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MusicComponent is nullptr"));
+		return;
+	}
+
 	MusicComponent->Play();
 }
 
 void USoundManager::StopMusic()
 {
+	if(MusicComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MusicComponent is nullptr"));
+		return;
+	}
+
 	MusicComponent->Stop();
 }
 
@@ -99,7 +146,7 @@ float USoundManager::GetSoundMix(int index) const
 	return SoundMixes[index];
 }
 
-void USoundManager::SetSoundMix(int index, float value, USoundClass* InSoundClass, USoundMix* InSoundMixModifier)
+void USoundManager::SetSoundMix(int index, float value)
 {
 	if(index < 0 || index >= 2)
 	{
@@ -107,6 +154,11 @@ void USoundManager::SetSoundMix(int index, float value, USoundClass* InSoundClas
 		return;
 	}
 
-	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), InSoundMixModifier, InSoundClass, value);
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	UTableManager* tableManager = gameInstance->GetSystemManager<UTableManager>();
+	const FSoundMixClassInfo* soundMixClass = tableManager->GetSoundMixClassInfo(static_cast<ESoundMixType>(index));
+
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), soundMixClass->InSoundMixModifier,
+		soundMixClass->InSoundClass, value);
 	SoundMixes[index] = value;
 }
