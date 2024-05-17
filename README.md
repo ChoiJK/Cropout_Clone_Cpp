@@ -1,7 +1,8 @@
 # Cropout with Cpp
 
 [![en](https://img.shields.io/badge/lang-en-red)](README-en.md)
-[![kr](https://img.shields.io/badge/lang-kr-blue)](README.md)
+[![kr](https://img.shields.io/badge/lang-kr-blue)](README.md)   
+[![Linkedin](https://i.sstatic.net/gVE0j.png) LinkedIn](https://www.linkedin.com/in/choijk)
 
 - [v1_회고 (~ 24/05/14)](Pages/Retrospectives_24_05_14.md)
 ---

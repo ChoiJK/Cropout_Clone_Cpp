@@ -1,7 +1,8 @@
 # Cropout_Clone_Cpp
 
 [![en](https://img.shields.io/badge/lang-en-red)](README-en.md)
-[![kr](https://img.shields.io/badge/lang-kr-blue)](README.md)
+[![kr](https://img.shields.io/badge/lang-kr-blue)](README.md)   
+[![Linkedin](https://i.sstatic.net/gVE0j.png) LinkedIn](https://www.linkedin.com/in/choijk)
 
 ## 1. Introduction
 
