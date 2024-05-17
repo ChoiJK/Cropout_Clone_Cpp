@@ -25,7 +25,6 @@ class CROPOUT_CLONE_CPP_API AIslandGen : public ADynamicMeshActor
 {
 	GENERATED_BODY()
 
-private:
 	void GenerateIslands(bool spawnMarkers);
 	void FirstStep(bool spawnMarkers);
 	void SecondStep();

@@ -160,6 +160,9 @@ void USoundManager::SetSoundMix(int index, float value)
 
 	SoundMixes[index] = value;
 
+	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
+	gameInstance->SaveOptionData();
+
 	ApplySoundVolume();
 }
 

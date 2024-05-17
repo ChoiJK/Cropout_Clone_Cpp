@@ -8,8 +8,6 @@
 #include "IslandBaseGameMode.generated.h"
 
 class UCropoutGameInstance;
-class FGlobalEventDispatcher;
-class UGlobalSharedVariable;
 class ASpawner;
 
 UCLASS()
@@ -20,24 +18,10 @@ class CROPOUT_CLONE_CPP_API AIslandBaseGameMode : public AGameModeBase
 public:
 	AIslandBaseGameMode();
 
-private:
-	UPROPERTY()
-	ASpawner* SpawnerRef;
-
 protected:
-	TWeakPtr<FGlobalEventDispatcher> EventDispatcher;
-	UGlobalSharedVariable* GlobalSharedVariable;
-
-	FDelegateHandle IslandGenCompleteHandle;
-
-	virtual void OnIslandGenCompleteInternal();
-
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
-	void OnIslandGenComplete();
-
 	UCropoutGameInstance* GetCropoutGameInstance();
-	ASpawner* GetSpawner();
 };

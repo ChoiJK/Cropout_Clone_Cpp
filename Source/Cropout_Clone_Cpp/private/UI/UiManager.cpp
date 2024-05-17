@@ -5,6 +5,7 @@
 
 #include "Core/CropoutGameInstance.h"
 #include "Core/InGame/InGameGameMode.h"
+#include "Entity/EntityManager.h"
 #include "UI/Panel/InGameLayerWidget.h"
 #include "UI/Element/ResourceWidget.h"
 #include "Manager/TableManager.h"
@@ -137,6 +138,7 @@ void UUiManager::UpdateVillagerCount()
 {
 	if(IsValid(UI_InGameMain))
 	{
-		UI_InGameMain->SetVillagerCount(GameInstance->GetCurrentGameMode()->GetVillagerCount());
+		UEntityManager* entityManager = GameInstance->GetLevelManager<UEntityManager>();
+		UI_InGameMain->SetVillagerCount(entityManager->GetVillagerCount());
 	}
 }

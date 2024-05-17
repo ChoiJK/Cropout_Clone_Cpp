@@ -16,6 +16,7 @@
 
 #include "Core/CropoutGameInstance.h"
 #include "Core/IslandBaseGameMode.h"
+#include "Entity/EntityManager.h"
 
 void AIslandGen::BeginPlay()
 {
@@ -186,7 +187,8 @@ void AIslandGen::SecondStep()
 	{
 		if(IsValid(islandGameMode))
 		{
-			islandGameMode->OnIslandGenComplete();
+			UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+			entityManager->OnIslandGenComplete();
 		}
 	}
 }

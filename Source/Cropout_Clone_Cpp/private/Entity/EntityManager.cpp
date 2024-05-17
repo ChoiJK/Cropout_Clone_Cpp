@@ -3,20 +3,33 @@
 
 #include "Entity/EntityManager.h"
 
+#include "EngineUtils.h"
+#include "NavigationSystem.h"
+#include "Core/CropoutGameInstance.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Entity/Interactable/Crop/CropBaseActor.h"
+#include "Entity/VIllager/Villager.h"
+#include "GLobal/GlobalSharedVariable.h"
+#include "Global/GlobalUtilFunctions.h"
+#include "Kismet/GameplayStatics.h"
+#include "Manager/TableManager.h"
 #include "SimpleRx/SimpleRx.h"
+#include "Spawn/Spawner.h"
 
 void UEntityManager::Init()
 {
 	Super::Init();
+
+	Villager_Ref = AVillager::StaticClass();
 }
 
 void UEntityManager::Prepare()
 {
 	Super::Prepare();
+
+	GlobalSharedVariable = UCropoutGameInstance::GetInstance()->GetGlobalSharedVariable();
 }
 
 void UEntityManager::Release()
@@ -27,6 +40,16 @@ void UEntityManager::Release()
 void UEntityManager::Destroy()
 {
 	Super::Destroy();
+}
+
+void UEntityManager::OnSaveData(UInGameSaveData* SaveData)
+{
+	Super::OnSaveData(SaveData);
+}
+
+void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
+{
+	Super::OnLoadData(SaveData);
 }
 
 void UEntityManager::AddInteractable(AInteractableBaseActor* Interactable)
@@ -390,4 +413,125 @@ std::shared_ptr<SimpleRxReactiveProperty<int>> UEntityManager::GetVillagerCountR
 	}
 
 	return VillagerCountRp;
+}
+
+void UEntityManager::OnIslandGenComplete()
+{
+	OnIslandGenCompleteInternal();
+}
+
+ASpawner* UEntityManager::GetSpawner()
+{
+	if(SpawnerRef == nullptr)
+	{
+		SpawnerRef = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
+		check(SpawnerRef != nullptr);
+	}
+
+	return SpawnerRef;
+}
+
+void UEntityManager::SpawnTownHall()
+{
+	UClass* bp_class = GlobalSharedVariable->GetSpawnMarkerClass();
+
+	if(bp_class == nullptr)
+	{
+		return;
+	}
+
+	TArray<AActor*> FoundActors;
+	for(TActorIterator<AActor> It(GetWorld(), bp_class); It; ++It)
+	{
+		FoundActors.Add(*It);
+	}
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), bp_class, FoundActors);
+
+	FVector spawnLocation = FVector::ZeroVector;
+	if(FoundActors.Num() != 0)
+	{
+		spawnLocation = FGlobalUtilFunctions::SteppedPosition(
+			FoundActors[FMath::RandRange(0, FoundActors.Num() - 1)]->GetActorLocation());
+	}
+
+	UTableManager* tableManager = UCropoutGameInstance::GetInstance()->GetSystemManager<UTableManager>();
+	const FInteractableInfo* info = tableManager->GetInteractableInfo("TownHall");
+	TownHall = Cast<ABuildingBaseActor>(GetSpawner()->SpawnInteractable(info));
+	if(TownHall)
+	{
+		TownHall->SetActorLocation(spawnLocation);
+	}
+}
+
+
+void UEntityManager::OnIslandGenCompleteInternal()
+{
+	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
+	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
+	{
+		// @Todo : Check Save Bool (In Game instance)
+		{
+		}
+
+		// else
+		{
+			// InGame Level이 아니면 Pass 필요
+			if(UCropoutGameInstance::GetInstance()->GetCurrentInGameMode() != nullptr)
+			{
+				SpawnTownHall();
+				SpawnVillagersInBegin();
+			}
+
+			auto spawner = GetSpawner();
+			if(IsValid(spawner))
+			{
+				spawner->SpawnRandom();
+			}
+		}
+	}));
+}
+
+void UEntityManager::SpawnVillagersInBegin()
+{
+	for(int i = 0; i < 3; ++i)
+	{
+		SpawnVillager();
+	}
+}
+
+
+AVillager* UEntityManager::SpawnVillager()
+{
+	FActorSpawnParameters ActorSpawnParams;
+	ActorSpawnParams.Owner = nullptr;
+	ActorSpawnParams.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+	FVector location = FVector::ZeroVector;
+	FVector boxExtent = FVector::ZeroVector;
+	TownHall->GetActorBounds(false, location, boxExtent);
+	float newPosDistance = FMath::Min(boxExtent.X, boxExtent.Y) * 2.f;
+	FVector newPosDelta = FMath::VRand() * newPosDistance;
+	location += newPosDelta;
+	location.Z = 0.f;
+
+	UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
+	FNavLocation NavLocation;
+	NavSys->GetRandomReachablePointInRadius(location, 500.0f, NavLocation);
+
+	auto NewPawn = GetWorld()->SpawnActor<AVillager>(*Villager_Ref, NavLocation, FRotator::ZeroRotator,
+		ActorSpawnParams);
+
+	if(NewPawn != nullptr)
+	{
+		if(NewPawn->Controller == NULL)
+		{
+			// NOTE: SpawnDefaultController ALSO calls Possess() to possess the pawn (if a controller is successfully spawned).
+			NewPawn->SpawnDefaultController();
+		}
+
+		return NewPawn;
+	}
+
+	return nullptr;
 }

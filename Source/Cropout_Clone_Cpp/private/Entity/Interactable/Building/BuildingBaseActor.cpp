@@ -196,9 +196,10 @@ void ABuildingBaseActor::BuildSuccess()
 	case EBuildingType::House:
 		{
 			UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
+			UEntityManager* entityManager = GameInstance->GetLevelManager<UEntityManager>();
 			for(int i = 0; i < NewVillagerCount; i++)
 			{
-				GameInstance->GetCurrentGameMode()->SpawnVillager();
+				entityManager->SpawnVillager();
 			}
 			break;
 		}

@@ -5,7 +5,9 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Core/CropoutGameInstance.h"
 #include "Core/InGame/InGameGameMode.h"
+#include "Entity/EntityManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Resource/ResourceBaseActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -60,8 +62,9 @@ EBTNodeResult::Type UBTTask_InitialCollectResource::ExecuteTask(UBehaviorTreeCom
 		}
 		BlackboardComp->SetValueAsObject(Key_Resource.SelectedKeyName, targetRef);
 
-		AActor* TownHallActor = Cast<AInGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->
-			TownHall;
+		UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+
+		AActor* TownHallActor = entityManager->TownHall;
 		if(TownHallActor != nullptr)
 		{
 			BlackboardComp->SetValueAsObject(Key_TownHall.SelectedKeyName, TownHallActor);

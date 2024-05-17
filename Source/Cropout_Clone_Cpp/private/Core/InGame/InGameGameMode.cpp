@@ -2,30 +2,16 @@
 
 #include "Core/InGame/InGameGameMode.h"
 
-#include "EngineUtils.h"
-#include "NavigationSystem.h"
-#include "Global/GlobalSharedVariable.h"
-#include "Global/GlobalUtilFunctions.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/InGame/InGamePlayerController.h"
 #include "Core/ApplicationState/ApplicationStateManager.h"
-#include "Entity/Interactable/Building/BuildingBaseActor.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/CropoutPlayer.h"
-#include "Entity/Villager/Villager.h"
 #include "Enum/ResourceType.h"
-#include "Manager/TableManager.h"
-
-
-#include "Spawn/Spawner.h"
-
 
 AInGameGameMode::AInGameGameMode()
 {
 	DefaultPawnClass = ACropoutPlayer::StaticClass();
 	PlayerControllerClass = AInGamePlayerController::StaticClass();
-
-	Villager_Ref = AVillager::StaticClass();
 }
 
 void AInGameGameMode::BeginPlay()
@@ -44,38 +30,6 @@ void AInGameGameMode::BeginPlay()
 void AInGameGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-}
-
-void AInGameGameMode::SpawnTownHall()
-{
-	UClass* bp_class = GlobalSharedVariable->GetSpawnMarkerClass();
-
-	if(bp_class == nullptr)
-	{
-		return;
-	}
-
-	TArray<AActor*> FoundActors;
-	for(TActorIterator<AActor> It(GetWorld(), bp_class); It; ++It)
-	{
-		FoundActors.Add(*It);
-	}
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), bp_class, FoundActors);
-
-	FVector spawnLocation = FVector::ZeroVector;
-	if(FoundActors.Num() != 0)
-	{
-		spawnLocation = FGlobalUtilFunctions::SteppedPosition(
-			FoundActors[FMath::RandRange(0, FoundActors.Num() - 1)]->GetActorLocation());
-	}
-
-	UTableManager* tableManager = GetCropoutGameInstance()->GetSystemManager<UTableManager>();
-	const FInteractableInfo* info = tableManager->GetInteractableInfo("TownHall");
-	TownHall = Cast<ABuildingBaseActor>(GetSpawner()->SpawnInteractable(info));
-	if(TownHall)
-	{
-		TownHall->SetActorLocation(spawnLocation);
-	}
 }
 
 int AInGameGameMode::GetResourceAmount(EResourceType type)
@@ -169,68 +123,4 @@ void AInGameGameMode::ResourceDebugMessage()
 		GEngine->AddOnScreenDebugMessage(static_cast<int>(EResourceType::Stone), 5.f, FColor::Black,
 			FString::Printf(TEXT("Stone %d"), ResourceBank[EResourceType::Stone]->GetValue()));
 	}
-}
-
-void AInGameGameMode::OnIslandGenCompleteInternal()
-{
-	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
-	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
-	{
-		// @Todo : Check Save Bool (In Game instance)
-		{
-		}
-
-		// else
-		{
-			SpawnTownHall();
-			SpawnVillagersInBegin();
-
-			Super::OnIslandGenCompleteInternal();
-		}
-	}));
-}
-
-void AInGameGameMode::SpawnVillagersInBegin()
-{
-	for(int i = 0; i < 3; ++i)
-	{
-		SpawnVillager();
-	}
-}
-
-
-AVillager* AInGameGameMode::SpawnVillager()
-{
-	FActorSpawnParameters ActorSpawnParams;
-	ActorSpawnParams.Owner = Owner;
-	ActorSpawnParams.SpawnCollisionHandlingOverride =
-		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-
-	FVector location = FVector::ZeroVector;
-	FVector boxExtent = FVector::ZeroVector;
-	TownHall->GetActorBounds(false, location, boxExtent);
-	float newPosDistance = FMath::Min(boxExtent.X, boxExtent.Y) * 2.f;
-	FVector newPosDelta = FMath::VRand() * newPosDistance;
-	location += newPosDelta;
-	location.Z = 0.f;
-
-	UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
-	FNavLocation NavLocation;
-	NavSys->GetRandomReachablePointInRadius(location, 500.0f, NavLocation);
-
-	auto NewPawn = GetWorld()->SpawnActor<AVillager>(*Villager_Ref, NavLocation, FRotator::ZeroRotator,
-		ActorSpawnParams);
-
-	if(NewPawn != nullptr)
-	{
-		if(NewPawn->Controller == NULL)
-		{
-			// NOTE: SpawnDefaultController ALSO calls Possess() to possess the pawn (if a controller is successfully spawned).
-			NewPawn->SpawnDefaultController();
-		}
-
-		return NewPawn;
-	}
-
-	return nullptr;
 }

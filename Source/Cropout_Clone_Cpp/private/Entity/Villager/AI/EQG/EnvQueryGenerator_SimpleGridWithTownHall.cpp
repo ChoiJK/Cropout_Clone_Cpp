@@ -3,7 +3,9 @@
 
 #include "Entity/Villager/AI/EQG/EnvQueryGenerator_SimpleGridWithTownHall.h"
 
+#include "Core/CropoutGameInstance.h"
 #include "Core/InGame/InGameGameMode.h"
+#include "Entity/EntityManager.h"
 #include "GameFramework/GameModeBase.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -33,7 +35,9 @@ void UEnvQueryGenerator_SimpleGridWithTownHall::GenerateItems(FEnvQueryInstance&
 
 	TArray<FVector> ContextLocations;
 
-	const AActor* TownHallActor = Cast<AInGameGameMode>(UGameplayStatics::GetGameMode(QueryInstance.World))->TownHall;
+	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+
+	const AActor* TownHallActor = entityManager->TownHall;
 	FVector targetLocation = TownHallActor->GetActorLocation();
 	if(TownHallActor != nullptr)
 	{

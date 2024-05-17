@@ -8,10 +8,13 @@
 #include "EntityManager.generated.h"
 
 class AInteractableBaseActor;
+class UGlobalSharedVariable;
 class ABuildingBaseActor;
 class AResourceBaseActor;
 class ACropBaseActor;
 class AVillager;
+class ASpawner;
+class FDelegateHandle;
 
 template <typename T>
 class SimpleRxReactiveProperty;
@@ -20,6 +23,10 @@ UCLASS()
 class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 {
 	GENERATED_BODY()
+
+	UPROPERTY()
+	ASpawner* SpawnerRef;
+	UGlobalSharedVariable* GlobalSharedVariable;
 
 	UPROPERTY()
 	TArray<AInteractableBaseActor*> Interactables;
@@ -49,13 +56,22 @@ class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 	void AddInteractable(AInteractableBaseActor* Interactable);
 	void RemoveInteractable(AInteractableBaseActor* Interactable);
 
-protected:
+	FDelegateHandle IslandGenCompleteHandle;
+
+	void OnIslandGenCompleteInternal();
+
+public:
 	virtual void Init() override;
 	virtual void Prepare() override;
 	virtual void Release() override;
 	virtual void Destroy() override;
 
-public:
+	virtual void OnSaveData(UInGameSaveData* SaveData) override;
+	virtual void OnLoadData(UInGameSaveData* SaveData) override;
+
+	ASpawner* GetSpawner();
+	void OnIslandGenComplete();
+
 	void AddBuilding(ABuildingBaseActor* Building, bool bRequireBuild = true);
 	void RemoveBuilding(ABuildingBaseActor* Building);
 	void ChangeBuildState(ABuildingBaseActor* Building, bool bRequireBuild);
@@ -78,4 +94,12 @@ public:
 	void AddVillager(AVillager* Villager);
 	void RemoveVillager(AVillager* Villager);
 	std::shared_ptr<SimpleRxReactiveProperty<int>> GetVillagerCountRp();
+
+	TSubclassOf<AVillager> Villager_Ref;
+	void SpawnVillagersInBegin();
+	AVillager* SpawnVillager();
+	int GetVillagerCount() { return Villagers.Num(); }
+
+	ABuildingBaseActor* TownHall;
+	void SpawnTownHall();
 };

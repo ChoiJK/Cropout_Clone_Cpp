@@ -12,6 +12,7 @@
 #include "Core/InGame/InGameGameMode.h"
 #include "Util/CoordinateUtils.h"
 #include "Data/InteractableInfo.h"
+#include "Entity/EntityManager.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
 #include "Player/CropoutPlayer.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -97,7 +98,9 @@ void UPlacementHandler::SetPlacementTargetEntity(const FInteractableInfo* intera
 {
 	PlacementTargetInfo = interactableInfo;
 
-	ASpawner* spawner = UCropoutGameInstance::GetInstance()->GetCurrentGameMode()->GetSpawner();
+	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+
+	ASpawner* spawner = entityManager->GetSpawner();
 	AInteractableBaseActor* interactableActor = spawner->SpawnInteractable(PlacementTargetInfo);
 	if(interactableActor == nullptr)
 	{
@@ -154,7 +157,9 @@ void UPlacementHandler::PlacingEntity()
 		return;
 	}
 
-	ASpawner* spawner = UCropoutGameInstance::GetInstance()->GetCurrentGameMode()->GetSpawner();
+	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+
+	ASpawner* spawner = entityManager->GetSpawner();
 	AInteractableBaseActor* interactableActor = spawner->SpawnInteractable(PlacementTargetInfo);
 	if(interactableActor == nullptr)
 	{

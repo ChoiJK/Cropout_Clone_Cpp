@@ -4,6 +4,7 @@
 
 #include "Core/CropoutGameInstance.h"
 #include "Core/InGame/InGameGameMode.h"
+#include "Entity/EntityManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/TableManager.h"
 #include "Spawn/Spawner.h"
@@ -47,14 +48,15 @@ void FStateStaticMethods::ClearSaveGame()
 void FStateStaticMethods::ClearSpawner()
 {
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	AInGameGameMode* gameMode = gameInstance->GetCurrentGameMode();
+	AInGameGameMode* gameMode = gameInstance->GetCurrentInGameMode();
 	if(gameMode == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("gameMode is nullptr"));
 		return;
 	}
+	UEntityManager* entityManager = gameInstance->GetLevelManager<UEntityManager>();
 
-	ASpawner* spawner = gameMode->GetSpawner();
+	ASpawner* spawner = entityManager->GetSpawner();
 	if(spawner == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("spawner is nullptr"));
@@ -67,7 +69,7 @@ void FStateStaticMethods::ClearSpawner()
 void FStateStaticMethods::SetGameContinue()
 {
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
-	AInGameGameMode* gameMode = gameInstance->GetCurrentGameMode();
+	AInGameGameMode* gameMode = gameInstance->GetCurrentInGameMode();
 	gameMode->SetIsContinueGame(true);
 }
 

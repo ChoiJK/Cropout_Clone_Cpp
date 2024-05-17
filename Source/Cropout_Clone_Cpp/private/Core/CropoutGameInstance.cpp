@@ -290,17 +290,17 @@ void UCropoutGameInstance::LoadInGameData()
 void UCropoutGameInstance::SetCurrentGameMode(AIslandBaseGameMode* gameMode)
 {
 	CurrentIslandGameMode = gameMode;
-	CurrentGameMode = nullptr;
+	CurrentInGameMode = nullptr;
 	if(gameMode && gameMode->IsA(AInGameGameMode::StaticClass()))
 	{
-		CurrentGameMode = Cast<AInGameGameMode>(gameMode);
+		CurrentInGameMode = Cast<AInGameGameMode>(gameMode);
 	}
 }
 
 void UCropoutGameInstance::SetCurrentGameMode(AInGameGameMode* gameMode)
 {
 	CurrentIslandGameMode = gameMode;
-	CurrentGameMode = gameMode;
+	CurrentInGameMode = gameMode;
 }
 
 void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerController)

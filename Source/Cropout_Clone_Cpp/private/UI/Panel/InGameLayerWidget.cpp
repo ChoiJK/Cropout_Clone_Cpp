@@ -46,7 +46,7 @@ void UInGameLayerWidget::NativeConstruct()
 			ResourceWidget[i]->SetResourceType(static_cast<EResourceType>(i + 1));
 			ResourceWidget[i]->SetValue(0);
 
-			gameInstance->GetCurrentGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1))->
+			gameInstance->GetCurrentInGameMode()->GetResourceRP(static_cast<EResourceType>(i + 1))->
 			              SubscribeAndNotify([this, i](int value)
 			              {
 				              if(ResourceWidget[i])

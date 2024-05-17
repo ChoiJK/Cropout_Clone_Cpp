@@ -41,8 +41,9 @@ EBTNodeResult::Type UBTTask_FindNearestOfField::ExecuteTask(UBehaviorTreeCompone
 		BlackboardComp->GetValueAsObject(Key_FieldTarget.SelectedKeyName));
 
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::Instance;
+	UEntityManager* entityManager = gameInstance->GetLevelManager<UEntityManager>();
 
-	if(ABuildingBaseActor* townHall = gameInstance->GetCurrentGameMode()->TownHall)
+	if(ABuildingBaseActor* townHall = entityManager->TownHall)
 	{
 		BlackboardComp->SetValueAsObject(Key_TownHall.SelectedKeyName, Cast<UObject>(townHall));
 	}
@@ -59,7 +60,6 @@ EBTNodeResult::Type UBTTask_FindNearestOfField::ExecuteTask(UBehaviorTreeCompone
 		return EBTNodeResult::Failed;
 	}
 
-	UEntityManager* entityManager = gameInstance->GetLevelManager<UEntityManager>();
 	ACropBaseActor* validFoundActor = nullptr; // 찾은 Actor 중에서 가장 가깝고, nearestTo와 경로가 만들어지는 Actor
 	// 먼저 추수가 필요한 Crop을 찾음
 	for(int i = 0; i < entityManager->GetRequireHarvestCropCount(); ++i)

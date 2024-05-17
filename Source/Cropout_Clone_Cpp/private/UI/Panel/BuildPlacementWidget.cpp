@@ -91,7 +91,7 @@ void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo
 	BuildableInfo = buildableInfo;
 
 	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
 		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
@@ -103,7 +103,7 @@ void UBuildPlacementWidget::SetBuildableInfo(const FBuildableInfo* buildableInfo
 
 void UBuildPlacementWidget::CheckHasConstructionCost() const
 {
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
 	bool hasResourceCost = true;
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
@@ -119,7 +119,7 @@ void UBuildPlacementWidget::CheckHasConstructionCost() const
 
 void UBuildPlacementWidget::SpendConstructionCost() const
 {
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
 		gameMode->SpendResource(cost.ResourceType, cost.Coat);

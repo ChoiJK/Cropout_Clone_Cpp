@@ -25,19 +25,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	virtual void OnIslandGenCompleteInternal() override;
-
 public:
 	AInGameGameMode();
-
-	TSubclassOf<AVillager> Villager_Ref;
-	TArray<AVillager*> Villagers;
-	void SpawnVillagersInBegin();
-	AVillager* SpawnVillager();
-	int GetVillagerCount() { return Villagers.Num(); }
-
-	ABuildingBaseActor* TownHall;
-	void SpawnTownHall();
 
 	int GetResourceAmount(EResourceType type);
 	bool HasResource(EResourceType type, int amount);

@@ -44,8 +44,9 @@ EBTNodeResult::Type UBTTask_FindNearestOfResource::ExecuteTask(UBehaviorTreeComp
 	AActor* target = Cast<AActor>(BlackboardComp->GetValueAsObject(Key_ResourceTarget.SelectedKeyName));
 
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::Instance;
+	UEntityManager* entityManager = gameInstance->GetLevelManager<UEntityManager>();
 
-	if(ABuildingBaseActor* townHall = gameInstance->GetCurrentGameMode()->TownHall)
+	if(ABuildingBaseActor* townHall = entityManager->TownHall)
 	{
 		BlackboardComp->SetValueAsObject(Key_NearestTo.SelectedKeyName, Cast<UObject>(townHall));
 	}
@@ -65,7 +66,6 @@ EBTNodeResult::Type UBTTask_FindNearestOfResource::ExecuteTask(UBehaviorTreeComp
 	EResourceType resourceType = static_cast<EResourceType>(BlackboardComp->GetValueAsEnum(
 		Key_ResourceType.SelectedKeyName));
 
-	UEntityManager* entityManager = gameInstance->GetLevelManager<UEntityManager>();
 	AActor* validFoundActor = nullptr; // 찾은 Actor 중에서 가장 가깝고, nearestTo와 경로가 만들어지는 Actor
 	for(int i = 0; i < entityManager->GetResourceOfTypeCount(resourceType); ++i)
 	{

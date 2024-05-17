@@ -56,7 +56,7 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 		}));
 
 	CompositeDisposable = std::make_shared<SimpleRxCompositeDisposable>();
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{
 		gameMode->GetResourceRP(cost.ResourceType)->SubscribeAndNotify([this](int value)
@@ -68,7 +68,7 @@ void UBuildEntityCardWidget::SetBuildableInfo(const FBuildableInfo* buildableInf
 
 void UBuildEntityCardWidget::CheckHasConstructionCost()
 {
-	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentGameMode();
+	AInGameGameMode* gameMode = UCropoutGameInstance::GetInstance()->GetCurrentInGameMode();
 	bool hasResourceCost = true;
 	for(FConstructionCost cost : BuildableInfo->ConstructionCosts)
 	{

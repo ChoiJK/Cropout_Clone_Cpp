@@ -3,9 +3,6 @@
 
 #include "Core/IslandBaseGameMode.h"
 #include "Core/CropoutGameInstance.h"
-#include "Spawn/Spawner.h"
-
-#include "Kismet/GameplayStatics.h"
 #include "Manager/SoundManager.h"
 
 AIslandBaseGameMode::AIslandBaseGameMode()
@@ -13,7 +10,6 @@ AIslandBaseGameMode::AIslandBaseGameMode()
 	if(auto gameInstance = GetCropoutGameInstance())
 	{
 		gameInstance->SetCurrentGameMode(this);
-		GlobalSharedVariable = gameInstance->GetGlobalSharedVariable();
 	}
 }
 
@@ -36,34 +32,6 @@ void AIslandBaseGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		gameInstance->SetCurrentGameMode(static_cast<AIslandBaseGameMode*>(nullptr));
 	}
-}
-
-
-void AIslandBaseGameMode::OnIslandGenComplete()
-{
-	OnIslandGenCompleteInternal();
-}
-
-void AIslandBaseGameMode::OnIslandGenCompleteInternal()
-{
-	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
-	{
-		if(ASpawner* spawnerRef = GetSpawner())
-		{
-			spawnerRef->SpawnRandom();
-		}
-	}));
-}
-
-ASpawner* AIslandBaseGameMode::GetSpawner()
-{
-	if(SpawnerRef == nullptr)
-	{
-		SpawnerRef = Cast<ASpawner>(UGameplayStatics::GetActorOfClass(GetWorld(), ASpawner::StaticClass()));
-		check(SpawnerRef != nullptr);
-	}
-
-	return SpawnerRef;
 }
 
 UCropoutGameInstance* AIslandBaseGameMode::GetCropoutGameInstance()

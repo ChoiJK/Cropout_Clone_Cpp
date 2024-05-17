@@ -278,10 +278,11 @@ void AVillager::AsyncJobResourceLoaded(FName jobName)
 	{
 		ActiveBehaviorTree = behaviorTree;
 		aiController->RunBehaviorTree(behaviorTree);
+		UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
 		if(TargetRef && IsValid(TargetRef))
 		{
 			aiController->GetBlackboardComponent()->SetValueAsObject(FName("Target"), TargetRef);
-			aiController->GetBlackboardComponent()->SetValueAsObject(FName("TownHall"), GameMode->TownHall);
+			aiController->GetBlackboardComponent()->SetValueAsObject(FName("TownHall"), entityManager->TownHall);
 			if(IsJobTypeResource(CurrentJobType))
 			{
 				aiController->GetBlackboardComponent()->SetValueAsEnum(FName("ResourceType"),

@@ -42,7 +42,7 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	AIslandBaseGameMode* CurrentIslandGameMode;
 
 	UPROPERTY()
-	AInGameGameMode* CurrentGameMode;
+	AInGameGameMode* CurrentInGameMode;
 
 	UPROPERTY()
 	ACropoutLevelScriptBase* CurrentLevelScript;
@@ -125,9 +125,9 @@ public:
 		return CurrentIslandGameMode;
 	}
 
-	AInGameGameMode* GetCurrentGameMode() const
+	AInGameGameMode* GetCurrentInGameMode() const
 	{
-		return CurrentGameMode;
+		return CurrentInGameMode;
 	}
 
 	ACropoutLevelScriptBase* GetCurrentLevelScript() const
