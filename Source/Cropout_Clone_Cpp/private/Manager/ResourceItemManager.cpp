@@ -32,11 +32,31 @@ void UResourceItemManager::Destroy()
 void UResourceItemManager::OnSaveData(UInGameSaveData* SaveData)
 {
 	Super::OnSaveData(SaveData);
+
+	for(int i = 0; i < static_cast<int>(EResourceType::Count); i++)
+	{
+		SaveData->SetResourceBank(static_cast<EResourceType>(i), GetResourceAmount(static_cast<EResourceType>(i)));
+	}
 }
 
 void UResourceItemManager::OnLoadData(UInGameSaveData* SaveData)
 {
 	Super::OnLoadData(SaveData);
+
+	if(SaveData == nullptr)
+	{
+		// SaveData가 없을 경우 기본값으로 설정
+		StoreResource(EResourceType::Food, 100);
+	}
+	else
+	{
+		for(int i = 0; i < static_cast<int>(EResourceType::Count); i++)
+		{
+			EResourceType type = static_cast<EResourceType>(i);
+			int amount = SaveData->GetResourceBank(type);
+			StoreResource(type, amount);
+		}
+	}
 }
 
 int UResourceItemManager::GetResourceAmount(EResourceType type)

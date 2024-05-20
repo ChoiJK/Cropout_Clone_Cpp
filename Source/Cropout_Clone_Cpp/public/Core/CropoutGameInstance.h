@@ -149,4 +149,5 @@ public:
 	void LoadOptionData();
 	void SaveInGameData();
 	void LoadInGameData();
+	void ClearInGameData();
 };

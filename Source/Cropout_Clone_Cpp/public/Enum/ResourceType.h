@@ -10,6 +10,7 @@ enum class EResourceType : uint8
 	Food UMETA(DisplayName = "Food"),
 	Wood UMETA(DisplayName = "Wood"),
 	Stone UMETA(DisplayName = "Stone"),
+	Count UMETA(Hidden)
 };
 
 inline FString EnumToString(EResourceType Value)

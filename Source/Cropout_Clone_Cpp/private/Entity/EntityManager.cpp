@@ -46,20 +46,25 @@ void UEntityManager::Destroy()
 void UEntityManager::OnSaveData(UInGameSaveData* SaveData)
 {
 	Super::OnSaveData(SaveData);
+
+	auto islandGen = GetIslandGen();
+
+	// Save Island Seed
+	SaveData->SetIslandRandSeed(islandGen->GetIslandSeed());
 }
 
 void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
 {
 	Super::OnLoadData(SaveData);
 
-	bool hasSaveData = SaveData != nullptr;
-	auto islandGen = GetIslandGen();
-
+	const bool hasSaveData = SaveData != nullptr;
+	const auto islandGen = GetIslandGen();
 
 	if(IsValid(islandGen))
 	{
 		if(hasSaveData)
 		{
+			islandGen->SetIslandSeed(SaveData->GetIslandRandSeed());
 		}
 		else
 		{

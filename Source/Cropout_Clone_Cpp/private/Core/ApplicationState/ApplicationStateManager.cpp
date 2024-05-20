@@ -113,6 +113,7 @@ void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_NewGame()
 	// MainMenu에서 NewGame버튼을 눌렀을 때 발생
 	UStateTransitionProcessor* MainMenu_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	MainMenu_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	MainMenu_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSaveGame);
 	MainMenu_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
 	AddTransitionProcessors(ECropoutState::MainMenu, FStateTransition(EStateTrigger::NewGame,
 		ECropoutState::InGame, MainMenu_To_InGame_Processor));
@@ -121,6 +122,12 @@ void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_NewGame()
 void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_LoadGame()
 {
 	// MainMenu -> InGame : LoadGame
+	// MainMenu에서 LoadGame버튼을 눌렀을 때 발생
+	UStateTransitionProcessor* MainMenu_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
+	MainMenu_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	MainMenu_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
+	AddTransitionProcessors(ECropoutState::MainMenu, FStateTransition(EStateTrigger::LoadGame,
+		ECropoutState::InGame, MainMenu_To_InGame_Processor));
 }
 
 void UApplicationStateManager::Initialize_MainMenu_To_Exit_With_ExitGame()
@@ -191,6 +198,7 @@ void UApplicationStateManager::Initialize_InGamePause_To_InGame_With_RestartGame
 	// InGamePause메뉴에서 Restart버튼을 눌렀을 때 발생
 	UStateTransitionProcessor* InGamePause_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	InGamePause_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	InGamePause_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSaveGame);
 	InGamePause_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
 	AddTransitionProcessors(ECropoutState::InGamePause, FStateTransition(EStateTrigger::RestartGame,
 		ECropoutState::InGame, InGamePause_To_InGame_Processor));
@@ -201,6 +209,7 @@ void UApplicationStateManager::Initialize_InGamePause_To_MainMenu_With_ToMainMen
 	// InGamePause -> MainMenu : ToMainMenu
 	UStateTransitionProcessor* InGamePause_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
 	InGamePause_To_MainMenu_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClosePauseMenuWidget);
+	InGamePause_To_MainMenu_Processor->AddClearPreviousStateProcess(FStateStaticMethods::SaveGame);
 	InGamePause_To_MainMenu_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenMainMenuLevel);
 	AddTransitionProcessors(ECropoutState::InGamePause, FStateTransition(EStateTrigger::ToMainMenu,
 		ECropoutState::MainMenu, InGamePause_To_MainMenu_Processor));
@@ -230,6 +239,7 @@ void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_RestartGam
 	// ResultMenuWidget에서 Restart버튼을 눌렀을 때 발생
 	UStateTransitionProcessor* InGameResult_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	InGameResult_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSpawner);
+	InGameResult_To_InGame_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSaveGame);
 	InGameResult_To_InGame_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenInGameLevel);
 	AddTransitionProcessors(ECropoutState::InGameResult, FStateTransition(EStateTrigger::RestartGame,
 		ECropoutState::InGame, InGameResult_To_InGame_Processor));
@@ -241,6 +251,7 @@ void UApplicationStateManager::Initialize_InGameResult_To_MainMenu_With_ToMainMe
 	// ResultMenuWidget에서 MainMenu버튼을 눌렀을 때 발생
 	UStateTransitionProcessor* InGameResult_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
 	InGameResult_To_MainMenu_Processor->AddClearPreviousStateProcess(FStateStaticMethods::CloseResultMenuWidget);
+	InGameResult_To_MainMenu_Processor->AddClearPreviousStateProcess(FStateStaticMethods::ClearSaveGame);
 	InGameResult_To_MainMenu_Processor->AddPrepareNextStateProcess(FStateStaticMethods::OpenMainMenuLevel);
 	AddTransitionProcessors(ECropoutState::InGameResult, FStateTransition(EStateTrigger::ToMainMenu,
 		ECropoutState::MainMenu, InGameResult_To_MainMenu_Processor));

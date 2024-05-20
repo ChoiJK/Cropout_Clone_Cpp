@@ -37,12 +37,12 @@ void FStateStaticMethods::OpenInGameLevel()
 
 void FStateStaticMethods::SaveGame()
 {
-	// @Todo : SaveGame
+	UCropoutGameInstance::GetInstance()->SaveInGameData();
 }
 
 void FStateStaticMethods::ClearSaveGame()
 {
-	// @Todo : SaveGame을 초기화한다.
+	UCropoutGameInstance::GetInstance()->ClearInGameData();
 }
 
 void FStateStaticMethods::ClearSpawner()

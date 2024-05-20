@@ -20,14 +20,6 @@ void AInGameGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	// @ TODO : ScreenEffect FadeOut
-
-	// 다음 프레임에 적용 (GameMode와 LevelScriptActor의 생성 순서 때문)
-	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
-	{
-		UResourceItemManager* resourceItemManager = UCropoutGameInstance::GetInstance()->GetLevelManager<
-			UResourceItemManager>();
-		resourceItemManager->StoreResource(EResourceType::Food, 100);
-	}));
 }
 
 void AInGameGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)

@@ -5,6 +5,7 @@
 
 #include "Core/InGame/InGameGameMode.h"
 #include "Core/InGame/InGamePlayerController.h"
+#include "Core/Level/InGameLavel.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/Base/SystemManager.h"
@@ -78,6 +79,12 @@ void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropou
 		if(IsLevelManagerInitialized == false)
 		{
 			InitializeLevelManagers();
+		}
+
+		if(CurrentLevelScript->IsA(AInGameLavel::StaticClass()))
+		{
+			// InGameLavel일때만 LoadInGameData
+			LoadInGameData();
 		}
 	}
 	else
@@ -167,8 +174,6 @@ void UCropoutGameInstance::InitializeLevelManagers()
 			Pair.Value->Prepare();
 		}
 	}
-
-	LoadInGameData();
 }
 
 void UCropoutGameInstance::ReleaseLevelManagers()
@@ -283,6 +288,11 @@ void UCropoutGameInstance::LoadInGameData()
 	{
 		levelManagerTuple.Value->OnLoadData(InGameSaveData);
 	}
+}
+
+void UCropoutGameInstance::ClearInGameData()
+{
+	UGameplayStatics::DeleteGameInSlot(TEXT("InGameSaveSlot"), 0);
 }
 
 void UCropoutGameInstance::SetCurrentGameMode(AIslandBaseGameMode* gameMode)
