@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "NavigationSystem.h"
+#include "Components/InstancedStaticMeshComponent.h"
 #include "Core/CropoutGameInstance.h"
 #include "Entity/Interactable/InteractableBaseActor.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
@@ -51,6 +52,29 @@ void UEntityManager::OnSaveData(UInGameSaveData* SaveData)
 
 	// Save Island Seed
 	SaveData->SetIslandRandSeed(islandGen->GetIslandSeed());
+
+	// Save Interactables
+	for(auto interactable : Interactables)
+	{
+		if(IsValid(interactable))
+		{
+			SaveData->AddEntityData(interactable->GetSaveData());
+		}
+	}
+
+	// Save Decoration
+	for(auto deco : DecorationMeshComponents)
+	{
+		// Save Decoration
+		for(int i = 0; i < deco.Value->GetInstanceCount(); ++i)
+		{
+			FTransform transform;
+			deco.Value->GetInstanceTransform(i, transform);
+			SaveData->AddDecorationTransform(deco.Key, transform);
+		}
+	}
+
+	// Save Villager
 }
 
 void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
@@ -71,6 +95,15 @@ void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
 			islandGen->SetIslandSeed(FMath::RandRange(1000, 100000));
 		}
 		islandGen->GenerateIslands(true);
+	}
+
+	SpawnEntityDataList.Empty();
+	DecorationTransforms.Empty();
+
+	if(hasSaveData)
+	{
+		SpawnEntityDataList = SaveData->GetEntityData();
+		DecorationTransforms = SaveData->GetDecorationTransforms();
 	}
 }
 
@@ -109,6 +142,11 @@ void UEntityManager::AddBuilding(ABuildingBaseActor* Building, bool bRequireBuil
 		{
 			BuildingsRequireBuild.Add(Building);
 		}
+	}
+
+	if(Building->GetName() == "TownHall")
+	{
+		TownHall = Building;
 	}
 }
 
@@ -403,6 +441,11 @@ ACropBaseActor* UEntityManager::FindNearestRequirePlantCrop(FVector Location, in
 	return CropsRequirePlant[selectionIndex];
 }
 
+void UEntityManager::AddDecoration(FName name, UInstancedStaticMeshComponent* DecorationMeshComponent)
+{
+	DecorationMeshComponents.Add(name, DecorationMeshComponent);
+}
+
 void UEntityManager::AddVillager(AVillager* Villager)
 {
 	if(Villagers.Contains(Villager) == false)
@@ -500,11 +543,25 @@ void UEntityManager::OnIslandGenCompleteInternal()
 	UE_LOG(LogTemp, Warning, TEXT( "IslandGenComplete" ));
 	GetWorld()->GetTimerManager().SetTimerForNextTick(FTimerDelegate::CreateWeakLambda(this, [this]()
 	{
-		// @Todo : Check Save Bool (In Game instance)
+		if(SpawnEntityDataList.Num() != 0)
 		{
-		}
+			// 저장데이터가 존재함.
+			auto spawner = GetSpawner();
+			if(IsValid(spawner))
+			{
+				for(auto Element : SpawnEntityDataList)
+				{
+					spawner->SpawnFromSaveData(&Element);
+					//UE_LOG(LogTemp, Warning, TEXT("SpawnEntityDataList : %s"), *Element.Name.ToString());
+				}
 
-		// else
+				for(auto Element : DecorationTransforms)
+				{
+					spawner->SpawnInstanceFromSaveData(Element.Key, Element.Value);
+				}
+			}
+		}
+		else
 		{
 			// InGame Level이 아니면 Pass 필요
 			if(UCropoutGameInstance::GetInstance()->GetCurrentInGameMode() != nullptr)

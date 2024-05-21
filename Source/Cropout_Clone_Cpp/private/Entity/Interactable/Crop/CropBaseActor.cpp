@@ -17,14 +17,23 @@ ACropBaseActor::ACropBaseActor()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ACropBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
+void ACropBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, const FSpawnEntitySaveData* LoadData)
 {
-	Super::SetInteractableInfo(InInfo);
+	Super::SetInteractableInfo(InInfo, LoadData);
 
 	GrowthTime = InInfo->GrowthTime;
 	HarvestAmount = InInfo->HarvestAmount;
+	CurrentGrowthTime = LoadData ? LoadData->FloatValue : 0.f;
 
 	Tags.Add("Farming");
+}
+
+FSpawnEntitySaveData ACropBaseActor::GetSaveData()
+{
+	FSpawnEntitySaveData buildingData;
+	InternalGetSaveData(buildingData);
+	buildingData.FloatValue = CurrentGrowthTime;
+	return buildingData;
 }
 
 void ACropBaseActor::BeginDestroy()
@@ -60,13 +69,13 @@ void ACropBaseActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-void ACropBaseActor::InitializeStaticMesh()
+void ACropBaseActor::InitializeStaticMesh(int index)
 {
 	Super::InitializeStaticMesh();
 
 	if(MeshList.Num() != 0)
 	{
-		ChangeMesh(0, true);
+		ChangeMesh(index == -1 ? 0 : index, true);
 	}
 }
 

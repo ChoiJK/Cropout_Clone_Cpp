@@ -37,7 +37,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual void InitializeStaticMesh() override;
+	virtual void InitializeStaticMesh(int index = -1) override;
 	FTimeline Timeline;
 	void StartTimeline();
 	void StopTimeline();
@@ -56,7 +56,9 @@ protected:
 public:
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void SetInteractableInfo(const FInteractableInfo* InInfo) override;
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo,
+		const FSpawnEntitySaveData* LoadData = nullptr) override;
+	virtual FSpawnEntitySaveData GetSaveData() override;
 	virtual void BeginDestroy() override;
 	virtual float Interact() override;
 	TTuple<EResourceType, int> CollectResource();

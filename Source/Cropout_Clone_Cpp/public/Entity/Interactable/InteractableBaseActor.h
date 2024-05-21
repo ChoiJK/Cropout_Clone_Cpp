@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
+#include "Data/InGameSaveData.h"
+#include "Enum/InteractableType.h"
 #include "GameFramework/Actor.h"
 #include "Player/Components/PlacementHandler.h"
 #include "InteractableBaseActor.generated.h"
@@ -20,7 +22,7 @@ struct FInteractableInfo;
 
 DECLARE_MULTICAST_DELEGATE(FReCalcBoxExtentDelegate);
 
-UCLASS()
+UCLASS(Abstract)
 class CROPOUT_CLONE_CPP_API AInteractableBaseActor : public AActor
 {
 	GENERATED_BODY()
@@ -36,7 +38,11 @@ private:
 	void DoGrundBlend();
 
 protected:
+	UPROPERTY(EditAnywhere)
 	FName Name;
+
+	UPROPERTY(EditAnywhere)
+	EInteractableType InteractableType = EInteractableType::None;
 
 	UPROPERTY(EditAnywhere, Category = "Ground Blend")
 	TObjectPtr<UTextureRenderTarget2D> RT_Draw;
@@ -75,7 +81,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void InitializeStaticMesh()
+	virtual void InitializeStaticMesh(int index = -1)
 	{
 	}
 
@@ -96,9 +102,10 @@ protected:
 	UPROPERTY()
 	UEntityManager* EntityManager = nullptr;
 
-	virtual void RegisterWithEntityManager()
-	{
-	}
+	UFUNCTION()
+	virtual void RegisterWithEntityManager() PURE_VIRTUAL(AInteractableBaseActor::RegisterWithEntityManager,);
+
+	void InternalGetSaveData(FSpawnEntitySaveData& OutData);
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
@@ -135,7 +142,11 @@ public:
 		return 0.0f;
 	}
 
-	virtual void SetInteractableInfo(const FInteractableInfo* InInfo);
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo, const FSpawnEntitySaveData* LoadData = nullptr);
+
+	UFUNCTION()
+	virtual FSpawnEntitySaveData GetSaveData() PURE_VIRTUAL(AInteractableBaseActor::GetSaveData,
+		{return FSpawnEntitySaveData();});
 
 	FName GetName() const
 	{

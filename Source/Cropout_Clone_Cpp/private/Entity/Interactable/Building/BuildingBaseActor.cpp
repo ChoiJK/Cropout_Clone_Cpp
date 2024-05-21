@@ -42,11 +42,11 @@ void ABuildingBaseActor::BeginDestroy()
 	}
 }
 
-void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
+void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, const FSpawnEntitySaveData* LoadData)
 {
-	Super::SetInteractableInfo(InInfo);
+	Super::SetInteractableInfo(InInfo, LoadData);
 
-	RemainingBuildTimeSec = BuildTimeSec;
+	RemainingBuildTimeSec = LoadData ? LoadData->FloatValue : BuildTimeSec;
 	BuildingType = InInfo->BuildingType;
 	NewVillagerCount = InInfo->NewVillagerCount;
 	if(RequireBuild)
@@ -57,6 +57,14 @@ void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
 	{
 		Tags.Add("Building");
 	}
+}
+
+FSpawnEntitySaveData ABuildingBaseActor::GetSaveData()
+{
+	FSpawnEntitySaveData buildingData;
+	InternalGetSaveData(buildingData);
+	buildingData.FloatValue = RemainingBuildTimeSec;
+	return buildingData;
 }
 
 void ABuildingBaseActor::BuildTick()
@@ -149,13 +157,13 @@ void ABuildingBaseActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ABuildingBaseActor::InitializeStaticMesh()
+void ABuildingBaseActor::InitializeStaticMesh(int index)
 {
 	Super::InitializeStaticMesh();
 
 	if(MeshList.Num() != 0)
 	{
-		ChangeMesh(0);
+		ChangeMesh(index == -1 ? 0 : index);
 	}
 }
 

@@ -18,18 +18,26 @@ AResourceBaseActor::AResourceBaseActor()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AResourceBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
+void AResourceBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, const FSpawnEntitySaveData* LoadData)
 {
-	Super::SetInteractableInfo(InInfo);
+	Super::SetInteractableInfo(InInfo, LoadData);
 
 	ResourceType = InInfo->ResourceType;
-	ResourceAmount = InInfo->ResourceAmount;
+	ResourceAmount = LoadData ? LoadData->FloatValue : InInfo->ResourceAmount;
 	CollectionTime = InInfo->CollectionTime;
 	CollectionValue = InInfo->CollectionValue;
 	UseRandomMesh = InInfo->UseRandomMesh;
 
 	FName resurceType = FName(EnumToString(ResourceType));
 	Tags.Add(resurceType);
+}
+
+FSpawnEntitySaveData AResourceBaseActor::GetSaveData()
+{
+	FSpawnEntitySaveData buildingData;
+	InternalGetSaveData(buildingData);
+	buildingData.FloatValue = ResourceAmount;
+	return buildingData;
 }
 
 void AResourceBaseActor::BeginDestroy()
@@ -42,12 +50,16 @@ void AResourceBaseActor::BeginDestroy()
 	}
 }
 
-void AResourceBaseActor::InitializeStaticMesh()
+void AResourceBaseActor::InitializeStaticMesh(int index)
 {
 	Super::InitializeStaticMesh();
-	if(UseRandomMesh)
+	if(UseRandomMesh && index == -1)
 	{
 		StaticMeshComponent->SetStaticMesh(MeshList[FMath::RandRange(0, MeshList.Num() - 1)]);
+	}
+	else
+	{
+		StaticMeshComponent->SetStaticMesh(MeshList[index]);
 	}
 }
 

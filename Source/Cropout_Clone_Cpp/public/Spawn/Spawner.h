@@ -14,6 +14,7 @@ class UTableManager;
 
 struct FSpawnerInfo;
 struct FInteractableInfo;
+struct FSpawnEntitySaveData;
 
 UCLASS()
 class CROPOUT_CLONE_CPP_API ASpawner : public AActor
@@ -45,7 +46,10 @@ private:
 
 public:
 	void SpawnRandom();
-	AInteractableBaseActor* SpawnInteractable(const FInteractableInfo* InteractableInfo);
+	void SpawnInstanceFromSaveData(FName Name, FTransformsSaveData& TransformsSaveData);
+	void SpawnFromSaveData(const FSpawnEntitySaveData* SpawnInstance);
+	AInteractableBaseActor* SpawnInteractable(const FInteractableInfo* InteractableInfo,
+		const FSpawnEntitySaveData* LoadData = nullptr);
 	void ClearSpawnerTimer();
 
 	UPROPERTY(EditAnywhere)

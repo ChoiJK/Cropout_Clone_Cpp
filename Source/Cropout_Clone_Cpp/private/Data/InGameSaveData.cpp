@@ -22,3 +22,32 @@ int UInGameSaveData::GetIslandRandSeed() const
 {
 	return IslandRandSeed;
 }
+
+void UInGameSaveData::AddEntityData(FSpawnEntitySaveData data)
+{
+	SpawnEntityData.Add(data);
+}
+
+TArray<FSpawnEntitySaveData>& UInGameSaveData::GetEntityData()
+{
+	return SpawnEntityData;
+}
+
+void UInGameSaveData::AddDecorationTransform(FName name, FTransform transform)
+{
+	if(DecorationTransforms.Contains(name) == false)
+	{
+		FTransformsSaveData data;
+		data.Transforms.Add(transform);
+		DecorationTransforms.Add(name, data);
+	}
+	else
+	{
+		DecorationTransforms[name].Transforms.Add(transform);
+	}
+}
+
+TMap<FName, FTransformsSaveData>& UInGameSaveData::GetDecorationTransforms()
+{
+	return DecorationTransforms;
+}

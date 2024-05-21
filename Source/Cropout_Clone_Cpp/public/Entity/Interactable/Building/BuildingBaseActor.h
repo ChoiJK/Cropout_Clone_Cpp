@@ -33,7 +33,9 @@ public:
 	ABuildingBaseActor();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginDestroy() override;
-	virtual void SetInteractableInfo(const FInteractableInfo* InInfo) override;
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo,
+		const FSpawnEntitySaveData* LoadData = nullptr) override;
+	virtual FSpawnEntitySaveData GetSaveData() override;
 
 	virtual float Interact() override;
 	void BuildTick();
@@ -43,6 +45,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void InitializeStaticMesh() override;
+	virtual void InitializeStaticMesh(int index = -1) override;
 	virtual void RegisterWithEntityManager() override;
 };

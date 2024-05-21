@@ -31,27 +31,41 @@ class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 	UPROPERTY()
 	AIslandGen* IslandGenRef;
 
+	UPROPERTY()
+	TArray<FSpawnEntitySaveData> SpawnEntityDataList;
+
+	UPROPERTY()
+	TMap<FName, FTransformsSaveData> DecorationTransforms;
+
 	UGlobalSharedVariable* GlobalSharedVariable;
 
 	UPROPERTY()
 	TArray<AInteractableBaseActor*> Interactables;
+	UPROPERTY()
 	TArray<ABuildingBaseActor*> Buildings;
+	UPROPERTY()
 	TArray<ABuildingBaseActor*> BuildingsRequireBuild;
 	int LastSortedBuildingFrameCount = 0;
 	FVector LastSortedBuildingLocation;
 
+	UPROPERTY()
 	TArray<AResourceBaseActor*> Resources;
 	TMap<EResourceType, TArray<AResourceBaseActor*>> ResourcesByType;
 	TMap<EResourceType, TTuple<int, FVector>> LastSortedResourceFrameCount;
 
+	UPROPERTY()
 	TArray<ACropBaseActor*> Crops;
+	UPROPERTY()
 	TArray<ACropBaseActor*> CropsRequireHarvest;
 	int LastSortedRequireHarvestFrameCount = 0;
 	FVector LastSortedRequireHarvestLocation;
 
+	UPROPERTY()
 	TArray<ACropBaseActor*> CropsRequirePlant;
 	int LastSortedRequirePlantFrameCount = 0;
 	FVector LastSortedRequirePlantLocation;
+
+	TMap<FName, UInstancedStaticMeshComponent*> DecorationMeshComponents;
 
 	UPROPERTY()
 	TArray<AVillager*> Villagers;
@@ -96,6 +110,8 @@ public:
 	int GetRequirePlantCropCount();
 	ACropBaseActor* FindNearestRequireHarvestCrop(FVector Location, int selectionIndex);
 	ACropBaseActor* FindNearestRequirePlantCrop(FVector Location, int selectionIndex);
+
+	void AddDecoration(FName name, UInstancedStaticMeshComponent* DecorationMeshComponent);
 
 	void AddVillager(AVillager* Villager);
 	void RemoveVillager(AVillager* Villager);

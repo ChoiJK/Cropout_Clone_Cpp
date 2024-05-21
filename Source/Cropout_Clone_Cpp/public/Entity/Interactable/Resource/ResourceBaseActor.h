@@ -47,9 +47,11 @@ protected:
 public:
 	void DoScaleUp(float delay);
 	void DoDeath();
-	virtual void SetInteractableInfo(const FInteractableInfo* InInfo) override;
+	virtual void SetInteractableInfo(const FInteractableInfo* InInfo,
+		const FSpawnEntitySaveData* LoadData = nullptr) override;
+	virtual FSpawnEntitySaveData GetSaveData() override;
 	virtual void BeginDestroy() override;
-	virtual void InitializeStaticMesh() override;
+	virtual void InitializeStaticMesh(int index = -1) override;
 	virtual float Interact() override;
 	TTuple<EResourceType, int> CollectResource();
 

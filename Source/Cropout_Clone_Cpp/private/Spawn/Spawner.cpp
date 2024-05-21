@@ -10,6 +10,7 @@
 #include "Manager/TableManager.h"
 #include "Data/SpawnerInfo.h"
 #include "Engine/StreamableManager.h"
+#include "Entity/EntityManager.h"
 #include "Entity/Interactable/Building/BuildingBaseActor.h"
 #include "Entity/Interactable/Crop/CropBaseActor.h"
 #include "Util/CoordinateUtils.h"
@@ -105,7 +106,65 @@ void ASpawner::SpawnRandom()
 	}
 }
 
-AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* InteractableInfo)
+void ASpawner::SpawnInstanceFromSaveData(FName Name, FTransformsSaveData& TransformsSaveData)
+{
+	const FInteractableInfo* interactableInfo = TableManager->GetInteractableInfo(Name);
+	if(interactableInfo->MeshList.Num() != 0)
+	{
+		FTransform transform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
+		UInstancedStaticMeshComponent* instancedSMC = Cast<UInstancedStaticMeshComponent>(
+			AddComponentByClass(UInstancedStaticMeshComponent::StaticClass(), false, transform, false));
+
+		UEntityManager* entityManager = GameInstance->GetLevelManager<UEntityManager>();
+		if(entityManager != nullptr)
+		{
+			entityManager->AddDecoration(interactableInfo->Name, instancedSMC);
+		}
+
+		GameInstance->GetStreamableManager().RequestAsyncLoad(interactableInfo->MeshList[0].ToSoftObjectPath(),
+			FStreamableDelegate::CreateLambda(
+				[interactableInfo, instancedSMC]()
+				{
+					instancedSMC->SetStaticMesh(
+						interactableInfo->MeshList[0].Get());
+				}));
+
+		for(auto spawnTransform : TransformsSaveData.Transforms)
+		{
+			instancedSMC->AddInstance(spawnTransform, true);
+		}
+	}
+}
+
+void ASpawner::SpawnFromSaveData(const FSpawnEntitySaveData* SpawnInstance)
+{
+	const FInteractableInfo* interactableInfo = TableManager->GetInteractableInfo(SpawnInstance->Name);
+	if(interactableInfo == nullptr)
+	{
+		return;
+	}
+
+	FTransform spawnTransform = FTransform(SpawnInstance->Rotation,
+		SpawnInstance->Location,
+		SpawnInstance->Scale);
+
+	AInteractableBaseActor* spawnedActor = SpawnInteractable(interactableInfo, SpawnInstance);
+	if(spawnedActor == nullptr)
+	{
+		return;
+	}
+	spawnedActor->SetActorTransform(spawnTransform);
+
+	if(spawnedActor->IsA(AResourceBaseActor::StaticClass()))
+	{
+		AResourceBaseActor* resourceActor = Cast<AResourceBaseActor>(spawnedActor);
+		resourceActor->DoScaleUp(1);
+	}
+}
+
+
+AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* InteractableInfo,
+	const FSpawnEntitySaveData* LoadData)
 {
 	if(InteractableInfo == nullptr)
 	{
@@ -131,7 +190,7 @@ AInteractableBaseActor* ASpawner::SpawnInteractable(const FInteractableInfo* Int
 
 	if(spawnedActor != nullptr)
 	{
-		spawnedActor->SetInteractableInfo(InteractableInfo);
+		spawnedActor->SetInteractableInfo(InteractableInfo, LoadData);
 	}
 
 	return spawnedActor;
@@ -169,6 +228,12 @@ void ASpawner::CheckNavMeshAndAsyncLoadFinished()
 				FTransform transform = FTransform(FRotator(0, 0, 0), FVector(0, 0, 0));
 				UInstancedStaticMeshComponent* instancedSMC = Cast<UInstancedStaticMeshComponent>(
 					AddComponentByClass(UInstancedStaticMeshComponent::StaticClass(), false, transform, false));
+
+				UEntityManager* entityManager = GameInstance->GetLevelManager<UEntityManager>();
+				if(entityManager != nullptr)
+				{
+					entityManager->AddDecoration(interactableInfo->Name, instancedSMC);
+				}
 
 				GameInstance->GetStreamableManager().RequestAsyncLoad(interactableInfo->MeshList[0].ToSoftObjectPath(),
 					FStreamableDelegate::CreateLambda(

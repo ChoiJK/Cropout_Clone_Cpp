@@ -54,9 +54,10 @@ AInteractableBaseActor::AInteractableBaseActor()
 	}
 }
 
-void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo)
+void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, const FSpawnEntitySaveData* LoadData)
 {
 	Name = InInfo->Name;
+	InteractableType = InInfo->InteractableType;
 	EnableGroundBlend = InInfo->EnableGroundBlend;
 	OutlineDraw = InInfo->OutlineDraw;
 	RequireBuild = InInfo->RequirBuildable;
@@ -73,15 +74,17 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 		MeshPathList.Add(mesh.ToSoftObjectPath());
 	}
 
+	int MeshIndex = LoadData ? LoadData->MeshIndex : -1;
+
 	cropoutGameInstance->GetStreamableManager().RequestAsyncLoad(MeshPathList,
-		FStreamableDelegate::CreateLambda([MeshPathList, this]()
+		FStreamableDelegate::CreateLambda([MeshPathList, MeshIndex, this]()
 		{
 			for(FSoftObjectPath meshPath : MeshPathList)
 			{
 				this->MeshList.Add(Cast<UStaticMesh>(meshPath.TryLoad()));
 			}
 
-			InitializeStaticMesh();
+			InitializeStaticMesh(MeshIndex);
 
 			if(const UWorld* world = GetWorld())
 			{
@@ -91,6 +94,16 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 				}));
 			}
 		}));
+}
+
+void AInteractableBaseActor::InternalGetSaveData(FSpawnEntitySaveData& OutData)
+{
+	OutData.Name = Name;
+	OutData.InteractableType = InteractableType;
+	OutData.MeshIndex = MeshList.Find(StaticMeshComponent->GetStaticMesh());
+	OutData.Location = GetActorLocation();
+	OutData.Rotation = GetActorRotation();
+	OutData.Scale = GetActorScale();
 }
 
 void AInteractableBaseActor::InitializeWithInteractableInfo()
