@@ -22,3 +22,26 @@ if(BPActorClass != nullptr)
 
 - 위 예시는 UClass를 통해 Actor를 Spawn합니다.
 - [Unreal Reflection 페이지](./Unreal%20Reflection.md)를 통해 UClass를 이용한 Reflection활용방법을 확인하실 수 있습니다.
+
+#### 순수가상함수
+``` c++
+UCLASS(Abstract)
+class MYPROJECT_API UAnimal : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    // 순수가상함수 선언
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Animal")
+    void MakeSound();
+    
+    virtual void MakeSound_Implementation() PURE_VIRTUAL(UAnimal::MakeSound, );
+
+    // 일반 함수 선언 및 구현
+    UFUNCTION(BlueprintCallable, Category = "Animal")
+    void Sleep()
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Animal is sleeping"));
+    }
+}
+```
