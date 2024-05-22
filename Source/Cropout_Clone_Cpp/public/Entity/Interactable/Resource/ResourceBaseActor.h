@@ -43,6 +43,7 @@ protected:
 	UFUNCTION()
 	void TimelineFinished();
 	virtual void RegisterWithEntityManager() override;
+	virtual void UnregisterWithEntityManager() override;
 
 public:
 	void DoScaleUp(float delay);

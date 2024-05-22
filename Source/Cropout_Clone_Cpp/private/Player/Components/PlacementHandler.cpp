@@ -83,7 +83,7 @@ bool UPlacementHandler::CheckEntityAgainstPlacementTarget(const FInteractableInf
 		return false;
 	}
 
-	if(PlacementTargetEntity->GetName() == info->Name)
+	if(PlacementTargetEntity->GetInteractableName() == info->Name)
 	{
 		return true;
 	}

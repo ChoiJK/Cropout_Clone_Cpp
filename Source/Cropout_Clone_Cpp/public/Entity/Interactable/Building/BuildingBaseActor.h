@@ -47,4 +47,5 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitializeStaticMesh(int index = -1) override;
 	virtual void RegisterWithEntityManager() override;
+	virtual void UnregisterWithEntityManager() override;
 };

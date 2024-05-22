@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/DataTable.h"
+#include "Enum/VillagerJobType.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Animation/AnimMontage.h"
 #include "Engine/SkeletalMesh.h"
@@ -25,17 +26,6 @@ struct FVillagerJob : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UStaticMesh> Tool;
-};
-
-enum class EVillagerJobType
-{
-	None,
-	Idle,
-	Food,
-	Wood,
-	Stone,
-	Farming,
-	Build
 };
 
 inline EVillagerJobType GetVillagerJobTypeFromString(const FString& jobTypeString)

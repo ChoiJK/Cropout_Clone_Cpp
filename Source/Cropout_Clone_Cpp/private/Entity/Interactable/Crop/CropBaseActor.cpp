@@ -24,6 +24,8 @@ void ACropBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, const 
 	GrowthTime = InInfo->GrowthTime;
 	HarvestAmount = InInfo->HarvestAmount;
 	CurrentGrowthTime = LoadData ? LoadData->FloatValue : 0.f;
+	GrowthProgress = FMath::Clamp(CurrentGrowthTime / GrowthTime, 0.f, 1.f);
+	ChangeMesh(GrowthProgress * (MeshList.Num() - 1));
 
 	Tags.Add("Farming");
 }
@@ -145,6 +147,14 @@ void ACropBaseActor::RegisterWithEntityManager()
 	if(EntityManager != nullptr)
 	{
 		EntityManager->AddCrop(this);
+	}
+}
+
+void ACropBaseActor::UnregisterWithEntityManager()
+{
+	if(EntityManager != nullptr)
+	{
+		EntityManager->RemoveCrop(this);
 	}
 }
 

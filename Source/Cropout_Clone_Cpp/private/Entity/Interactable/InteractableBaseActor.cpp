@@ -57,6 +57,7 @@ AInteractableBaseActor::AInteractableBaseActor()
 void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, const FSpawnEntitySaveData* LoadData)
 {
 	Name = InInfo->Name;
+	EntityID = LoadData ? LoadData->EntityID : "";
 	InteractableType = InInfo->InteractableType;
 	EnableGroundBlend = InInfo->EnableGroundBlend;
 	OutlineDraw = InInfo->OutlineDraw;
@@ -75,6 +76,8 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 	}
 
 	int MeshIndex = LoadData ? LoadData->MeshIndex : -1;
+
+	RegisterWithEntityManager();
 
 	cropoutGameInstance->GetStreamableManager().RequestAsyncLoad(MeshPathList,
 		FStreamableDelegate::CreateLambda([MeshPathList, MeshIndex, this]()
@@ -98,7 +101,8 @@ void AInteractableBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo
 
 void AInteractableBaseActor::InternalGetSaveData(FSpawnEntitySaveData& OutData)
 {
-	OutData.Name = Name;
+	OutData.EntityID = EntityID;
+	OutData.InteractableName = Name;
 	OutData.InteractableType = InteractableType;
 	OutData.MeshIndex = MeshList.Find(StaticMeshComponent->GetStaticMesh());
 	OutData.Location = GetActorLocation();
@@ -120,9 +124,9 @@ void AInteractableBaseActor::InitializeWithInteractableInfo()
 
 			// Placement Mode일경우 EntityManager에 등록하지 않음
 			const FName targetTag = TEXT("PlacementMode");
-			if(ActorHasTag(targetTag) == false)
+			if(ActorHasTag(targetTag))
 			{
-				RegisterWithEntityManager();
+				UnregisterWithEntityManager();
 			}
 		}));
 	}

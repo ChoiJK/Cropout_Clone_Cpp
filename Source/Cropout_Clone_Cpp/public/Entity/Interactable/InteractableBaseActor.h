@@ -38,6 +38,8 @@ private:
 	void DoGrundBlend();
 
 protected:
+	FString EntityID = "";
+
 	UPROPERTY(EditAnywhere)
 	FName Name;
 
@@ -105,10 +107,23 @@ protected:
 	UFUNCTION()
 	virtual void RegisterWithEntityManager() PURE_VIRTUAL(AInteractableBaseActor::RegisterWithEntityManager,);
 
+	UFUNCTION()
+	virtual void UnregisterWithEntityManager() PURE_VIRTUAL(AInteractableBaseActor::UnregisterWithEntityManager,);
+
 	void InternalGetSaveData(FSpawnEntitySaveData& OutData);
 
 public:
 	virtual void Tick(float DeltaSeconds) override;
+
+	void SetEntityID(FString InID)
+	{
+		EntityID = InID;
+	}
+
+	FString GetEntityID() const
+	{
+		return EntityID;
+	}
 
 	template <typename T>
 	FDelegateHandle AddReCalcBoxExtentDelegateHandle(T* ClassInstance,
@@ -148,7 +163,7 @@ public:
 	virtual FSpawnEntitySaveData GetSaveData() PURE_VIRTUAL(AInteractableBaseActor::GetSaveData,
 		{return FSpawnEntitySaveData();});
 
-	FName GetName() const
+	FName GetInteractableName() const
 	{
 		return Name;
 	}

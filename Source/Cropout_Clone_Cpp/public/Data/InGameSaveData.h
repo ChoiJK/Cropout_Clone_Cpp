@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Enum/ResourceType.h"
 #include "Enum/InteractableType.h"
+#include "Enum/VillagerJobType.h"
 #include "GameFramework/SaveGame.h"
 #include "InGameSaveData.generated.h"
 
@@ -14,7 +15,10 @@ struct FSpawnEntitySaveData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FName Name;
+	FString EntityID;
+
+	UPROPERTY()
+	FName InteractableName;
 
 	UPROPERTY()
 	EInteractableType InteractableType;
@@ -38,7 +42,6 @@ struct FSpawnEntitySaveData
 	int IntValue;
 };
 
-
 USTRUCT()
 struct FTransformsSaveData
 {
@@ -46,6 +49,33 @@ struct FTransformsSaveData
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<FTransform> Transforms;
+};
+
+USTRUCT()
+struct FVillagerSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	FVector Location;
+
+	UPROPERTY(VisibleAnywhere)
+	FRotator Rotation;
+
+	UPROPERTY(VisibleAnywhere)
+	int HairMeshIndex;
+
+	UPROPERTY(VisibleAnywhere)
+	EVillagerJobType JobType;
+
+	UPROPERTY(VisibleAnywhere)
+	FString TargetEntityID;
+
+	UPROPERTY(VisibleAnywhere)
+	EResourceType StoreResourceType;
+
+	UPROPERTY(VisibleAnywhere)
+	int StoreAmount;
 };
 
 UCLASS()
@@ -65,6 +95,9 @@ class CROPOUT_CLONE_CPP_API UInGameSaveData : public USaveGame
 	UPROPERTY(VisibleAnywhere)
 	TMap<FName, FTransformsSaveData> DecorationTransforms;
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<FVillagerSaveData> VillagerData;
+
 public:
 	void SetResourceBank(EResourceType type, int amount);
 	int GetResourceBank(EResourceType type) const;
@@ -77,4 +110,7 @@ public:
 
 	void AddDecorationTransform(FName name, FTransform transform);
 	TMap<FName, FTransformsSaveData>& GetDecorationTransforms();
+
+	void AddVillagerData(FVillagerSaveData data);
+	TArray<FVillagerSaveData>& GetVillagerData();
 };

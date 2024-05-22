@@ -49,6 +49,10 @@ void ABuildingBaseActor::SetInteractableInfo(const FInteractableInfo* InInfo, co
 	RemainingBuildTimeSec = LoadData ? LoadData->FloatValue : BuildTimeSec;
 	BuildingType = InInfo->BuildingType;
 	NewVillagerCount = InInfo->NewVillagerCount;
+
+	BuildProgress = 1.0f - (RemainingBuildTimeSec / BuildTimeSec);
+	RequireBuild = RemainingBuildTimeSec > 0.0f;
+
 	if(RequireBuild)
 	{
 		Tags.Add("Build");
@@ -175,6 +179,14 @@ void ABuildingBaseActor::RegisterWithEntityManager()
 	}
 }
 
+void ABuildingBaseActor::UnregisterWithEntityManager()
+{
+	if(EntityManager != nullptr)
+	{
+		EntityManager->RemoveBuilding(this);
+	}
+}
+
 void ABuildingBaseActor::ChangeMesh(int index)
 {
 	if(index >= 0 && index < MeshList.Num())
@@ -196,7 +208,7 @@ void ABuildingBaseActor::BuildSuccess()
 
 	if(EntityManager != nullptr)
 	{
-		EntityManager->RemoveBuilding(this);
+		EntityManager->ChangeBuildState(this, false);
 	}
 
 	switch(BuildingType)

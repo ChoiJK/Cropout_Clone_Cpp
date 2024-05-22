@@ -116,8 +116,16 @@ void AVillager::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(EatTimerHandle, this, &AVillager::Eat, 24.f, true);
 
-	ChangeJob(EVillagerJobType::Idle);
-	HairMesh->SetSkeletalMesh(HairMeshes[FMath::RandRange(0, HairMeshes.Num() - 1)]);
+	if(CurrentJobType == EVillagerJobType::None)
+	{
+		ChangeJob(EVillagerJobType::Idle);
+	}
+
+	if(HairMesh->GetSkeletalMeshAsset() == nullptr)
+	{
+		HairMesh->SetSkeletalMesh(HairMeshes[FMath::RandRange(0, HairMeshes.Num() - 1)]);
+	}
+
 	HairMesh->SetCustomPrimitiveDataFloat(0, FMath::RandRange(0.f, 1.f));
 
 	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
@@ -225,6 +233,83 @@ void AVillager::DeliverResource()
 	}
 }
 
+FVillagerSaveData AVillager::GetSaveData()
+{
+	FVillagerSaveData saveData;
+
+	saveData.Location = GetActorLocation();
+	saveData.Rotation = GetActorRotation();
+	saveData.HairMeshIndex = HairMeshes.Find(HairMesh->GetSkeletalMeshAsset());
+	saveData.JobType = CurrentJobType;
+
+	AAIController* aiController = Cast<AAIController>(GetController());
+	AInteractableBaseActor* interactableBaseActor = Cast<AInteractableBaseActor>(
+		aiController->GetBlackboardComponent()->GetValueAsObject(FName("Target")));
+
+	if(interactableBaseActor && IsValid(interactableBaseActor))
+	{
+		saveData.TargetEntityID = interactableBaseActor->GetEntityID();
+	}
+
+	saveData.StoreResourceType = StoreResourceType;
+	saveData.StoreAmount = StoreAmount;
+
+	if(IsJobTypeResource(CurrentJobType))
+	{
+	}
+	else if(IsJobTypeBuilding(CurrentJobType))
+	{
+	}
+	else if(IsJobTypeFarming(CurrentJobType))
+	{
+	}
+
+	return saveData;
+}
+
+void AVillager::LoadSaveData(FVillagerSaveData* saveData)
+{
+	if(saveData == nullptr)
+	{
+		return;
+	}
+
+	if(saveData->HairMeshIndex >= 0 && saveData->HairMeshIndex < HairMeshes.Num())
+	{
+		HairMesh->SetSkeletalMesh(HairMeshes[saveData->HairMeshIndex]);
+	}
+
+	//if(saveData->JobType != EVillagerJobType::None)
+	//{
+	//	ChangeJob(saveData->JobType);
+	//}
+
+	UEntityManager* entityManager = UCropoutGameInstance::GetInstance()->GetLevelManager<UEntityManager>();
+	if(saveData->TargetEntityID.Len() > 0)
+	{
+		AInteractableBaseActor* interactableBaseActor = entityManager->GetInteractable(saveData->TargetEntityID);
+		if(interactableBaseActor != nullptr)
+		{
+			Action(interactableBaseActor);
+		}
+	}
+
+	if(CurrentJobType == EVillagerJobType::Idle)
+	{
+		ChangeJob(saveData->JobType);
+	}
+
+	if(saveData->StoreResourceType != EResourceType::None)
+	{
+		StoreResource(saveData->StoreResourceType, saveData->StoreAmount);
+	}
+}
+
+bool AVillager::CheckHasResource() const
+{
+	return StoreResourceType != EResourceType::None && StoreAmount > 0;
+}
+
 void AVillager::ChangeJob(EVillagerJobType jobType)
 {
 	CurrentJobType = jobType;
@@ -284,18 +369,21 @@ void AVillager::AsyncJobResourceLoaded(FName jobName)
 		if(TargetRef && IsValid(TargetRef))
 		{
 			aiController->GetBlackboardComponent()->SetValueAsObject(FName("Target"), TargetRef);
-			aiController->GetBlackboardComponent()->SetValueAsObject(FName("TownHall"), entityManager->TownHall);
-			if(IsJobTypeResource(CurrentJobType))
-			{
-				aiController->GetBlackboardComponent()->SetValueAsEnum(FName("ResourceType"),
-					static_cast<uint8>(GetResourceTypeFromJobType(CurrentJobType)));
-			}
-			else if(IsJobTypeBuilding(CurrentJobType))
-			{
-			}
-			else if(IsJobTypeFarming(CurrentJobType))
-			{
-			}
+		}
+
+		aiController->GetBlackboardComponent()->SetValueAsObject(FName("TownHall"), entityManager->TownHall);
+		if(IsJobTypeResource(CurrentJobType))
+		{
+			aiController->GetBlackboardComponent()->SetValueAsEnum(FName("ResourceType"),
+				static_cast<uint8>(GetResourceTypeFromJobType(CurrentJobType)));
+		}
+		else if(IsJobTypeBuilding(CurrentJobType))
+		{
+		}
+		else if(IsJobTypeFarming(CurrentJobType))
+		{
+			bool hasResource = CheckHasResource();
+			aiController->GetBlackboardComponent()->SetValueAsBool(FName("IsDelivery"), hasResource);
 		}
 	}
 

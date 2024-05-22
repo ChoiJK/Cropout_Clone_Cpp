@@ -37,10 +37,13 @@ class CROPOUT_CLONE_CPP_API UEntityManager : public ULevelManager
 	UPROPERTY()
 	TMap<FName, FTransformsSaveData> DecorationTransforms;
 
+	UPROPERTY()
+	TArray<FVillagerSaveData> VillagerData;
+
 	UGlobalSharedVariable* GlobalSharedVariable;
 
 	UPROPERTY()
-	TArray<AInteractableBaseActor*> Interactables;
+	TMap<FString, AInteractableBaseActor*> Interactables;
 	UPROPERTY()
 	TArray<ABuildingBaseActor*> Buildings;
 	UPROPERTY()
@@ -92,6 +95,8 @@ public:
 	AIslandGen* GetIslandGen();
 	void OnIslandGenComplete();
 
+	AInteractableBaseActor* GetInteractable(FString ID);
+
 	void AddBuilding(ABuildingBaseActor* Building, bool bRequireBuild = true);
 	void RemoveBuilding(ABuildingBaseActor* Building);
 	void ChangeBuildState(ABuildingBaseActor* Building, bool bRequireBuild);
@@ -119,7 +124,7 @@ public:
 
 	TSubclassOf<AVillager> Villager_Ref;
 	void SpawnVillagersInBegin();
-	AVillager* SpawnVillager();
+	AVillager* SpawnVillager(FVillagerSaveData* VillagerSaveData = nullptr);
 	int GetVillagerCount() { return Villagers.Num(); }
 
 	ABuildingBaseActor* TownHall;

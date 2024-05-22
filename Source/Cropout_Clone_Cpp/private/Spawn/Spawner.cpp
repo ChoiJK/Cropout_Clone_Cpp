@@ -138,7 +138,7 @@ void ASpawner::SpawnInstanceFromSaveData(FName Name, FTransformsSaveData& Transf
 
 void ASpawner::SpawnFromSaveData(const FSpawnEntitySaveData* SpawnInstance)
 {
-	const FInteractableInfo* interactableInfo = TableManager->GetInteractableInfo(SpawnInstance->Name);
+	const FInteractableInfo* interactableInfo = TableManager->GetInteractableInfo(SpawnInstance->InteractableName);
 	if(interactableInfo == nullptr)
 	{
 		return;

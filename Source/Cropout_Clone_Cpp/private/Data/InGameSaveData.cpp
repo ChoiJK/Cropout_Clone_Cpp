@@ -51,3 +51,13 @@ TMap<FName, FTransformsSaveData>& UInGameSaveData::GetDecorationTransforms()
 {
 	return DecorationTransforms;
 }
+
+void UInGameSaveData::AddVillagerData(FVillagerSaveData data)
+{
+	VillagerData.Add(data);
+}
+
+TArray<FVillagerSaveData>& UInGameSaveData::GetVillagerData()
+{
+	return VillagerData;
+}

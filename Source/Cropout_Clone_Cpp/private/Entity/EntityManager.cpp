@@ -19,6 +19,7 @@
 #include "SimpleRx/SimpleRx.h"
 #include "Spawn/IslandGen.h"
 #include "Spawn/Spawner.h"
+#include "Util/StringUtils.h"
 
 void UEntityManager::Init()
 {
@@ -56,9 +57,9 @@ void UEntityManager::OnSaveData(UInGameSaveData* SaveData)
 	// Save Interactables
 	for(auto interactable : Interactables)
 	{
-		if(IsValid(interactable))
+		if(IsValid(interactable.Value))
 		{
-			SaveData->AddEntityData(interactable->GetSaveData());
+			SaveData->AddEntityData(interactable.Value->GetSaveData());
 		}
 	}
 
@@ -75,6 +76,13 @@ void UEntityManager::OnSaveData(UInGameSaveData* SaveData)
 	}
 
 	// Save Villager
+	for(auto villager : Villagers)
+	{
+		if(IsValid(villager))
+		{
+			SaveData->AddVillagerData(villager->GetSaveData());
+		}
+	}
 }
 
 void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
@@ -84,11 +92,19 @@ void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
 	const bool hasSaveData = SaveData != nullptr;
 	const auto islandGen = GetIslandGen();
 
+	SpawnEntityDataList.Empty();
+	DecorationTransforms.Empty();
+	VillagerData.Empty();
+
 	if(IsValid(islandGen))
 	{
 		if(hasSaveData)
 		{
 			islandGen->SetIslandSeed(SaveData->GetIslandRandSeed());
+
+			SpawnEntityDataList = SaveData->GetEntityData();
+			DecorationTransforms = SaveData->GetDecorationTransforms();
+			VillagerData = SaveData->GetVillagerData();
 		}
 		else
 		{
@@ -96,35 +112,40 @@ void UEntityManager::OnLoadData(UInGameSaveData* SaveData)
 		}
 		islandGen->GenerateIslands(true);
 	}
-
-	SpawnEntityDataList.Empty();
-	DecorationTransforms.Empty();
-
-	if(hasSaveData)
-	{
-		SpawnEntityDataList = SaveData->GetEntityData();
-		DecorationTransforms = SaveData->GetDecorationTransforms();
-	}
 }
 
 void UEntityManager::AddInteractable(AInteractableBaseActor* Interactable)
 {
-	if(Interactables.Contains(Interactable))
+	if(Interactable->GetEntityID().IsEmpty())
 	{
-		return;
+		FString entityName;
+		do
+		{
+			entityName = StringUtils::GenerateRandomStringWithSeed(6);
+		}
+		while(Interactables.Contains(entityName));
+		Interactable->SetEntityID(entityName);
+	}
+	else
+	{
+		if(Interactables.Contains(Interactable->GetEntityID()))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Interactable ID is already exist"));
+			return;
+		}
 	}
 
-	Interactables.Add(Interactable);
+	Interactables.Add(Interactable->GetEntityID(), Interactable);
 }
 
 void UEntityManager::RemoveInteractable(AInteractableBaseActor* Interactable)
 {
-	if(Interactables.Contains(Interactable) == false)
+	if(Interactables.Contains(Interactable->GetEntityID()) == false)
 	{
 		return;
 	}
 
-	Interactables.Remove(Interactable);
+	Interactables.Remove(Interactable->GetEntityID());
 }
 
 void UEntityManager::AddBuilding(ABuildingBaseActor* Building, bool bRequireBuild)
@@ -144,7 +165,7 @@ void UEntityManager::AddBuilding(ABuildingBaseActor* Building, bool bRequireBuil
 		}
 	}
 
-	if(Building->GetName() == "TownHall")
+	if(Building->GetInteractableName() == "TownHall")
 	{
 		TownHall = Building;
 	}
@@ -485,6 +506,11 @@ void UEntityManager::OnIslandGenComplete()
 	OnIslandGenCompleteInternal();
 }
 
+AInteractableBaseActor* UEntityManager::GetInteractable(FString ID)
+{
+	return Interactables.FindRef(ID);
+}
+
 ASpawner* UEntityManager::GetSpawner()
 {
 	if(SpawnerRef == nullptr)
@@ -552,12 +578,16 @@ void UEntityManager::OnIslandGenCompleteInternal()
 				for(auto Element : SpawnEntityDataList)
 				{
 					spawner->SpawnFromSaveData(&Element);
-					//UE_LOG(LogTemp, Warning, TEXT("SpawnEntityDataList : %s"), *Element.Name.ToString());
 				}
 
 				for(auto Element : DecorationTransforms)
 				{
 					spawner->SpawnInstanceFromSaveData(Element.Key, Element.Value);
+				}
+
+				for(auto Element : VillagerData)
+				{
+					SpawnVillager(&Element);
 				}
 			}
 		}
@@ -588,26 +618,39 @@ void UEntityManager::SpawnVillagersInBegin()
 }
 
 
-AVillager* UEntityManager::SpawnVillager()
+AVillager* UEntityManager::SpawnVillager(FVillagerSaveData* VillagerSaveData)
 {
 	FActorSpawnParameters ActorSpawnParams;
 	ActorSpawnParams.Owner = nullptr;
 	ActorSpawnParams.SpawnCollisionHandlingOverride =
 		ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-	FVector location = FVector::ZeroVector;
-	FVector boxExtent = FVector::ZeroVector;
-	TownHall->GetActorBounds(false, location, boxExtent);
-	float newPosDistance = FMath::Min(boxExtent.X, boxExtent.Y) * 2.f;
-	FVector newPosDelta = FMath::VRand() * newPosDistance;
-	location += newPosDelta;
-	location.Z = 0.f;
+	FVector villagerLocation;
+	FRotator villagerRotation;
 
-	UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
-	FNavLocation NavLocation;
-	NavSys->GetRandomReachablePointInRadius(location, 500.0f, NavLocation);
+	if(VillagerSaveData == nullptr)
+	{
+		FVector location = FVector::ZeroVector;
+		FVector boxExtent = FVector::ZeroVector;
+		TownHall->GetActorBounds(false, location, boxExtent);
+		float newPosDistance = FMath::Min(boxExtent.X, boxExtent.Y) * 2.f;
+		FVector newPosDelta = FMath::VRand() * newPosDistance;
+		location += newPosDelta;
+		location.Z = 0.f;
 
-	auto NewPawn = GetWorld()->SpawnActor<AVillager>(*Villager_Ref, NavLocation, FRotator::ZeroRotator,
+		UNavigationSystemV1* NavSys = Cast<UNavigationSystemV1>(GetWorld()->GetNavigationSystem());
+		FNavLocation NavLocation;
+		NavSys->GetRandomReachablePointInRadius(location, 500.0f, NavLocation);
+		villagerLocation = NavLocation.Location;
+		villagerRotation = FRotator::ZeroRotator;
+	}
+	else
+	{
+		villagerLocation = VillagerSaveData->Location;
+		villagerRotation = VillagerSaveData->Rotation;
+	}
+
+	auto NewPawn = GetWorld()->SpawnActor<AVillager>(*Villager_Ref, villagerLocation, villagerRotation,
 		ActorSpawnParams);
 
 	if(NewPawn != nullptr)
@@ -616,6 +659,11 @@ AVillager* UEntityManager::SpawnVillager()
 		{
 			// NOTE: SpawnDefaultController ALSO calls Possess() to possess the pawn (if a controller is successfully spawned).
 			NewPawn->SpawnDefaultController();
+		}
+
+		if(VillagerSaveData != nullptr)
+		{
+			NewPawn->LoadSaveData(VillagerSaveData);
 		}
 
 		return NewPawn;

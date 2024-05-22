@@ -14,6 +14,7 @@ class USkeletalMesh;
 class UCropoutGameInstance;
 class UAnimBlueprint;
 class AInGameGameMode;
+struct FVillagerSaveData;
 
 UCLASS(BlueprintType)
 class CROPOUT_CLONE_CPP_API AVillager : public APawn
@@ -57,8 +58,6 @@ protected:
 	FTimerHandle EatTimerHandle;
 	void Eat();
 	virtual void BeginPlay() override;
-
-public:
 	virtual void Destroyed() override;
 
 private:
@@ -92,6 +91,10 @@ protected:
 	int StoreAmount;
 
 public:
+	FVillagerSaveData GetSaveData();
+	void LoadSaveData(FVillagerSaveData* saveData);
+	bool CheckHasResource() const;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void PlayWorkAnim(float delay);

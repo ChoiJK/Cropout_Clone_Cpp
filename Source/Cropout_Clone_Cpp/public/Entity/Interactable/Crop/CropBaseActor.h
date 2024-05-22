@@ -47,6 +47,7 @@ protected:
 	UFUNCTION()
 	void TimelineFinished();
 	virtual void RegisterWithEntityManager() override;
+	virtual void UnregisterWithEntityManager() override;
 
 	void ChangeMesh(int index, bool isFirst = false);
 	FDelegateHandle RecalcBoxExtentDelegateHandle;

@@ -134,6 +134,14 @@ void AResourceBaseActor::RegisterWithEntityManager()
 	}
 }
 
+void AResourceBaseActor::UnregisterWithEntityManager()
+{
+	if(EntityManager != nullptr)
+	{
+		EntityManager->RemoveResource(this);
+	}
+}
+
 void AResourceBaseActor::DoScaleUp(float delay)
 {
 	StaticMeshComponent->SetHiddenInGame(true);
