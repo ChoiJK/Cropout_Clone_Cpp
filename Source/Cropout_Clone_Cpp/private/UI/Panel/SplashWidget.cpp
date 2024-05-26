@@ -5,7 +5,7 @@
 
 #include "Animation/UMGSequencePlayer.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/ApplicationState/ApplicationStateManager.h"
+#include "ApplicationState/ApplicationStateManager.h"
 
 void USplashWidget::NativeConstruct()
 {

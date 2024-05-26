@@ -4,7 +4,7 @@
 #include "UI/Panel/PauseMenuWidget.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/ApplicationState/ApplicationStateManager.h"
+#include "ApplicationState/ApplicationStateManager.h"
 #include "UI/Element/ButtonWidget.h"
 
 void UPauseMenuWidget::NativeConstruct()

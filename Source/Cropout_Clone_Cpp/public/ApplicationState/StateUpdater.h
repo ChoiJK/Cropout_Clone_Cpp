@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/ApplicationState/StateMachineBase.h"
+#include "ApplicationState/StateMachineBase.h"
 #include "StateUpdater.generated.h"
 
 UCLASS()

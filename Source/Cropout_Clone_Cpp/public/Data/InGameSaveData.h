@@ -83,10 +83,10 @@ class CROPOUT_CLONE_CPP_API UInGameSaveData : public USaveGame
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, Category = "Options")
+	UPROPERTY(VisibleAnywhere)
 	int32 ResourceBank[static_cast<int>(EResourceType::Count)] = {0};
 
-	UPROPERTY(VisibleAnywhere, Category = "Options")
+	UPROPERTY(VisibleAnywhere)
 	int32 IslandRandSeed = 0;
 
 	UPROPERTY(VisibleAnywhere)

@@ -61,6 +61,10 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 	void InitializeLevelManagers();
 	void ReleaseLevelManagers();
 
+	// Tick	
+	FTSTicker::FDelegateHandle TickDelegateHandle;
+	bool Tick(float DeltaTime);
+
 public:
 	static UCropoutGameInstance* Instance;
 

@@ -1,4 +1,4 @@
-#include "Core/ApplicationState/StateUpdater.h"
+#include "ApplicationState/StateUpdater.h"
 
 void UStateUpdater::SetProcessUpdate(const StateProcessFunction& processFunction)
 {

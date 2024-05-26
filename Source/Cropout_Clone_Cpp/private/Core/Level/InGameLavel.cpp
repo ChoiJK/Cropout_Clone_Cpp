@@ -12,7 +12,10 @@ void AInGameLavel::BeginPlay()
 
 	UCropoutGameInstance* gameInstance = UCropoutGameInstance::GetInstance();
 	UUiManager* uiManager = gameInstance->GetLevelManager<UUiManager>();
-	uiManager->CreateInGameLayerWidget();
+	if(uiManager)
+	{
+		uiManager->CreateInGameLayerWidget();
+	}
 }
 
 void AInGameLavel::Destroyed()

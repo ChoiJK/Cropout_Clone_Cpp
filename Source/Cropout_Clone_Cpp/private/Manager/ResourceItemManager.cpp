@@ -4,7 +4,7 @@
 #include "Manager/ResourceItemManager.h"
 
 #include "Core/CropoutGameInstance.h"
-#include "Core/ApplicationState/ApplicationStateManager.h"
+#include "ApplicationState/ApplicationStateManager.h"
 #include "Core/InGame/InGameGameMode.h"
 #include "Enum/ResourceType.h"
 

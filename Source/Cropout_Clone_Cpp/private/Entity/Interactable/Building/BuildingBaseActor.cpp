@@ -6,7 +6,7 @@
 #include "Components/BoxComponent.h"
 #include "Core/CropoutGameInstance.h"
 #include "Core/InGame/InGameGameMode.h"
-#include "Core/ApplicationState/ApplicationStateManager.h"
+#include "ApplicationState/ApplicationStateManager.h"
 #include "Data/InteractableInfo.h"
 #include "Entity/EntityManager.h"
 #include "Spawn/Spawner.h"

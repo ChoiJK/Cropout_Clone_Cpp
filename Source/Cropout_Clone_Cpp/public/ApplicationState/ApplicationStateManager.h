@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/ApplicationState/StateMachineBase.h"
+#include "ApplicationState/StateMachineBase.h"
 #include "Manager/Base/SystemManager.h"
 #include "ApplicationStateManager.generated.h"
 
@@ -44,6 +44,8 @@
 // InGameResult -> MainMenu	: ToMainMenu
 
 class UStateUpdater;
+class UStateProcessSharedData;
+class UStateTransitionProcessor;
 struct FStateTransitions;
 
 UCLASS()
@@ -56,6 +58,12 @@ class CROPOUT_CLONE_CPP_API UApplicationStateManager : public USystemManager
 
 	UPROPERTY()
 	TMap<ECropoutState, FStateTransitions> TransitionProcessors;
+
+	UPROPERTY()
+	UStateProcessSharedData* SharedData;
+
+	UPROPERTY()
+	UStateTransitionProcessor* TransitionProcessor;
 
 	ECropoutState CurrentState;
 
@@ -88,6 +96,8 @@ public:
 	virtual void Destroy() override;
 
 	virtual void OnLevelLoaded() override;
+
+	ECropoutState GetCurrentState() const;
 
 	bool TriggerStateTransition(EStateTrigger trigger);
 	void UpdateState();

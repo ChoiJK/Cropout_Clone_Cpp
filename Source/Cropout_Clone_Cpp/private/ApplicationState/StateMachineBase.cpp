@@ -1,5 +1,5 @@
-#include "Core/ApplicationState/StateMachineBase.h"
-#include "Core/ApplicationState/StateTransitionProcessor.h"
+#include "ApplicationState/StateMachineBase.h"
+#include "ApplicationState/StateTransitionProcessor.h"
 
 FStateTransition::FStateTransition(): Trigger(), ToState(), TransitionProcessor(nullptr)
 {

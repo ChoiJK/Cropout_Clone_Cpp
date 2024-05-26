@@ -3,6 +3,7 @@
 
 #include "Core/CropoutGameInstance.h"
 
+#include "ApplicationState/ApplicationStateManager.h"
 #include "Core/InGame/InGameGameMode.h"
 #include "Core/InGame/InGamePlayerController.h"
 #include "Core/Level/InGameLavel.h"
@@ -20,12 +21,18 @@ void UCropoutGameInstance::Init()
 	GlobalSharedVariable = NewObject<UGlobalSharedVariable>();
 	GlobalSharedVariable->SetCropoutGameInstance(this);
 
+	// FTicker에 Tick 함수를 등록
+	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(
+		FTickerDelegate::CreateUObject(this, &UCropoutGameInstance::Tick));
+
 	InitializeSystemManagers();
 }
 
 void UCropoutGameInstance::Shutdown()
 {
 	UE_LOG(LogTemp, Warning, TEXT("UCropoutGameInstance::Shutdown"));
+
+	FTSTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
 
 	if((GIsEditor && IsEngineExitRequested()) == false)
 	{
@@ -60,6 +67,17 @@ void UCropoutGameInstance::Shutdown()
 	Instance = nullptr;
 
 	Super::Shutdown();
+}
+
+
+bool UCropoutGameInstance::Tick(float DeltaTime)
+{
+	// 매 프레임 호출
+	UApplicationStateManager* ASM = GetSystemManager<UApplicationStateManager>();
+	ASM->UpdateState();
+
+	// true를 반환하면 다음 틱에서 다시 호출 됨
+	return true;
 }
 
 void UCropoutGameInstance::SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase)
@@ -141,6 +159,13 @@ void UCropoutGameInstance::InitializeSystemManagers()
 
 void UCropoutGameInstance::InitializeLevelManagers()
 {
+	UApplicationStateManager* ASM = GetSystemManager<UApplicationStateManager>();
+	// none, initialize시에는 LevelManager를 생성하지 않음
+	if(ASM->GetCurrentState() < ECropoutState::Splash)
+	{
+		return;
+	}
+
 	IsProgressLevelManagerInitialized = true;
 	for(TObjectIterator<UClass> It; It; ++It)
 	{

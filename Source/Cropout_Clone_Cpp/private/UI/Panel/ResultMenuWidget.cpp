@@ -5,7 +5,7 @@
 
 #include "CommonTextBlock.h"
 #include "Core/CropoutGameInstance.h"
-#include "Core/ApplicationState/ApplicationStateManager.h"
+#include "ApplicationState/ApplicationStateManager.h"
 #include "UI/Element/ButtonWidget.h"
 
 void UResultMenuWidget::NativeConstruct()
