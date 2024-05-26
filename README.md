@@ -51,7 +51,7 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 > 주의 - 모든 리소스에 대한 경로가 하드코딩되어있습니다. 주의바랍니다.
 
 ## 5. Progress
-현재 작업은 약 90%정도 진행되었습니다.   
+현재 작업은 약 95%정도 진행되었습니다.   
 
 <작업 된 내용>
 - Geometry Script를 통한 지형생성
@@ -65,9 +65,9 @@ Cropout은 Top-down방식의 Casual RTS 게임 샘플입니다. 크로스 플랫
 - Level간 전환
 - Game의 승리/패배 조건 설정
 - Interactable, Buildable, Build UI를 위한 데이터 흐름 리팩토링
+- Save/Load 기능
 
 <작업 할 내용>
-- Save/Load 기능
 - 크로스 플랫폼 테스트
 
 ## 6. 정리, 아이디어

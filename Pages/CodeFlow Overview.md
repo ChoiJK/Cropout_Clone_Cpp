@@ -8,9 +8,6 @@
     <details>
     <summary> Core </summary>
 
-    - Application의 상태를 관리합니다.
-        - Application level의 제어
-        - level 전환
     - UE GamePlay Framework를 구현합니다.
         - GameInstance
         - PlayerController
@@ -19,6 +16,16 @@
     
     </details>
     
+    <details>
+    <summary> ApplicationState </summary>
+
+    - Application의 상태를 관리합니다.
+        - Application level의 제어
+        - level 전환
+        - State 전환시 Process들을 추가하여 여러 연출, 효과 등 안정적인 S/W 플로우 관리 가능
+    
+    </details>
+
     <details>
     <summary> Data </summary>
 
@@ -115,8 +122,8 @@
     - SystemManager로서 Application이 시작하고 종료될 때까지 유지됩니다.
     - State와 Transition을 통해 S/W의 상태를 전환하고, 전환에 따른 로직이 처리됩니다.
     - 각 State전환에 대한 처리를 자세히 살펴보려면 ApplicationStateManager, TransitionProcessor를 확인하시면 됩니다.
+    - 각 TransitionProcess간 의존관계 처리작업이 추가되었습니다. (24/05/26)
 ![alt text](Images/Code%20Overview_1.png)
-> 주의 : 아직 TransitionProcessor에 Async, Function 우선순위 및 의존관계 처리가 되지 않았습니다. 순차로 처리됩니다.
 
 ### Manager 관리
 - Manager에 대한 관리는 CropoutGameInstance에서 처리합니다.
@@ -126,6 +133,7 @@
     - 대표적으로 ApplicationState, Table, SimpleReactive에 대한 처리를 관리합니다.
 - LevelManager : Level이 열릴 때 생성되었다가 파괴될 때 제거되는 Manager입니다.
     - 대표적으로 Entity, Sound, Ui에 대한 처리를 관리합니다.
+    - MainMenu 이후에만 생성합니다.
 
 ### Table소개
 - 모든 Table은 TableManager를 통해 Load되고 활용할 수 있습니다.
