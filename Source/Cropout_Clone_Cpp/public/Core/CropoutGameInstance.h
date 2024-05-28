@@ -10,7 +10,6 @@
 
 #include "CropoutGameInstance.generated.h"
 
-class AInGamePlayerController;
 class AInGameGameMode;
 class AIslandBaseGameMode;
 class ACropoutLevelScriptBase;
@@ -49,10 +48,6 @@ class CROPOUT_CLONE_CPP_API UCropoutGameInstance : public UGameInstance
 
 	UPROPERTY()
 	APlayerController* CurrentPlayerController;
-
-	UPROPERTY()
-	AInGamePlayerController* CurrentCropoutPlayerController;
-
 
 	virtual void Init() override;
 	virtual void Shutdown() override;
@@ -141,9 +136,6 @@ public:
 
 	void SetCurrentPlayerController(APlayerController* playerController);
 	APlayerController* GetCurrentPlayerController();
-
-	void SetCurrentCropoutPlayerController(AInGamePlayerController* playerController);
-	AInGamePlayerController* GetCurrentCropoutPlayerController();
 
 	void SetCurrentLevelScript(ACropoutLevelScriptBase* cropoutLevelScriptBase);
 	void SystemManagerBeginDestroy(UManagerBase* Manager);

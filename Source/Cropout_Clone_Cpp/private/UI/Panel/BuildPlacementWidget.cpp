@@ -21,7 +21,16 @@ void UBuildPlacementWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
-	Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentCropoutPlayerController()->GetPawn());
+
+	const AInGamePlayerController* playerController = Cast<AInGamePlayerController>(
+		GameInstance->GetCurrentPlayerController());
+	if(playerController == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UBuildEntityCardWidget::OnButtonClicked, playerController is nullptr"));
+		return;
+	}
+
+	Player = Cast<ACropoutPlayer>(playerController->GetPawn());
 
 	PlaceButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnPlaceButtonClicked);
 	RotateButton->OnClicked().AddUObject(this, &UBuildPlacementWidget::OnRotateButtonClicked);

@@ -2,9 +2,7 @@
 
 
 #include "Core/Level/CropoutLevelScriptBase.h"
-#include "Manager/Base/LevelManager.h"
 #include "Core/CropoutGameInstance.h"
-#include "ApplicationState/ApplicationStateManager.h"
 
 
 ACropoutLevelScriptBase::ACropoutLevelScriptBase()

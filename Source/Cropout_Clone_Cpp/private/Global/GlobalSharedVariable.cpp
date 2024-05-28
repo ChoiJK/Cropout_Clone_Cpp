@@ -1,5 +1,6 @@
 #include "Global/GlobalSharedVariable.h"
-#include "Core/CropoutGameInstance.h"
+
+#include "Engine/TextureRenderTarget2D.h"
 #include "Materials/MaterialParameterCollection.h"
 
 UGlobalSharedVariable::UGlobalSharedVariable()
@@ -20,6 +21,8 @@ void UGlobalSharedVariable::Initialize()
 	CropoutMPC = LoadObject<UMaterialParameterCollection>(
 		"MaterialParameterCollection'/Game/Resources/Materials/MPC_Cropout.MPC_Cropout'");
 	PlaceableMaterial = LoadObject<UMaterial>("Material'/Game/Resources/Materials/M_Placeable.M_Placeable'");
+	RT_Draw = LoadObject<UTextureRenderTarget2D>(
+		"TextureRenderTarget2D'/Game/Resources/RenderTarget/RT_GrassMove.RT_GrassMove'");
 }
 
 void UGlobalSharedVariable::SetCropoutGameInstance(UCropoutGameInstance* instance)
@@ -55,4 +58,9 @@ UMaterialParameterCollection* UGlobalSharedVariable::GetCropoutMPC()
 UMaterial* UGlobalSharedVariable::GetPlaceableMaterial()
 {
 	return PlaceableMaterial;
+}
+
+UTextureRenderTarget2D* UGlobalSharedVariable::GetRT_Draw()
+{
+	return RT_Draw;
 }

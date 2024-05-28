@@ -40,13 +40,6 @@ AInteractableBaseActor::AInteractableBaseActor()
 	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	BoxComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-	static ConstructorHelpers::FObjectFinder<UTextureRenderTarget2D> TextureRenderTargetAsset(
-		TEXT("TextureRenderTarget2D'/Game/Resources/RenderTarget/RT_GrassMove.RT_GrassMove'"));
-	if(TextureRenderTargetAsset.Succeeded())
-	{
-		RT_Draw = TextureRenderTargetAsset.Object;
-	}
-
 	if(IsInitWoobleCurveSuccess() == false)
 	{
 		Destroy();
@@ -195,6 +188,8 @@ void AInteractableBaseActor::CheckOverlappingActor()
 void AInteractableBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	RT_Draw = UCropoutGameInstance::GetInstance()->GetGlobalSharedVariable()->GetRT_Draw();
 
 	FOnTimelineFloat TimelineProgress;
 	TimelineProgress.BindUFunction(this, FName("Wooble_TimelineUpdate"));

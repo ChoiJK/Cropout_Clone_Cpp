@@ -1,16 +1,17 @@
-#include "StateProcessFactory.h"
+#include "ApplicationState/StateProcess/StateProcessFactory.h"
 
-#include "StateProcess_ClearSaveGame.h"
-#include "StateProcess_ClearSpawner.h"
-#include "StateProcess_CloseMenuWidget.h"
-#include "StateProcess_Initialize.h"
-#include "StateProcess_OpenLevel.h"
-#include "StateProcess_OpenMenuWidget.h"
-#include "StateProcess_SaveGame.h"
-#include "StateProcess_SetGameContinue.h"
-#include "StateProcess_SetGamePausedMode.h"
-#include "StateProcess_SetInputMode.h"
-#include "StateProcess_SetResultMenuWidgetText.h"
+#include "ApplicationState/StateProcess/StateProcess_ClearGrassMoveRT.h"
+#include "ApplicationState/StateProcess/StateProcess_ClearSaveGame.h"
+#include "ApplicationState/StateProcess/StateProcess_ClearSpawner.h"
+#include "ApplicationState/StateProcess/StateProcess_CloseMenuWidget.h"
+#include "ApplicationState/StateProcess/StateProcess_Initialize.h"
+#include "ApplicationState/StateProcess/StateProcess_OpenLevel.h"
+#include "ApplicationState/StateProcess/StateProcess_OpenMenuWidget.h"
+#include "ApplicationState/StateProcess/StateProcess_SaveGame.h"
+#include "ApplicationState/StateProcess/StateProcess_SetGameContinue.h"
+#include "ApplicationState/StateProcess/StateProcess_SetGamePausedMode.h"
+#include "ApplicationState/StateProcess/StateProcess_SetInputMode.h"
+#include "ApplicationState/StateProcess/StateProcess_SetResultMenuWidgetText.h"
 
 UStateProcess_Initialize* StateProcessFactory::Create_StateProcess_Initialize()
 {
@@ -37,6 +38,11 @@ UStateProcess_ClearSaveGame* StateProcessFactory::Create_StateProcess_ClearSaveG
 UStateProcess_ClearSpawner* StateProcessFactory::Create_StateProcess_ClearSpawner()
 {
 	return NewObject<UStateProcess_ClearSpawner>();
+}
+
+UStateProcess_ClearGrassMoveRT* StateProcessFactory::Create_StateProcess_ClearGrassMoveRT()
+{
+	return NewObject<UStateProcess_ClearGrassMoveRT>();
 }
 
 UStateProcess_SetGameContinue* StateProcessFactory::Create_StateProcess_SetGameContinue()

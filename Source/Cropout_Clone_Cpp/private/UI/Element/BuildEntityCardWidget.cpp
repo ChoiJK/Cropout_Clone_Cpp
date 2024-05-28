@@ -6,6 +6,7 @@
 #include "Animation/WidgetAnimation.h"
 #include "Components/Image.h"
 #include "Core/CropoutGameInstance.h"
+#include "Core/CropoutPlayerControllerBase.h"
 #include "Core/InGame/InGamePlayerController.h"
 #include "Core/InGame/InGameGameMode.h"
 #include "Data/BuildableInfo.h"
@@ -92,7 +93,15 @@ void UBuildEntityCardWidget::OnButtonClicked()
 		UE_LOG(LogTemp, Warning, TEXT("UBuildEntityCardWidget::OnButtonClicked, %s"), *BuildableInfo->ToString());
 		UCropoutGameInstance* GameInstance = UCropoutGameInstance::GetInstance();
 
-		ACropoutPlayer* Player = Cast<ACropoutPlayer>(GameInstance->GetCurrentCropoutPlayerController()->GetPawn());
+		const AInGamePlayerController* playerController = Cast<AInGamePlayerController>(
+			GameInstance->GetCurrentPlayerController());
+		if(playerController == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("UBuildEntityCardWidget::OnButtonClicked, playerController is nullptr"));
+			return;
+		}
+
+		ACropoutPlayer* Player = Cast<ACropoutPlayer>(playerController->GetPawn());
 		if(Player)
 		{
 			Player->BeginBuild(BuildableInfo);

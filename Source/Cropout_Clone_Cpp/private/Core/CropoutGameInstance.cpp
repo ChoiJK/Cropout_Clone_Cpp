@@ -5,7 +5,6 @@
 
 #include "ApplicationState/ApplicationStateManager.h"
 #include "Core/InGame/InGameGameMode.h"
-#include "Core/InGame/InGamePlayerController.h"
 #include "Core/Level/InGameLavel.h"
 #include "Global/GlobalSharedVariable.h"
 #include "Kismet/GameplayStatics.h"
@@ -339,12 +338,6 @@ void UCropoutGameInstance::SetCurrentGameMode(AInGameGameMode* gameMode)
 void UCropoutGameInstance::SetCurrentPlayerController(APlayerController* playerController)
 {
 	CurrentPlayerController = playerController;
-
-	CurrentCropoutPlayerController = nullptr;
-	if(playerController && playerController->IsA(AInGamePlayerController::StaticClass()))
-	{
-		CurrentCropoutPlayerController = Cast<AInGamePlayerController>(playerController);
-	}
 }
 
 APlayerController* UCropoutGameInstance::GetCurrentPlayerController()
@@ -355,20 +348,4 @@ APlayerController* UCropoutGameInstance::GetCurrentPlayerController()
 	}
 
 	return CurrentPlayerController;
-}
-
-void UCropoutGameInstance::SetCurrentCropoutPlayerController(AInGamePlayerController* playerController)
-{
-	CurrentPlayerController = playerController;
-	CurrentCropoutPlayerController = playerController;
-}
-
-AInGamePlayerController* UCropoutGameInstance::GetCurrentCropoutPlayerController()
-{
-	if(CurrentCropoutPlayerController == nullptr)
-	{
-		SetCurrentPlayerController(GetFirstLocalPlayerController());
-	}
-
-	return CurrentCropoutPlayerController;
 }

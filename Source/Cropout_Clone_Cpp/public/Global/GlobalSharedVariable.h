@@ -43,16 +43,26 @@ private:
 		return loadedClass;
 	}
 
+	UPROPERTY()
 	UCropoutGameInstance* GameInstance;
 
+	UPROPERTY()
 	UStaticMesh* PrimitiveShapeMeshs[static_cast<int>(EPrimitiveShapeType::Count)];
 
+	UPROPERTY()
 	UClass* SpawnMarkerClass = nullptr;
+	UPROPERTY()
 	UMaterialParameterCollection* LandScapeMPC = nullptr;
+	UPROPERTY()
 	UMaterial* LandScapeMaterial = nullptr;
 
+	UPROPERTY()
 	UMaterialParameterCollection* CropoutMPC = nullptr;
+	UPROPERTY()
 	UMaterial* PlaceableMaterial = nullptr;
+
+	UPROPERTY()
+	UTextureRenderTarget2D* RT_Draw = nullptr;
 
 public:
 	void SetCropoutGameInstance(UCropoutGameInstance* instance);
@@ -63,6 +73,5 @@ public:
 	UMaterial* GetLandScapeMaterial();
 	UMaterialParameterCollection* GetCropoutMPC();
 	UMaterial* GetPlaceableMaterial();
-
-private:
+	UTextureRenderTarget2D* GetRT_Draw();
 };

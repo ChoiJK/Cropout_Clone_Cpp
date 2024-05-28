@@ -10,6 +10,7 @@ class UStateProcess_Initialize;
 class UStateProcess_SaveGame;
 class UStateProcess_ClearSaveGame;
 class UStateProcess_ClearSpawner;
+class UStateProcess_ClearGrassMoveRT;
 
 class UStateProcess_SetGameContinue;
 
@@ -34,6 +35,7 @@ public:
 	static UStateProcess_SaveGame* Create_StateProcess_SaveGame();
 	static UStateProcess_ClearSaveGame* Create_StateProcess_ClearSaveGame();
 	static UStateProcess_ClearSpawner* Create_StateProcess_ClearSpawner();
+	static UStateProcess_ClearGrassMoveRT* Create_StateProcess_ClearGrassMoveRT();
 
 	static UStateProcess_SetGameContinue* Create_StateProcess_SetGameContinue();
 

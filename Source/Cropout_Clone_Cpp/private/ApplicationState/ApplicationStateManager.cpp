@@ -6,6 +6,7 @@
 #include "ApplicationState/StateTransitionProcessor.h"
 #include "ApplicationState/StateUpdater.h"
 #include "ApplicationState/StateProcess/StateProcessFactory.h"
+#include "ApplicationState/StateProcess/StateProcess_ClearGrassMoveRT.h"
 #include "ApplicationState/StateProcess/StateProcess_ClearSaveGame.h"
 #include "ApplicationState/StateProcess/StateProcess_ClearSpawner.h"
 #include "ApplicationState/StateProcess/StateProcess_CloseMenuWidget.h"
@@ -128,6 +129,7 @@ void UApplicationStateManager::Initialize_Splash_To_MainMenu_With_SplashComplete
 	// Splash화면이 끝나고 MainMenu화면으로 넘어갈 때 발생
 	UDependentProcessQueue* ToMainMenuQueue = NewObject<UDependentProcessQueue>();
 	ToMainMenuQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("MainMenu"));
+	ToMainMenuQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* Splash_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
 	Splash_To_MainMenu_Processor->AddTransitionProcess(ToMainMenuQueue);
@@ -143,6 +145,7 @@ void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_NewGame()
 	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSpawner());
 	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSaveGame());
 	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("InGame"));
+	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* MainMenu_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	MainMenu_To_InGame_Processor->AddTransitionProcess(ToInGameQueue);
@@ -157,6 +160,7 @@ void UApplicationStateManager::Initialize_MainMenu_To_InGame_With_LoadGame()
 	UDependentProcessQueue* ToInGameQueue = NewObject<UDependentProcessQueue>();
 	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSpawner());
 	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("InGame"));
+	ToInGameQueue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* MainMenu_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	MainMenu_To_InGame_Processor->AddTransitionProcess(ToInGameQueue);
@@ -249,6 +253,7 @@ void UApplicationStateManager::Initialize_InGamePause_To_InGame_With_RestartGame
 	InGamePause_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSpawner());
 	InGamePause_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSaveGame());
 	InGamePause_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("InGame"));
+	InGamePause_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* InGamePause_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	InGamePause_To_InGame_Processor->AddTransitionProcess(InGamePause_To_InGame_Queue);
@@ -264,6 +269,7 @@ void UApplicationStateManager::Initialize_InGamePause_To_MainMenu_With_ToMainMen
 	InGamePause_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_CloseMenuWidget());
 	InGamePause_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_SaveGame());
 	InGamePause_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("MainMenu"));
+	InGamePause_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* InGamePause_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
 	InGamePause_To_MainMenu_Processor->AddTransitionProcess(InGamePause_To_MainMenu_Queue);
@@ -302,6 +308,7 @@ void UApplicationStateManager::Initialize_InGameResult_To_InGame_With_RestartGam
 	InGameResult_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSpawner());
 	InGameResult_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSaveGame());
 	InGameResult_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("InGame"));
+	InGameResult_To_InGame_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* InGameResult_To_InGame_Processor = NewObject<UStateTransitionProcessor>();
 	InGameResult_To_InGame_Processor->AddTransitionProcess(InGameResult_To_InGame_Queue);
@@ -317,6 +324,7 @@ void UApplicationStateManager::Initialize_InGameResult_To_MainMenu_With_ToMainMe
 	InGameResult_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_CloseMenuWidget());
 	InGameResult_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearSaveGame());
 	InGameResult_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_OpenLevel("MainMenu"));
+	InGameResult_To_MainMenu_Queue->AddDependentProcess(StateProcessFactory::Create_StateProcess_ClearGrassMoveRT());
 
 	UStateTransitionProcessor* InGameResult_To_MainMenu_Processor = NewObject<UStateTransitionProcessor>();
 	InGameResult_To_MainMenu_Processor->AddTransitionProcess(InGameResult_To_MainMenu_Queue);
